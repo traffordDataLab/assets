@@ -1,0 +1,33 @@
+/* Replacement L.AwesomeMarkers styles based on original CSS file */
+/* Author: L. Voogdt | License: MIT | Version: 1.0 */
+.awesome-marker {
+  background-repeat: no-repeat;     /* definition for the background-image is in the mixed and gradient styles files, so this just sets the repeat */
+  width: 35px;
+  height: 46px;
+  position:absolute;
+  left:0;
+  top:0;
+  display: block;
+  text-align: center;
+}
+
+.awesome-marker-shadow {
+  background: url('markers-shadow.png') no-repeat 0 0;
+  width: 36px;
+  height: 16px;
+}
+
+.awesome-marker i {
+  color: #333;
+  margin-top: 10px;
+  display: inline-block;
+  font-size: 14px;
+}
+
+.awesome-marker .icon-white {
+  color: #fff;
+}
+
+.awesome-marker .icon-black {
+  color: #000;
+}

@@ -1,0 +1,168 @@
+/*
+    20150417 - Trafford Data Lab, James Austin.
+    These are all the styles related to map markers and the legend items associated with them.
+    They have been developed to replace the graphics provided with the Awesome Markers plugin by Lennard Voogdt.
+    However, as we are still using the Awesome Markers code, naming references are retained as "awesome-marker-icon..."
+    The icons are PNG "ribbons" of different colours (see below) from left to right and in sets of different shapes (markers: standard, tab and wedge which can display Font Awesome icons in the middle and pins: circle, square and triangle which are just to mark a location).
+    There are ribbons of 10 markers, (in each of the 3 marker shapes), for each of the following colours, in both "bright" and "dark" palette options, which are handled in a separate CSS file:
+        - Grey
+        - Red
+        - Orange
+        - Yellow
+        - Green
+        - Blue
+        - Purple
+        - Pink
+
+    We also have mixed ribbons of 18 icons in all 3 marker shapes and all 3 pin shapes containing icon colour no. 10 from each of the 16 bright and dark palettes, prefixed with a white and black version
+    Finally, the base awesome markers classes which are required to be used in conjunction with the classes below are found in extended_markers_base.css.
+*/
+
+/*------------------------- Mixed Colours Ribbons -------------------------*/
+/* Standard markers */
+.awesome-marker-icon-standard-white, .awesome-marker-icon-standard-black, .awesome-marker-icon-standard-grey-bright, .awesome-marker-icon-standard-grey-dark, .awesome-marker-icon-standard-red-bright,  .awesome-marker-icon-standard-red-dark, .awesome-marker-icon-standard-orange-bright, .awesome-marker-icon-standard-orange-dark, .awesome-marker-icon-standard-yellow-bright, .awesome-marker-icon-standard-yellow-dark, .awesome-marker-icon-standard-green-bright, .awesome-marker-icon-standard-green-dark, .awesome-marker-icon-standard-blue-bright, .awesome-marker-icon-standard-blue-dark, .awesome-marker-icon-standard-purple-bright, .awesome-marker-icon-standard-purple-dark, .awesome-marker-icon-standard-pink-bright, .awesome-marker-icon-standard-pink-dark
+{
+    background-image: url('trafforddatalab_markers-standard-mixed.png');
+}
+
+/* Tab Markers */
+.awesome-marker-icon-tab-white, .awesome-marker-icon-tab-black, .awesome-marker-icon-tab-grey-bright, .awesome-marker-icon-tab-grey-dark, .awesome-marker-icon-tab-red-bright,  .awesome-marker-icon-tab-red-dark, .awesome-marker-icon-tab-orange-bright, .awesome-marker-icon-tab-orange-dark, .awesome-marker-icon-tab-yellow-bright, .awesome-marker-icon-tab-yellow-dark, .awesome-marker-icon-tab-green-bright, .awesome-marker-icon-tab-green-dark, .awesome-marker-icon-tab-blue-bright, .awesome-marker-icon-tab-blue-dark, .awesome-marker-icon-tab-purple-bright, .awesome-marker-icon-tab-purple-dark, .awesome-marker-icon-tab-pink-bright, .awesome-marker-icon-tab-pink-dark
+{
+    background-image: url('trafforddatalab_markers-tab-mixed.png');
+}
+
+/* Wedge markers */
+.awesome-marker-icon-wedge-white, .awesome-marker-icon-wedge-black, .awesome-marker-icon-wedge-grey-bright, .awesome-marker-icon-wedge-grey-dark, .awesome-marker-icon-wedge-red-bright,  .awesome-marker-icon-wedge-red-dark, .awesome-marker-icon-wedge-orange-bright, .awesome-marker-icon-wedge-orange-dark, .awesome-marker-icon-wedge-yellow-bright, .awesome-marker-icon-wedge-yellow-dark, .awesome-marker-icon-wedge-green-bright, .awesome-marker-icon-wedge-green-dark, .awesome-marker-icon-wedge-blue-bright, .awesome-marker-icon-wedge-blue-dark, .awesome-marker-icon-wedge-purple-bright, .awesome-marker-icon-wedge-purple-dark, .awesome-marker-icon-wedge-pink-bright, .awesome-marker-icon-wedge-pink-dark
+{
+    background-image: url('trafforddatalab_markers-wedge-mixed.png');
+}
+
+/* Circle pins */
+.awesome-marker-icon-pin-circle-white, .awesome-marker-icon-pin-circle-black, .awesome-marker-icon-pin-circle-grey-bright, .awesome-marker-icon-pin-circle-grey-dark, .awesome-marker-icon-pin-circle-red-bright,  .awesome-marker-icon-pin-circle-red-dark, .awesome-marker-icon-pin-circle-orange-bright, .awesome-marker-icon-pin-circle-orange-dark, .awesome-marker-icon-pin-circle-yellow-bright, .awesome-marker-icon-pin-circle-yellow-dark, .awesome-marker-icon-pin-circle-green-bright, .awesome-marker-icon-pin-circle-green-dark, .awesome-marker-icon-pin-circle-blue-bright, .awesome-marker-icon-pin-circle-blue-dark, .awesome-marker-icon-pin-circle-purple-bright, .awesome-marker-icon-pin-circle-purple-dark, .awesome-marker-icon-pin-circle-pink-bright, .awesome-marker-icon-pin-circle-pink-dark
+{
+    background-image: url('trafforddatalab_pins-circle-mixed.png');
+}
+
+/* Square pins */
+.awesome-marker-icon-pin-square-white, .awesome-marker-icon-pin-square-black, .awesome-marker-icon-pin-square-grey-bright, .awesome-marker-icon-pin-square-grey-dark, .awesome-marker-icon-pin-square-red-bright,  .awesome-marker-icon-pin-square-red-dark, .awesome-marker-icon-pin-square-orange-bright, .awesome-marker-icon-pin-square-orange-dark, .awesome-marker-icon-pin-square-yellow-bright, .awesome-marker-icon-pin-square-yellow-dark, .awesome-marker-icon-pin-square-green-bright, .awesome-marker-icon-pin-square-green-dark, .awesome-marker-icon-pin-square-blue-bright, .awesome-marker-icon-pin-square-blue-dark, .awesome-marker-icon-pin-square-purple-bright, .awesome-marker-icon-pin-square-purple-dark, .awesome-marker-icon-pin-square-pink-bright, .awesome-marker-icon-pin-square-pink-dark
+{
+    background-image: url('trafforddatalab_pins-square-mixed.png');
+}
+
+/* Triangle pins */
+.awesome-marker-icon-pin-triangle-white, .awesome-marker-icon-pin-triangle-black, .awesome-marker-icon-pin-triangle-grey-bright, .awesome-marker-icon-pin-triangle-grey-dark, .awesome-marker-icon-pin-triangle-red-bright,  .awesome-marker-icon-pin-triangle-red-dark, .awesome-marker-icon-pin-triangle-orange-bright, .awesome-marker-icon-pin-triangle-orange-dark, .awesome-marker-icon-pin-triangle-yellow-bright, .awesome-marker-icon-pin-triangle-yellow-dark, .awesome-marker-icon-pin-triangle-green-bright, .awesome-marker-icon-pin-triangle-green-dark, .awesome-marker-icon-pin-triangle-blue-bright, .awesome-marker-icon-pin-triangle-blue-dark, .awesome-marker-icon-pin-triangle-purple-bright, .awesome-marker-icon-pin-triangle-purple-dark, .awesome-marker-icon-pin-triangle-pink-bright, .awesome-marker-icon-pin-triangle-pink-dark
+{
+    background-image: url('trafforddatalab_pins-triangle-mixed.png');
+}
+
+/* Ribbon background positions (all shapes) */
+.awesome-marker-icon-standard-white, .awesome-marker-icon-tab-white, .awesome-marker-icon-wedge-white, .awesome-marker-icon-pin-circle-white, .awesome-marker-icon-pin-square-white, .awesome-marker-icon-pin-triangle-white
+{
+    background-position: 0px 0px;
+}
+
+.awesome-marker-icon-standard-black, .awesome-marker-icon-tab-black, .awesome-marker-icon-wedge-black, .awesome-marker-icon-pin-circle-black, .awesome-marker-icon-pin-square-black, .awesome-marker-icon-pin-triangle-black
+{
+    background-position: -36px 0px;
+}
+
+.awesome-marker-icon-standard-grey-bright, .awesome-marker-icon-tab-grey-bright, .awesome-marker-icon-wedge-grey-bright, .awesome-marker-icon-pin-circle-grey-bright, .awesome-marker-icon-pin-square-grey-bright, .awesome-marker-icon-pin-triangle-grey-bright
+{
+    background-position: -72px 0px;
+}
+
+.awesome-marker-icon-standard-grey-dark, .awesome-marker-icon-tab-grey-dark, .awesome-marker-icon-wedge-grey-dark, .awesome-marker-icon-pin-circle-grey-dark, .awesome-marker-icon-pin-square-grey-dark, .awesome-marker-icon-pin-triangle-grey-dark
+{
+    background-position: -108px 0px;
+}
+
+.awesome-marker-icon-standard-red-bright, .awesome-marker-icon-tab-red-bright, .awesome-marker-icon-wedge-red-bright, .awesome-marker-icon-pin-circle-red-bright, .awesome-marker-icon-pin-square-red-bright, .awesome-marker-icon-pin-triangle-red-bright
+{
+    background-position: -144px 0px;
+}
+
+.awesome-marker-icon-standard-red-dark, .awesome-marker-icon-tab-red-dark, .awesome-marker-icon-wedge-red-dark, .awesome-marker-icon-pin-circle-red-dark, .awesome-marker-icon-pin-square-red-dark, .awesome-marker-icon-pin-triangle-red-dark
+{
+    background-position: -180px 0px;
+}
+
+.awesome-marker-icon-standard-orange-bright, .awesome-marker-icon-tab-orange-bright, .awesome-marker-icon-wedge-orange-bright, .awesome-marker-icon-pin-circle-orange-bright, .awesome-marker-icon-pin-square-orange-bright, .awesome-marker-icon-pin-triangle-orange-bright
+{
+    background-position: -216px 0px;
+}
+
+.awesome-marker-icon-standard-orange-dark, .awesome-marker-icon-tab-orange-dark, .awesome-marker-icon-wedge-orange-dark, .awesome-marker-icon-pin-circle-orange-dark, .awesome-marker-icon-pin-square-orange-dark, .awesome-marker-icon-pin-triangle-orange-dark
+{
+    background-position: -252px 0px;
+}
+
+.awesome-marker-icon-standard-yellow-bright, .awesome-marker-icon-tab-yellow-bright, .awesome-marker-icon-wedge-yellow-bright, .awesome-marker-icon-pin-circle-yellow-bright, .awesome-marker-icon-pin-square-yellow-bright, .awesome-marker-icon-pin-triangle-yellow-bright
+{
+    background-position: -288px 0px;
+}
+
+.awesome-marker-icon-standard-yellow-dark, .awesome-marker-icon-tab-yellow-dark, .awesome-marker-icon-wedge-yellow-dark, .awesome-marker-icon-pin-circle-yellow-dark, .awesome-marker-icon-pin-square-yellow-dark, .awesome-marker-icon-pin-triangle-yellow-dark
+{
+    background-position: -324px 0px;
+}
+
+.awesome-marker-icon-standard-green-bright, .awesome-marker-icon-tab-green-bright, .awesome-marker-icon-wedge-green-bright, .awesome-marker-icon-pin-circle-green-bright, .awesome-marker-icon-pin-square-green-bright, .awesome-marker-icon-pin-triangle-green-bright
+{
+    background-position: -360px 0px;
+}
+
+.awesome-marker-icon-standard-green-dark, .awesome-marker-icon-tab-green-dark, .awesome-marker-icon-wedge-green-dark, .awesome-marker-icon-pin-circle-green-dark, .awesome-marker-icon-pin-square-green-dark, .awesome-marker-icon-pin-triangle-green-dark
+{
+    background-position: -396px 0px;
+}
+
+.awesome-marker-icon-standard-blue-bright, .awesome-marker-icon-tab-blue-bright, .awesome-marker-icon-wedge-blue-bright, .awesome-marker-icon-pin-circle-blue-bright, .awesome-marker-icon-pin-square-blue-bright, .awesome-marker-icon-pin-triangle-blue-bright
+{
+    background-position: -432px 0px;
+}
+
+.awesome-marker-icon-standard-blue-dark, .awesome-marker-icon-tab-blue-dark, .awesome-marker-icon-wedge-blue-dark, .awesome-marker-icon-pin-circle-blue-dark, .awesome-marker-icon-pin-square-blue-dark, .awesome-marker-icon-pin-triangle-blue-dark
+{
+    background-position: -468px 0px;
+}
+
+.awesome-marker-icon-standard-purple-bright, .awesome-marker-icon-tab-purple-bright, .awesome-marker-icon-wedge-purple-bright, .awesome-marker-icon-pin-circle-purple-bright, .awesome-marker-icon-pin-square-purple-bright, .awesome-marker-icon-pin-triangle-purple-bright
+{
+    background-position: -504px 0px;
+}
+
+.awesome-marker-icon-standard-purple-dark, .awesome-marker-icon-tab-purple-dark, .awesome-marker-icon-wedge-purple-dark, .awesome-marker-icon-pin-circle-purple-dark, .awesome-marker-icon-pin-square-purple-dark, .awesome-marker-icon-pin-triangle-purple-dark
+{
+    background-position: -540px 0px;
+}
+
+.awesome-marker-icon-standard-pink-bright, .awesome-marker-icon-tab-pink-bright, .awesome-marker-icon-wedge-pink-bright, .awesome-marker-icon-pin-circle-pink-bright, .awesome-marker-icon-pin-square-pink-bright, .awesome-marker-icon-pin-triangle-pink-bright
+{
+    background-position: -576px 0px;
+}
+
+.awesome-marker-icon-standard-pink-dark, .awesome-marker-icon-tab-pink-dark, .awesome-marker-icon-wedge-pink-dark, .awesome-marker-icon-pin-circle-pink-dark, .awesome-marker-icon-pin-square-pink-dark, .awesome-marker-icon-pin-triangle-pink-dark
+{
+    background-position: -612px 0px;
+}
+
+
+/* Classes defining the dominant colour of each marker, for use in map legends etc. */
+.bg-white           { background-color: #ececec; }
+.bg-black           { background-color: #222222; }
+.bg-grey-bright     { background-color: #a5a5a5; }
+.bg-grey-dark       { background-color: #444444; }
+.bg-red-bright      { background-color: #ff0000; }
+.bg-red-dark        { background-color: #8b0000; }
+.bg-orange-bright   { background-color: #ff8100; }
+.bg-orange-dark     { background-color: #b56819; }
+.bg-yellow-bright   { background-color: #f3ff00; }
+.bg-yellow-dark     { background-color: #cfd810; }
+.bg-green-bright    { background-color: #13d113; }
+.bg-green-dark      { background-color: #007f00; }
+.bg-blue-bright     { background-color: #0000ff; }
+.bg-blue-dark       { background-color: #01017f; }
+.bg-purple-bright   { background-color: #7700ff; }
+.bg-purple-dark     { background-color: #450f83; }
+.bg-pink-bright     { background-color: #ff00d1; }
+.bg-pink-dark       { background-color: #b11e97; }

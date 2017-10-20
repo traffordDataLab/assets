@@ -1,0 +1,500 @@
+/*
+    20150417 - Trafford Data Lab, James Austin.
+    These are all the styles related to our gradient map markers and the legend items associated with them.
+    They have been developed to replace the graphics provided with the Awesome Markers plugin by Lennard Voogdt.
+    However, as we are still using the Awesome Markers code, naming references are retained as "awesome-marker-icon..."
+    The icons are PNG "ribbons" of different coloured markers (see below) in sets of 3 different shapes (standard, tab and wedge) which can display Font Awesome icons in the middle.
+    There are ribbons of 10 markers, (in each of the 3 marker shapes), for each of the following colours, in both "bright" and "dark" palette options:
+        - Grey
+        - Red
+        - Orange
+        - Yellow
+        - Green
+        - BLue
+        - Purple
+        - Pink
+
+    We also have mixed ribbons of 18 icons in all 3 marker shapes plus 3 pin shapes, (circle, square and triangle), containing icon colour no. 10 from each of the 18 bright and dark palettes, prefixed with a white and black version.  Styles for the mixed ribbons are handled in a separate CSS file.
+    Finally, the base awesome markers classes which are required to be used in conjunction with the classes below are found in extended_markers_base.css.
+*/
+
+/*------------------------- Gradient Colour Ribbons -------------------------*/
+/* Standard markers */
+.awesome-marker-icon-standard-grey1-bright, .awesome-marker-icon-standard-grey2-bright, .awesome-marker-icon-standard-grey3-bright, .awesome-marker-icon-standard-grey4-bright, .awesome-marker-icon-standard-grey5-bright,  .awesome-marker-icon-standard-grey6-bright, .awesome-marker-icon-standard-grey7-bright, .awesome-marker-icon-standard-grey8-bright, .awesome-marker-icon-standard-grey9-bright, .awesome-marker-icon-standard-grey10-bright
+{
+    background-image: url('trafforddatalab_markers-standard-grey-bright.png');
+}
+.awesome-marker-icon-standard-grey1-dark, .awesome-marker-icon-standard-grey2-dark, .awesome-marker-icon-standard-grey3-dark, .awesome-marker-icon-standard-grey4-dark, .awesome-marker-icon-standard-grey5-dark,  .awesome-marker-icon-standard-grey6-dark, .awesome-marker-icon-standard-grey7-dark, .awesome-marker-icon-standard-grey8-dark, .awesome-marker-icon-standard-grey9-dark, .awesome-marker-icon-standard-grey10-dark
+{
+    background-image: url('trafforddatalab_markers-standard-grey-dark.png');
+}
+
+.awesome-marker-icon-standard-red1-bright, .awesome-marker-icon-standard-red2-bright, .awesome-marker-icon-standard-red3-bright, .awesome-marker-icon-standard-red4-bright, .awesome-marker-icon-standard-red5-bright,  .awesome-marker-icon-standard-red6-bright, .awesome-marker-icon-standard-red7-bright, .awesome-marker-icon-standard-red8-bright, .awesome-marker-icon-standard-red9-bright, .awesome-marker-icon-standard-red10-bright
+{
+    background-image: url('trafforddatalab_markers-standard-red-bright.png');
+}
+.awesome-marker-icon-standard-red1-dark, .awesome-marker-icon-standard-red2-dark, .awesome-marker-icon-standard-red3-dark, .awesome-marker-icon-standard-red4-dark, .awesome-marker-icon-standard-red5-dark,  .awesome-marker-icon-standard-red6-dark, .awesome-marker-icon-standard-red7-dark, .awesome-marker-icon-standard-red8-dark, .awesome-marker-icon-standard-red9-dark, .awesome-marker-icon-standard-red10-dark
+{
+    background-image: url('trafforddatalab_markers-standard-red-dark.png');
+}
+
+.awesome-marker-icon-standard-orange1-bright, .awesome-marker-icon-standard-orange2-bright, .awesome-marker-icon-standard-orange3-bright, .awesome-marker-icon-standard-orange4-bright, .awesome-marker-icon-standard-orange5-bright,  .awesome-marker-icon-standard-orange6-bright, .awesome-marker-icon-standard-orange7-bright, .awesome-marker-icon-standard-orange8-bright, .awesome-marker-icon-standard-orange9-bright, .awesome-marker-icon-standard-orange10-bright
+{
+    background-image: url('trafforddatalab_markers-standard-orange-bright.png');
+}
+.awesome-marker-icon-standard-orange1-dark, .awesome-marker-icon-standard-orange2-dark, .awesome-marker-icon-standard-orange3-dark, .awesome-marker-icon-standard-orange4-dark, .awesome-marker-icon-standard-orange5-dark,  .awesome-marker-icon-standard-orange6-dark, .awesome-marker-icon-standard-orange7-dark, .awesome-marker-icon-standard-orange8-dark, .awesome-marker-icon-standard-orange9-dark, .awesome-marker-icon-standard-orange10-dark
+{
+    background-image: url('trafforddatalab_markers-standard-orange-dark.png');
+}
+
+.awesome-marker-icon-standard-yellow1-bright, .awesome-marker-icon-standard-yellow2-bright, .awesome-marker-icon-standard-yellow3-bright, .awesome-marker-icon-standard-yellow4-bright, .awesome-marker-icon-standard-yellow5-bright,  .awesome-marker-icon-standard-yellow6-bright, .awesome-marker-icon-standard-yellow7-bright, .awesome-marker-icon-standard-yellow8-bright, .awesome-marker-icon-standard-yellow9-bright, .awesome-marker-icon-standard-yellow10-bright
+{
+    background-image: url('trafforddatalab_markers-standard-yellow-bright.png');
+}
+.awesome-marker-icon-standard-yellow1-dark, .awesome-marker-icon-standard-yellow2-dark, .awesome-marker-icon-standard-yellow3-dark, .awesome-marker-icon-standard-yellow4-dark, .awesome-marker-icon-standard-yellow5-dark,  .awesome-marker-icon-standard-yellow6-dark, .awesome-marker-icon-standard-yellow7-dark, .awesome-marker-icon-standard-yellow8-dark, .awesome-marker-icon-standard-yellow9-dark, .awesome-marker-icon-standard-yellow10-dark
+{
+    background-image: url('trafforddatalab_markers-standard-yellow-dark.png');
+}
+
+.awesome-marker-icon-standard-green1-bright, .awesome-marker-icon-standard-green2-bright, .awesome-marker-icon-standard-green3-bright, .awesome-marker-icon-standard-green4-bright, .awesome-marker-icon-standard-green5-bright,  .awesome-marker-icon-standard-green6-bright, .awesome-marker-icon-standard-green7-bright, .awesome-marker-icon-standard-green8-bright, .awesome-marker-icon-standard-green9-bright, .awesome-marker-icon-standard-green10-bright
+{
+    background-image: url('trafforddatalab_markers-standard-green-bright.png');
+}
+.awesome-marker-icon-standard-green1-dark, .awesome-marker-icon-standard-green2-dark, .awesome-marker-icon-standard-green3-dark, .awesome-marker-icon-standard-green4-dark, .awesome-marker-icon-standard-green5-dark,  .awesome-marker-icon-standard-green6-dark, .awesome-marker-icon-standard-green7-dark, .awesome-marker-icon-standard-green8-dark, .awesome-marker-icon-standard-green9-dark, .awesome-marker-icon-standard-green10-dark
+{
+    background-image: url('trafforddatalab_markers-standard-green-dark.png');
+}
+
+.awesome-marker-icon-standard-blue1-bright, .awesome-marker-icon-standard-blue2-bright, .awesome-marker-icon-standard-blue3-bright, .awesome-marker-icon-standard-blue4-bright, .awesome-marker-icon-standard-blue5-bright,  .awesome-marker-icon-standard-blue6-bright, .awesome-marker-icon-standard-blue7-bright, .awesome-marker-icon-standard-blue8-bright, .awesome-marker-icon-standard-blue9-bright, .awesome-marker-icon-standard-blue10-bright
+{
+    background-image: url('trafforddatalab_markers-standard-blue-bright.png');
+}
+.awesome-marker-icon-standard-blue1-dark, .awesome-marker-icon-standard-blue2-dark, .awesome-marker-icon-standard-blue3-dark, .awesome-marker-icon-standard-blue4-dark, .awesome-marker-icon-standard-blue5-dark,  .awesome-marker-icon-standard-blue6-dark, .awesome-marker-icon-standard-blue7-dark, .awesome-marker-icon-standard-blue8-dark, .awesome-marker-icon-standard-blue9-dark, .awesome-marker-icon-standard-blue10-dark
+{
+    background-image: url('trafforddatalab_markers-standard-blue-dark.png');
+}
+
+.awesome-marker-icon-standard-purple1-bright, .awesome-marker-icon-standard-purple2-bright, .awesome-marker-icon-standard-purple3-bright, .awesome-marker-icon-standard-purple4-bright, .awesome-marker-icon-standard-purple5-bright,  .awesome-marker-icon-standard-purple6-bright, .awesome-marker-icon-standard-purple7-bright, .awesome-marker-icon-standard-purple8-bright, .awesome-marker-icon-standard-purple9-bright, .awesome-marker-icon-standard-purple10-bright
+{
+    background-image: url('trafforddatalab_markers-standard-purple-bright.png');
+}
+.awesome-marker-icon-standard-purple1-dark, .awesome-marker-icon-standard-purple2-dark, .awesome-marker-icon-standard-purple3-dark, .awesome-marker-icon-standard-purple4-dark, .awesome-marker-icon-standard-purple5-dark,  .awesome-marker-icon-standard-purple6-dark, .awesome-marker-icon-standard-purple7-dark, .awesome-marker-icon-standard-purple8-dark, .awesome-marker-icon-standard-purple9-dark, .awesome-marker-icon-standard-purple10-dark
+{
+    background-image: url('trafforddatalab_markers-standard-purple-dark.png');
+}
+
+.awesome-marker-icon-standard-pink1-bright, .awesome-marker-icon-standard-pink2-bright, .awesome-marker-icon-standard-pink3-bright, .awesome-marker-icon-standard-pink4-bright, .awesome-marker-icon-standard-pink5-bright,  .awesome-marker-icon-standard-pink6-bright, .awesome-marker-icon-standard-pink7-bright, .awesome-marker-icon-standard-pink8-bright, .awesome-marker-icon-standard-pink9-bright, .awesome-marker-icon-standard-pink10-bright
+{
+    background-image: url('trafforddatalab_markers-standard-pink-bright.png');
+}
+.awesome-marker-icon-standard-pink1-dark, .awesome-marker-icon-standard-pink2-dark, .awesome-marker-icon-standard-pink3-dark, .awesome-marker-icon-standard-pink4-dark, .awesome-marker-icon-standard-pink5-dark,  .awesome-marker-icon-standard-pink6-dark, .awesome-marker-icon-standard-pink7-dark, .awesome-marker-icon-standard-pink8-dark, .awesome-marker-icon-standard-pink9-dark, .awesome-marker-icon-standard-pink10-dark
+{
+    background-image: url('trafforddatalab_markers-standard-pink-dark.png');
+}
+
+
+/* Tab Markers */
+.awesome-marker-icon-tab-grey1-bright, .awesome-marker-icon-tab-grey2-bright, .awesome-marker-icon-tab-grey3-bright, .awesome-marker-icon-tab-grey4-bright, .awesome-marker-icon-tab-grey5-bright,  .awesome-marker-icon-tab-grey6-bright, .awesome-marker-icon-tab-grey7-bright, .awesome-marker-icon-tab-grey8-bright, .awesome-marker-icon-tab-grey9-bright, .awesome-marker-icon-tab-grey10-bright
+{
+    background-image: url('trafforddatalab_markers-tab-grey-bright.png');
+}
+.awesome-marker-icon-tab-grey1-dark, .awesome-marker-icon-tab-grey2-dark, .awesome-marker-icon-tab-grey3-dark, .awesome-marker-icon-tab-grey4-dark, .awesome-marker-icon-tab-grey5-dark,  .awesome-marker-icon-tab-grey6-dark, .awesome-marker-icon-tab-grey7-dark, .awesome-marker-icon-tab-grey8-dark, .awesome-marker-icon-tab-grey9-dark, .awesome-marker-icon-tab-grey10-dark
+{
+    background-image: url('trafforddatalab_markers-tab-grey-dark.png');
+}
+
+.awesome-marker-icon-tab-red1-bright, .awesome-marker-icon-tab-red2-bright, .awesome-marker-icon-tab-red3-bright, .awesome-marker-icon-tab-red4-bright, .awesome-marker-icon-tab-red5-bright,  .awesome-marker-icon-tab-red6-bright, .awesome-marker-icon-tab-red7-bright, .awesome-marker-icon-tab-red8-bright, .awesome-marker-icon-tab-red9-bright, .awesome-marker-icon-tab-red10-bright
+{
+    background-image: url('trafforddatalab_markers-tab-red-bright.png');
+}
+.awesome-marker-icon-tab-red1-dark, .awesome-marker-icon-tab-red2-dark, .awesome-marker-icon-tab-red3-dark, .awesome-marker-icon-tab-red4-dark, .awesome-marker-icon-tab-red5-dark,  .awesome-marker-icon-tab-red6-dark, .awesome-marker-icon-tab-red7-dark, .awesome-marker-icon-tab-red8-dark, .awesome-marker-icon-tab-red9-dark, .awesome-marker-icon-tab-red10-dark
+{
+    background-image: url('trafforddatalab_markers-tab-red-dark.png');
+}
+
+.awesome-marker-icon-tab-orange1-bright, .awesome-marker-icon-tab-orange2-bright, .awesome-marker-icon-tab-orange3-bright, .awesome-marker-icon-tab-orange4-bright, .awesome-marker-icon-tab-orange5-bright,  .awesome-marker-icon-tab-orange6-bright, .awesome-marker-icon-tab-orange7-bright, .awesome-marker-icon-tab-orange8-bright, .awesome-marker-icon-tab-orange9-bright, .awesome-marker-icon-tab-orange10-bright
+{
+    background-image: url('trafforddatalab_markers-tab-orange-bright.png');
+}
+.awesome-marker-icon-tab-orange1-dark, .awesome-marker-icon-tab-orange2-dark, .awesome-marker-icon-tab-orange3-dark, .awesome-marker-icon-tab-orange4-dark, .awesome-marker-icon-tab-orange5-dark,  .awesome-marker-icon-tab-orange6-dark, .awesome-marker-icon-tab-orange7-dark, .awesome-marker-icon-tab-orange8-dark, .awesome-marker-icon-tab-orange9-dark, .awesome-marker-icon-tab-orange10-dark
+{
+    background-image: url('trafforddatalab_markers-tab-orange-dark.png');
+}
+
+.awesome-marker-icon-tab-yellow1-bright, .awesome-marker-icon-tab-yellow2-bright, .awesome-marker-icon-tab-yellow3-bright, .awesome-marker-icon-tab-yellow4-bright, .awesome-marker-icon-tab-yellow5-bright,  .awesome-marker-icon-tab-yellow6-bright, .awesome-marker-icon-tab-yellow7-bright, .awesome-marker-icon-tab-yellow8-bright, .awesome-marker-icon-tab-yellow9-bright, .awesome-marker-icon-tab-yellow10-bright
+{
+    background-image: url('trafforddatalab_markers-tab-yellow-bright.png');
+}
+.awesome-marker-icon-tab-yellow1-dark, .awesome-marker-icon-tab-yellow2-dark, .awesome-marker-icon-tab-yellow3-dark, .awesome-marker-icon-tab-yellow4-dark, .awesome-marker-icon-tab-yellow5-dark,  .awesome-marker-icon-tab-yellow6-dark, .awesome-marker-icon-tab-yellow7-dark, .awesome-marker-icon-tab-yellow8-dark, .awesome-marker-icon-tab-yellow9-dark, .awesome-marker-icon-tab-yellow10-dark
+{
+    background-image: url('trafforddatalab_markers-tab-yellow-dark.png');
+}
+
+.awesome-marker-icon-tab-green1-bright, .awesome-marker-icon-tab-green2-bright, .awesome-marker-icon-tab-green3-bright, .awesome-marker-icon-tab-green4-bright, .awesome-marker-icon-tab-green5-bright,  .awesome-marker-icon-tab-green6-bright, .awesome-marker-icon-tab-green7-bright, .awesome-marker-icon-tab-green8-bright, .awesome-marker-icon-tab-green9-bright, .awesome-marker-icon-tab-green10-bright
+{
+    background-image: url('trafforddatalab_markers-tab-green-bright.png');
+}
+.awesome-marker-icon-tab-green1-dark, .awesome-marker-icon-tab-green2-dark, .awesome-marker-icon-tab-green3-dark, .awesome-marker-icon-tab-green4-dark, .awesome-marker-icon-tab-green5-dark,  .awesome-marker-icon-tab-green6-dark, .awesome-marker-icon-tab-green7-dark, .awesome-marker-icon-tab-green8-dark, .awesome-marker-icon-tab-green9-dark, .awesome-marker-icon-tab-green10-dark
+{
+    background-image: url('trafforddatalab_markers-tab-green-dark.png');
+}
+
+.awesome-marker-icon-tab-blue1-bright, .awesome-marker-icon-tab-blue2-bright, .awesome-marker-icon-tab-blue3-bright, .awesome-marker-icon-tab-blue4-bright, .awesome-marker-icon-tab-blue5-bright,  .awesome-marker-icon-tab-blue6-bright, .awesome-marker-icon-tab-blue7-bright, .awesome-marker-icon-tab-blue8-bright, .awesome-marker-icon-tab-blue9-bright, .awesome-marker-icon-tab-blue10-bright
+{
+    background-image: url('trafforddatalab_markers-tab-blue-bright.png');
+}
+.awesome-marker-icon-tab-blue1-dark, .awesome-marker-icon-tab-blue2-dark, .awesome-marker-icon-tab-blue3-dark, .awesome-marker-icon-tab-blue4-dark, .awesome-marker-icon-tab-blue5-dark,  .awesome-marker-icon-tab-blue6-dark, .awesome-marker-icon-tab-blue7-dark, .awesome-marker-icon-tab-blue8-dark, .awesome-marker-icon-tab-blue9-dark, .awesome-marker-icon-tab-blue10-dark
+{
+    background-image: url('trafforddatalab_markers-tab-blue-dark.png');
+}
+
+.awesome-marker-icon-tab-purple1-bright, .awesome-marker-icon-tab-purple2-bright, .awesome-marker-icon-tab-purple3-bright, .awesome-marker-icon-tab-purple4-bright, .awesome-marker-icon-tab-purple5-bright,  .awesome-marker-icon-tab-purple6-bright, .awesome-marker-icon-tab-purple7-bright, .awesome-marker-icon-tab-purple8-bright, .awesome-marker-icon-tab-purple9-bright, .awesome-marker-icon-tab-purple10-bright
+{
+    background-image: url('trafforddatalab_markers-tab-purple-bright.png');
+}
+.awesome-marker-icon-tab-purple1-dark, .awesome-marker-icon-tab-purple2-dark, .awesome-marker-icon-tab-purple3-dark, .awesome-marker-icon-tab-purple4-dark, .awesome-marker-icon-tab-purple5-dark,  .awesome-marker-icon-tab-purple6-dark, .awesome-marker-icon-tab-purple7-dark, .awesome-marker-icon-tab-purple8-dark, .awesome-marker-icon-tab-purple9-dark, .awesome-marker-icon-tab-purple10-dark
+{
+    background-image: url('trafforddatalab_markers-tab-purple-dark.png');
+}
+
+.awesome-marker-icon-tab-pink1-bright, .awesome-marker-icon-tab-pink2-bright, .awesome-marker-icon-tab-pink3-bright, .awesome-marker-icon-tab-pink4-bright, .awesome-marker-icon-tab-pink5-bright,  .awesome-marker-icon-tab-pink6-bright, .awesome-marker-icon-tab-pink7-bright, .awesome-marker-icon-tab-pink8-bright, .awesome-marker-icon-tab-pink9-bright, .awesome-marker-icon-tab-pink10-bright
+{
+    background-image: url('trafforddatalab_markers-tab-pink-bright.png');
+}
+.awesome-marker-icon-tab-pink1-dark, .awesome-marker-icon-tab-pink2-dark, .awesome-marker-icon-tab-pink3-dark, .awesome-marker-icon-tab-pink4-dark, .awesome-marker-icon-tab-pink5-dark,  .awesome-marker-icon-tab-pink6-dark, .awesome-marker-icon-tab-pink7-dark, .awesome-marker-icon-tab-pink8-dark, .awesome-marker-icon-tab-pink9-dark, .awesome-marker-icon-tab-pink10-dark
+{
+    background-image: url('trafforddatalab_markers-tab-pink-dark.png');
+}
+
+
+/* Wedge markers */
+.awesome-marker-icon-wedge-grey1-bright, .awesome-marker-icon-wedge-grey2-bright, .awesome-marker-icon-wedge-grey3-bright, .awesome-marker-icon-wedge-grey4-bright, .awesome-marker-icon-wedge-grey5-bright,  .awesome-marker-icon-wedge-grey6-bright, .awesome-marker-icon-wedge-grey7-bright, .awesome-marker-icon-wedge-grey8-bright, .awesome-marker-icon-wedge-grey9-bright, .awesome-marker-icon-wedge-grey10-bright
+{
+    background-image: url('trafforddatalab_markers-wedge-grey-bright.png');
+}
+.awesome-marker-icon-wedge-grey1-dark, .awesome-marker-icon-wedge-grey2-dark, .awesome-marker-icon-wedge-grey3-dark, .awesome-marker-icon-wedge-grey4-dark, .awesome-marker-icon-wedge-grey5-dark,  .awesome-marker-icon-wedge-grey6-dark, .awesome-marker-icon-wedge-grey7-dark, .awesome-marker-icon-wedge-grey8-dark, .awesome-marker-icon-wedge-grey9-dark, .awesome-marker-icon-wedge-grey10-dark
+{
+    background-image: url('trafforddatalab_markers-wedge-grey-dark.png');
+}
+
+.awesome-marker-icon-wedge-red1-bright, .awesome-marker-icon-wedge-red2-bright, .awesome-marker-icon-wedge-red3-bright, .awesome-marker-icon-wedge-red4-bright, .awesome-marker-icon-wedge-red5-bright,  .awesome-marker-icon-wedge-red6-bright, .awesome-marker-icon-wedge-red7-bright, .awesome-marker-icon-wedge-red8-bright, .awesome-marker-icon-wedge-red9-bright, .awesome-marker-icon-wedge-red10-bright
+{
+    background-image: url('trafforddatalab_markers-wedge-red-bright.png');
+}
+.awesome-marker-icon-wedge-red1-dark, .awesome-marker-icon-wedge-red2-dark, .awesome-marker-icon-wedge-red3-dark, .awesome-marker-icon-wedge-red4-dark, .awesome-marker-icon-wedge-red5-dark,  .awesome-marker-icon-wedge-red6-dark, .awesome-marker-icon-wedge-red7-dark, .awesome-marker-icon-wedge-red8-dark, .awesome-marker-icon-wedge-red9-dark, .awesome-marker-icon-wedge-red10-dark
+{
+    background-image: url('trafforddatalab_markers-wedge-red-dark.png');
+}
+
+.awesome-marker-icon-wedge-orange1-bright, .awesome-marker-icon-wedge-orange2-bright, .awesome-marker-icon-wedge-orange3-bright, .awesome-marker-icon-wedge-orange4-bright, .awesome-marker-icon-wedge-orange5-bright,  .awesome-marker-icon-wedge-orange6-bright, .awesome-marker-icon-wedge-orange7-bright, .awesome-marker-icon-wedge-orange8-bright, .awesome-marker-icon-wedge-orange9-bright, .awesome-marker-icon-wedge-orange10-bright
+{
+    background-image: url('trafforddatalab_markers-wedge-orange-bright.png');
+}
+.awesome-marker-icon-wedge-orange1-dark, .awesome-marker-icon-wedge-orange2-dark, .awesome-marker-icon-wedge-orange3-dark, .awesome-marker-icon-wedge-orange4-dark, .awesome-marker-icon-wedge-orange5-dark,  .awesome-marker-icon-wedge-orange6-dark, .awesome-marker-icon-wedge-orange7-dark, .awesome-marker-icon-wedge-orange8-dark, .awesome-marker-icon-wedge-orange9-dark, .awesome-marker-icon-wedge-orange10-dark
+{
+    background-image: url('trafforddatalab_markers-wedge-orange-dark.png');
+}
+
+.awesome-marker-icon-wedge-yellow1-bright, .awesome-marker-icon-wedge-yellow2-bright, .awesome-marker-icon-wedge-yellow3-bright, .awesome-marker-icon-wedge-yellow4-bright, .awesome-marker-icon-wedge-yellow5-bright,  .awesome-marker-icon-wedge-yellow6-bright, .awesome-marker-icon-wedge-yellow7-bright, .awesome-marker-icon-wedge-yellow8-bright, .awesome-marker-icon-wedge-yellow9-bright, .awesome-marker-icon-wedge-yellow10-bright
+{
+    background-image: url('trafforddatalab_markers-wedge-yellow-bright.png');
+}
+.awesome-marker-icon-wedge-yellow1-dark, .awesome-marker-icon-wedge-yellow2-dark, .awesome-marker-icon-wedge-yellow3-dark, .awesome-marker-icon-wedge-yellow4-dark, .awesome-marker-icon-wedge-yellow5-dark,  .awesome-marker-icon-wedge-yellow6-dark, .awesome-marker-icon-wedge-yellow7-dark, .awesome-marker-icon-wedge-yellow8-dark, .awesome-marker-icon-wedge-yellow9-dark, .awesome-marker-icon-wedge-yellow10-dark
+{
+    background-image: url('trafforddatalab_markers-wedge-yellow-dark.png');
+}
+
+.awesome-marker-icon-wedge-green1-bright, .awesome-marker-icon-wedge-green2-bright, .awesome-marker-icon-wedge-green3-bright, .awesome-marker-icon-wedge-green4-bright, .awesome-marker-icon-wedge-green5-bright,  .awesome-marker-icon-wedge-green6-bright, .awesome-marker-icon-wedge-green7-bright, .awesome-marker-icon-wedge-green8-bright, .awesome-marker-icon-wedge-green9-bright, .awesome-marker-icon-wedge-green10-bright
+{
+    background-image: url('trafforddatalab_markers-wedge-green-bright.png');
+}
+.awesome-marker-icon-wedge-green1-dark, .awesome-marker-icon-wedge-green2-dark, .awesome-marker-icon-wedge-green3-dark, .awesome-marker-icon-wedge-green4-dark, .awesome-marker-icon-wedge-green5-dark,  .awesome-marker-icon-wedge-green6-dark, .awesome-marker-icon-wedge-green7-dark, .awesome-marker-icon-wedge-green8-dark, .awesome-marker-icon-wedge-green9-dark, .awesome-marker-icon-wedge-green10-dark
+{
+    background-image: url('trafforddatalab_markers-wedge-green-dark.png');
+}
+
+.awesome-marker-icon-wedge-blue1-bright, .awesome-marker-icon-wedge-blue2-bright, .awesome-marker-icon-wedge-blue3-bright, .awesome-marker-icon-wedge-blue4-bright, .awesome-marker-icon-wedge-blue5-bright,  .awesome-marker-icon-wedge-blue6-bright, .awesome-marker-icon-wedge-blue7-bright, .awesome-marker-icon-wedge-blue8-bright, .awesome-marker-icon-wedge-blue9-bright, .awesome-marker-icon-wedge-blue10-bright
+{
+    background-image: url('trafforddatalab_markers-wedge-blue-bright.png');
+}
+.awesome-marker-icon-wedge-blue1-dark, .awesome-marker-icon-wedge-blue2-dark, .awesome-marker-icon-wedge-blue3-dark, .awesome-marker-icon-wedge-blue4-dark, .awesome-marker-icon-wedge-blue5-dark,  .awesome-marker-icon-wedge-blue6-dark, .awesome-marker-icon-wedge-blue7-dark, .awesome-marker-icon-wedge-blue8-dark, .awesome-marker-icon-wedge-blue9-dark, .awesome-marker-icon-wedge-blue10-dark
+{
+    background-image: url('trafforddatalab_markers-wedge-blue-dark.png');
+}
+
+.awesome-marker-icon-wedge-purple1-bright, .awesome-marker-icon-wedge-purple2-bright, .awesome-marker-icon-wedge-purple3-bright, .awesome-marker-icon-wedge-purple4-bright, .awesome-marker-icon-wedge-purple5-bright,  .awesome-marker-icon-wedge-purple6-bright, .awesome-marker-icon-wedge-purple7-bright, .awesome-marker-icon-wedge-purple8-bright, .awesome-marker-icon-wedge-purple9-bright, .awesome-marker-icon-wedge-purple10-bright
+{
+    background-image: url('trafforddatalab_markers-wedge-purple-bright.png');
+}
+.awesome-marker-icon-wedge-purple1-dark, .awesome-marker-icon-wedge-purple2-dark, .awesome-marker-icon-wedge-purple3-dark, .awesome-marker-icon-wedge-purple4-dark, .awesome-marker-icon-wedge-purple5-dark,  .awesome-marker-icon-wedge-purple6-dark, .awesome-marker-icon-wedge-purple7-dark, .awesome-marker-icon-wedge-purple8-dark, .awesome-marker-icon-wedge-purple9-dark, .awesome-marker-icon-wedge-purple10-dark
+{
+    background-image: url('trafforddatalab_markers-wedge-purple-dark.png');
+}
+
+.awesome-marker-icon-wedge-pink1-bright, .awesome-marker-icon-wedge-pink2-bright, .awesome-marker-icon-wedge-pink3-bright, .awesome-marker-icon-wedge-pink4-bright, .awesome-marker-icon-wedge-pink5-bright,  .awesome-marker-icon-wedge-pink6-bright, .awesome-marker-icon-wedge-pink7-bright, .awesome-marker-icon-wedge-pink8-bright, .awesome-marker-icon-wedge-pink9-bright, .awesome-marker-icon-wedge-pink10-bright
+{
+    background-image: url('trafforddatalab_markers-wedge-pink-bright.png');
+}
+.awesome-marker-icon-wedge-pink1-dark, .awesome-marker-icon-wedge-pink2-dark, .awesome-marker-icon-wedge-pink3-dark, .awesome-marker-icon-wedge-pink4-dark, .awesome-marker-icon-wedge-pink5-dark,  .awesome-marker-icon-wedge-pink6-dark, .awesome-marker-icon-wedge-pink7-dark, .awesome-marker-icon-wedge-pink8-dark, .awesome-marker-icon-wedge-pink9-dark, .awesome-marker-icon-wedge-pink10-dark
+{
+    background-image: url('trafforddatalab_markers-wedge-pink-dark.png');
+}
+
+
+/* Ribbon background positions (all shapes) */
+.awesome-marker-icon-standard-grey1-bright, .awesome-marker-icon-standard-grey1-dark, .awesome-marker-icon-standard-red1-bright, .awesome-marker-icon-standard-red1-dark, .awesome-marker-icon-standard-orange1-bright, .awesome-marker-icon-standard-orange1-dark, .awesome-marker-icon-standard-yellow1-bright, .awesome-marker-icon-standard-yellow1-dark, .awesome-marker-icon-standard-green1-bright, .awesome-marker-icon-standard-green1-dark, .awesome-marker-icon-standard-blue1-bright, .awesome-marker-icon-standard-blue1-dark, .awesome-marker-icon-standard-purple1-bright, .awesome-marker-icon-standard-purple1-dark, .awesome-marker-icon-standard-pink1-bright, .awesome-marker-icon-standard-pink1-dark,
+.awesome-marker-icon-tab-grey1-bright, .awesome-marker-icon-tab-grey1-dark, .awesome-marker-icon-tab-red1-bright, .awesome-marker-icon-tab-red1-dark, .awesome-marker-icon-tab-orange1-bright, .awesome-marker-icon-tab-orange1-dark, .awesome-marker-icon-tab-yellow1-bright, .awesome-marker-icon-tab-yellow1-dark, .awesome-marker-icon-tab-green1-bright, .awesome-marker-icon-tab-green1-dark, .awesome-marker-icon-tab-blue1-bright, .awesome-marker-icon-tab-blue1-dark, .awesome-marker-icon-tab-purple1-bright, .awesome-marker-icon-tab-purple1-dark, .awesome-marker-icon-tab-pink1-bright, .awesome-marker-icon-tab-pink1-dark,
+.awesome-marker-icon-wedge-grey1-bright, .awesome-marker-icon-wedge-grey1-dark, .awesome-marker-icon-wedge-red1-bright, .awesome-marker-icon-wedge-red1-dark, .awesome-marker-icon-wedge-orange1-bright, .awesome-marker-icon-wedge-orange1-dark, .awesome-marker-icon-wedge-yellow1-bright, .awesome-marker-icon-wedge-yellow1-dark, .awesome-marker-icon-wedge-green1-bright, .awesome-marker-icon-wedge-green1-dark, .awesome-marker-icon-wedge-blue1-bright, .awesome-marker-icon-wedge-blue1-dark, .awesome-marker-icon-wedge-purple1-bright, .awesome-marker-icon-wedge-purple1-dark, .awesome-marker-icon-wedge-pink1-bright, .awesome-marker-icon-wedge-pink1-dark
+{
+    background-position: 0px 0px;
+}
+
+.awesome-marker-icon-standard-grey2-bright, .awesome-marker-icon-standard-grey2-dark, .awesome-marker-icon-standard-red2-bright, .awesome-marker-icon-standard-red2-dark, .awesome-marker-icon-standard-orange2-bright, .awesome-marker-icon-standard-orange2-dark, .awesome-marker-icon-standard-yellow2-bright, .awesome-marker-icon-standard-yellow2-dark, .awesome-marker-icon-standard-green2-bright, .awesome-marker-icon-standard-green2-dark, .awesome-marker-icon-standard-blue2-bright, .awesome-marker-icon-standard-blue2-dark, .awesome-marker-icon-standard-purple2-bright, .awesome-marker-icon-standard-purple2-dark, .awesome-marker-icon-standard-pink2-bright, .awesome-marker-icon-standard-pink2-dark,
+.awesome-marker-icon-tab-grey2-bright, .awesome-marker-icon-tab-grey2-dark, .awesome-marker-icon-tab-red2-bright, .awesome-marker-icon-tab-red2-dark, .awesome-marker-icon-tab-orange2-bright, .awesome-marker-icon-tab-orange2-dark, .awesome-marker-icon-tab-yellow2-bright, .awesome-marker-icon-tab-yellow2-dark, .awesome-marker-icon-tab-green2-bright, .awesome-marker-icon-tab-green2-dark, .awesome-marker-icon-tab-blue2-bright, .awesome-marker-icon-tab-blue2-dark, .awesome-marker-icon-tab-purple2-bright, .awesome-marker-icon-tab-purple2-dark, .awesome-marker-icon-tab-pink2-bright, .awesome-marker-icon-tab-pink2-dark,
+.awesome-marker-icon-wedge-grey2-bright, .awesome-marker-icon-wedge-grey2-dark, .awesome-marker-icon-wedge-red2-bright, .awesome-marker-icon-wedge-red2-dark, .awesome-marker-icon-wedge-orange2-bright, .awesome-marker-icon-wedge-orange2-dark, .awesome-marker-icon-wedge-yellow2-bright, .awesome-marker-icon-wedge-yellow2-dark, .awesome-marker-icon-wedge-green2-bright, .awesome-marker-icon-wedge-green2-dark, .awesome-marker-icon-wedge-blue2-bright, .awesome-marker-icon-wedge-blue2-dark, .awesome-marker-icon-wedge-purple2-bright, .awesome-marker-icon-wedge-purple2-dark, .awesome-marker-icon-wedge-pink2-bright, .awesome-marker-icon-wedge-pink2-dark
+{
+    background-position: -36px 0px;
+}
+
+.awesome-marker-icon-standard-grey3-bright, .awesome-marker-icon-standard-grey3-dark, .awesome-marker-icon-standard-red3-bright, .awesome-marker-icon-standard-red3-dark, .awesome-marker-icon-standard-orange3-bright, .awesome-marker-icon-standard-orange3-dark, .awesome-marker-icon-standard-yellow3-bright, .awesome-marker-icon-standard-yellow3-dark, .awesome-marker-icon-standard-green3-bright, .awesome-marker-icon-standard-green3-dark, .awesome-marker-icon-standard-blue3-bright, .awesome-marker-icon-standard-blue3-dark, .awesome-marker-icon-standard-purple3-bright, .awesome-marker-icon-standard-purple3-dark, .awesome-marker-icon-standard-pink3-bright, .awesome-marker-icon-standard-pink3-dark,
+.awesome-marker-icon-tab-grey3-bright, .awesome-marker-icon-tab-grey3-dark, .awesome-marker-icon-tab-red3-bright, .awesome-marker-icon-tab-red3-dark, .awesome-marker-icon-tab-orange3-bright, .awesome-marker-icon-tab-orange3-dark, .awesome-marker-icon-tab-yellow3-bright, .awesome-marker-icon-tab-yellow3-dark, .awesome-marker-icon-tab-green3-bright, .awesome-marker-icon-tab-green3-dark, .awesome-marker-icon-tab-blue3-bright, .awesome-marker-icon-tab-blue3-dark, .awesome-marker-icon-tab-purple3-bright, .awesome-marker-icon-tab-purple3-dark, .awesome-marker-icon-tab-pink3-bright, .awesome-marker-icon-tab-pink3-dark,
+.awesome-marker-icon-wedge-grey3-bright, .awesome-marker-icon-wedge-grey3-dark, .awesome-marker-icon-wedge-red3-bright, .awesome-marker-icon-wedge-red3-dark, .awesome-marker-icon-wedge-orange3-bright, .awesome-marker-icon-wedge-orange3-dark, .awesome-marker-icon-wedge-yellow3-bright, .awesome-marker-icon-wedge-yellow3-dark, .awesome-marker-icon-wedge-green3-bright, .awesome-marker-icon-wedge-green3-dark, .awesome-marker-icon-wedge-blue3-bright, .awesome-marker-icon-wedge-blue3-dark, .awesome-marker-icon-wedge-purple3-bright, .awesome-marker-icon-wedge-purple3-dark, .awesome-marker-icon-wedge-pink3-bright, .awesome-marker-icon-wedge-pink3-dark
+{
+    background-position: -72px 0px;
+}
+
+.awesome-marker-icon-standard-grey4-bright, .awesome-marker-icon-standard-grey4-dark, .awesome-marker-icon-standard-red4-bright, .awesome-marker-icon-standard-red4-dark, .awesome-marker-icon-standard-orange4-bright, .awesome-marker-icon-standard-orange4-dark, .awesome-marker-icon-standard-yellow4-bright, .awesome-marker-icon-standard-yellow4-dark, .awesome-marker-icon-standard-green4-bright, .awesome-marker-icon-standard-green4-dark, .awesome-marker-icon-standard-blue4-bright, .awesome-marker-icon-standard-blue4-dark, .awesome-marker-icon-standard-purple4-bright, .awesome-marker-icon-standard-purple4-dark, .awesome-marker-icon-standard-pink4-bright, .awesome-marker-icon-standard-pink4-dark,
+.awesome-marker-icon-tab-grey4-bright, .awesome-marker-icon-tab-grey4-dark, .awesome-marker-icon-tab-red4-bright, .awesome-marker-icon-tab-red4-dark, .awesome-marker-icon-tab-orange4-bright, .awesome-marker-icon-tab-orange4-dark, .awesome-marker-icon-tab-yellow4-bright, .awesome-marker-icon-tab-yellow4-dark, .awesome-marker-icon-tab-green4-bright, .awesome-marker-icon-tab-green4-dark, .awesome-marker-icon-tab-blue4-bright, .awesome-marker-icon-tab-blue4-dark, .awesome-marker-icon-tab-purple4-bright, .awesome-marker-icon-tab-purple4-dark, .awesome-marker-icon-tab-pink4-bright, .awesome-marker-icon-tab-pink4-dark,
+.awesome-marker-icon-wedge-grey4-bright, .awesome-marker-icon-wedge-grey4-dark, .awesome-marker-icon-wedge-red4-bright, .awesome-marker-icon-wedge-red4-dark, .awesome-marker-icon-wedge-orange4-bright, .awesome-marker-icon-wedge-orange4-dark, .awesome-marker-icon-wedge-yellow4-bright, .awesome-marker-icon-wedge-yellow4-dark, .awesome-marker-icon-wedge-green4-bright, .awesome-marker-icon-wedge-green4-dark, .awesome-marker-icon-wedge-blue4-bright, .awesome-marker-icon-wedge-blue4-dark, .awesome-marker-icon-wedge-purple4-bright, .awesome-marker-icon-wedge-purple4-dark, .awesome-marker-icon-wedge-pink4-bright, .awesome-marker-icon-wedge-pink4-dark
+{
+    background-position: -108px 0px;
+}
+
+.awesome-marker-icon-standard-grey5-bright, .awesome-marker-icon-standard-grey5-dark, .awesome-marker-icon-standard-red5-bright, .awesome-marker-icon-standard-red5-dark, .awesome-marker-icon-standard-orange5-bright, .awesome-marker-icon-standard-orange5-dark, .awesome-marker-icon-standard-yellow5-bright, .awesome-marker-icon-standard-yellow5-dark, .awesome-marker-icon-standard-green5-bright, .awesome-marker-icon-standard-green5-dark, .awesome-marker-icon-standard-blue5-bright, .awesome-marker-icon-standard-blue5-dark, .awesome-marker-icon-standard-purple5-bright, .awesome-marker-icon-standard-purple5-dark, .awesome-marker-icon-standard-pink5-bright, .awesome-marker-icon-standard-pink5-dark,
+.awesome-marker-icon-tab-grey5-bright, .awesome-marker-icon-tab-grey5-dark, .awesome-marker-icon-tab-red5-bright, .awesome-marker-icon-tab-red5-dark, .awesome-marker-icon-tab-orange5-bright, .awesome-marker-icon-tab-orange5-dark, .awesome-marker-icon-tab-yellow5-bright, .awesome-marker-icon-tab-yellow5-dark, .awesome-marker-icon-tab-green5-bright, .awesome-marker-icon-tab-green5-dark, .awesome-marker-icon-tab-blue5-bright, .awesome-marker-icon-tab-blue5-dark, .awesome-marker-icon-tab-purple5-bright, .awesome-marker-icon-tab-purple5-dark, .awesome-marker-icon-tab-pink5-bright, .awesome-marker-icon-tab-pink5-dark,
+.awesome-marker-icon-wedge-grey5-bright, .awesome-marker-icon-wedge-grey5-dark, .awesome-marker-icon-wedge-red5-bright, .awesome-marker-icon-wedge-red5-dark, .awesome-marker-icon-wedge-orange5-bright, .awesome-marker-icon-wedge-orange5-dark, .awesome-marker-icon-wedge-yellow5-bright, .awesome-marker-icon-wedge-yellow5-dark, .awesome-marker-icon-wedge-green5-bright, .awesome-marker-icon-wedge-green5-dark, .awesome-marker-icon-wedge-blue5-bright, .awesome-marker-icon-wedge-blue5-dark, .awesome-marker-icon-wedge-purple5-bright, .awesome-marker-icon-wedge-purple5-dark, .awesome-marker-icon-wedge-pink5-bright, .awesome-marker-icon-wedge-pink5-dark
+{
+    background-position: -144px 0px;
+}
+
+.awesome-marker-icon-standard-grey6-bright, .awesome-marker-icon-standard-grey6-dark, .awesome-marker-icon-standard-red6-bright, .awesome-marker-icon-standard-red6-dark, .awesome-marker-icon-standard-orange6-bright, .awesome-marker-icon-standard-orange6-dark, .awesome-marker-icon-standard-yellow6-bright, .awesome-marker-icon-standard-yellow6-dark, .awesome-marker-icon-standard-green6-bright, .awesome-marker-icon-standard-green6-dark, .awesome-marker-icon-standard-blue6-bright, .awesome-marker-icon-standard-blue6-dark, .awesome-marker-icon-standard-purple6-bright, .awesome-marker-icon-standard-purple6-dark, .awesome-marker-icon-standard-pink6-bright, .awesome-marker-icon-standard-pink6-dark,
+.awesome-marker-icon-tab-grey6-bright, .awesome-marker-icon-tab-grey6-dark, .awesome-marker-icon-tab-red6-bright, .awesome-marker-icon-tab-red6-dark, .awesome-marker-icon-tab-orange6-bright, .awesome-marker-icon-tab-orange6-dark, .awesome-marker-icon-tab-yellow6-bright, .awesome-marker-icon-tab-yellow6-dark, .awesome-marker-icon-tab-green6-bright, .awesome-marker-icon-tab-green6-dark, .awesome-marker-icon-tab-blue6-bright, .awesome-marker-icon-tab-blue6-dark, .awesome-marker-icon-tab-purple6-bright, .awesome-marker-icon-tab-purple6-dark, .awesome-marker-icon-tab-pink6-bright, .awesome-marker-icon-tab-pink6-dark,
+.awesome-marker-icon-wedge-grey6-bright, .awesome-marker-icon-wedge-grey6-dark, .awesome-marker-icon-wedge-red6-bright, .awesome-marker-icon-wedge-red6-dark, .awesome-marker-icon-wedge-orange6-bright, .awesome-marker-icon-wedge-orange6-dark, .awesome-marker-icon-wedge-yellow6-bright, .awesome-marker-icon-wedge-yellow6-dark, .awesome-marker-icon-wedge-green6-bright, .awesome-marker-icon-wedge-green6-dark, .awesome-marker-icon-wedge-blue6-bright, .awesome-marker-icon-wedge-blue6-dark, .awesome-marker-icon-wedge-purple6-bright, .awesome-marker-icon-wedge-purple6-dark, .awesome-marker-icon-wedge-pink6-bright, .awesome-marker-icon-wedge-pink6-dark
+{
+    background-position: -180px 0px;
+}
+
+.awesome-marker-icon-standard-grey7-bright, .awesome-marker-icon-standard-grey7-dark, .awesome-marker-icon-standard-red7-bright, .awesome-marker-icon-standard-red7-dark, .awesome-marker-icon-standard-orange7-bright, .awesome-marker-icon-standard-orange7-dark, .awesome-marker-icon-standard-yellow7-bright, .awesome-marker-icon-standard-yellow7-dark, .awesome-marker-icon-standard-green7-bright, .awesome-marker-icon-standard-green7-dark, .awesome-marker-icon-standard-blue7-bright, .awesome-marker-icon-standard-blue7-dark, .awesome-marker-icon-standard-purple7-bright, .awesome-marker-icon-standard-purple7-dark, .awesome-marker-icon-standard-pink7-bright, .awesome-marker-icon-standard-pink7-dark,
+.awesome-marker-icon-tab-grey7-bright, .awesome-marker-icon-tab-grey7-dark, .awesome-marker-icon-tab-red7-bright, .awesome-marker-icon-tab-red7-dark, .awesome-marker-icon-tab-orange7-bright, .awesome-marker-icon-tab-orange7-dark, .awesome-marker-icon-tab-yellow7-bright, .awesome-marker-icon-tab-yellow7-dark, .awesome-marker-icon-tab-green7-bright, .awesome-marker-icon-tab-green7-dark, .awesome-marker-icon-tab-blue7-bright, .awesome-marker-icon-tab-blue7-dark, .awesome-marker-icon-tab-purple7-bright, .awesome-marker-icon-tab-purple7-dark, .awesome-marker-icon-tab-pink7-bright, .awesome-marker-icon-tab-pink7-dark,
+.awesome-marker-icon-wedge-grey7-bright, .awesome-marker-icon-wedge-grey7-dark, .awesome-marker-icon-wedge-red7-bright, .awesome-marker-icon-wedge-red7-dark, .awesome-marker-icon-wedge-orange7-bright, .awesome-marker-icon-wedge-orange7-dark, .awesome-marker-icon-wedge-yellow7-bright, .awesome-marker-icon-wedge-yellow7-dark, .awesome-marker-icon-wedge-green7-bright, .awesome-marker-icon-wedge-green7-dark, .awesome-marker-icon-wedge-blue7-bright, .awesome-marker-icon-wedge-blue7-dark, .awesome-marker-icon-wedge-purple7-bright, .awesome-marker-icon-wedge-purple7-dark, .awesome-marker-icon-wedge-pink7-bright, .awesome-marker-icon-wedge-pink7-dark
+{
+    background-position: -216px 0px;
+}
+
+.awesome-marker-icon-standard-grey8-bright, .awesome-marker-icon-standard-grey8-dark, .awesome-marker-icon-standard-red8-bright, .awesome-marker-icon-standard-red8-dark, .awesome-marker-icon-standard-orange8-bright, .awesome-marker-icon-standard-orange8-dark, .awesome-marker-icon-standard-yellow8-bright, .awesome-marker-icon-standard-yellow8-dark, .awesome-marker-icon-standard-green8-bright, .awesome-marker-icon-standard-green8-dark, .awesome-marker-icon-standard-blue8-bright, .awesome-marker-icon-standard-blue8-dark, .awesome-marker-icon-standard-purple8-bright, .awesome-marker-icon-standard-purple8-dark, .awesome-marker-icon-standard-pink8-bright, .awesome-marker-icon-standard-pink8-dark,
+.awesome-marker-icon-tab-grey8-bright, .awesome-marker-icon-tab-grey8-dark, .awesome-marker-icon-tab-red8-bright, .awesome-marker-icon-tab-red8-dark, .awesome-marker-icon-tab-orange8-bright, .awesome-marker-icon-tab-orange8-dark, .awesome-marker-icon-tab-yellow8-bright, .awesome-marker-icon-tab-yellow8-dark, .awesome-marker-icon-tab-green8-bright, .awesome-marker-icon-tab-green8-dark, .awesome-marker-icon-tab-blue8-bright, .awesome-marker-icon-tab-blue8-dark, .awesome-marker-icon-tab-purple8-bright, .awesome-marker-icon-tab-purple8-dark, .awesome-marker-icon-tab-pink8-bright, .awesome-marker-icon-tab-pink8-dark,
+.awesome-marker-icon-wedge-grey8-bright, .awesome-marker-icon-wedge-grey8-dark, .awesome-marker-icon-wedge-red8-bright, .awesome-marker-icon-wedge-red8-dark, .awesome-marker-icon-wedge-orange8-bright, .awesome-marker-icon-wedge-orange8-dark, .awesome-marker-icon-wedge-yellow8-bright, .awesome-marker-icon-wedge-yellow8-dark, .awesome-marker-icon-wedge-green8-bright, .awesome-marker-icon-wedge-green8-dark, .awesome-marker-icon-wedge-blue8-bright, .awesome-marker-icon-wedge-blue8-dark, .awesome-marker-icon-wedge-purple8-bright, .awesome-marker-icon-wedge-purple8-dark, .awesome-marker-icon-wedge-pink8-bright, .awesome-marker-icon-wedge-pink8-dark
+{
+    background-position: -252px 0px;
+}
+
+.awesome-marker-icon-standard-grey9-bright, .awesome-marker-icon-standard-grey9-dark, .awesome-marker-icon-standard-red9-bright, .awesome-marker-icon-standard-red9-dark, .awesome-marker-icon-standard-orange9-bright, .awesome-marker-icon-standard-orange9-dark, .awesome-marker-icon-standard-yellow9-bright, .awesome-marker-icon-standard-yellow9-dark, .awesome-marker-icon-standard-green9-bright, .awesome-marker-icon-standard-green9-dark, .awesome-marker-icon-standard-blue9-bright, .awesome-marker-icon-standard-blue9-dark, .awesome-marker-icon-standard-purple9-bright, .awesome-marker-icon-standard-purple9-dark, .awesome-marker-icon-standard-pink9-bright, .awesome-marker-icon-standard-pink9-dark,
+.awesome-marker-icon-tab-grey9-bright, .awesome-marker-icon-tab-grey9-dark, .awesome-marker-icon-tab-red9-bright, .awesome-marker-icon-tab-red9-dark, .awesome-marker-icon-tab-orange9-bright, .awesome-marker-icon-tab-orange9-dark, .awesome-marker-icon-tab-yellow9-bright, .awesome-marker-icon-tab-yellow9-dark, .awesome-marker-icon-tab-green9-bright, .awesome-marker-icon-tab-green9-dark, .awesome-marker-icon-tab-blue9-bright, .awesome-marker-icon-tab-blue9-dark, .awesome-marker-icon-tab-purple9-bright, .awesome-marker-icon-tab-purple9-dark, .awesome-marker-icon-tab-pink9-bright, .awesome-marker-icon-tab-pink9-dark,
+.awesome-marker-icon-wedge-grey9-bright, .awesome-marker-icon-wedge-grey9-dark, .awesome-marker-icon-wedge-red9-bright, .awesome-marker-icon-wedge-red9-dark, .awesome-marker-icon-wedge-orange9-bright, .awesome-marker-icon-wedge-orange9-dark, .awesome-marker-icon-wedge-yellow9-bright, .awesome-marker-icon-wedge-yellow9-dark, .awesome-marker-icon-wedge-green9-bright, .awesome-marker-icon-wedge-green9-dark, .awesome-marker-icon-wedge-blue9-bright, .awesome-marker-icon-wedge-blue9-dark, .awesome-marker-icon-wedge-purple9-bright, .awesome-marker-icon-wedge-purple9-dark, .awesome-marker-icon-wedge-pink9-bright, .awesome-marker-icon-wedge-pink9-dark
+{
+    background-position: -288px 0px;
+}
+
+.awesome-marker-icon-standard-grey10-bright, .awesome-marker-icon-standard-grey10-dark, .awesome-marker-icon-standard-red10-bright, .awesome-marker-icon-standard-red10-dark, .awesome-marker-icon-standard-orange10-bright, .awesome-marker-icon-standard-orange10-dark, .awesome-marker-icon-standard-yellow10-bright, .awesome-marker-icon-standard-yellow10-dark, .awesome-marker-icon-standard-green10-bright, .awesome-marker-icon-standard-green10-dark, .awesome-marker-icon-standard-blue10-bright, .awesome-marker-icon-standard-blue10-dark, .awesome-marker-icon-standard-purple10-bright, .awesome-marker-icon-standard-purple10-dark, .awesome-marker-icon-standard-pink10-bright, .awesome-marker-icon-standard-pink10-dark,
+.awesome-marker-icon-tab-grey10-bright, .awesome-marker-icon-tab-grey10-dark, .awesome-marker-icon-tab-red10-bright, .awesome-marker-icon-tab-red10-dark, .awesome-marker-icon-tab-orange10-bright, .awesome-marker-icon-tab-orange10-dark, .awesome-marker-icon-tab-yellow10-bright, .awesome-marker-icon-tab-yellow10-dark, .awesome-marker-icon-tab-green10-bright, .awesome-marker-icon-tab-green10-dark, .awesome-marker-icon-tab-blue10-bright, .awesome-marker-icon-tab-blue10-dark, .awesome-marker-icon-tab-purple10-bright, .awesome-marker-icon-tab-purple10-dark, .awesome-marker-icon-tab-pink10-bright, .awesome-marker-icon-tab-pink10-dark,
+.awesome-marker-icon-wedge-grey10-bright, .awesome-marker-icon-wedge-grey10-dark, .awesome-marker-icon-wedge-red10-bright, .awesome-marker-icon-wedge-red10-dark, .awesome-marker-icon-wedge-orange10-bright, .awesome-marker-icon-wedge-orange10-dark, .awesome-marker-icon-wedge-yellow10-bright, .awesome-marker-icon-wedge-yellow10-dark, .awesome-marker-icon-wedge-green10-bright, .awesome-marker-icon-wedge-green10-dark, .awesome-marker-icon-wedge-blue10-bright, .awesome-marker-icon-wedge-blue10-dark, .awesome-marker-icon-wedge-purple10-bright, .awesome-marker-icon-wedge-purple10-dark, .awesome-marker-icon-wedge-pink10-bright, .awesome-marker-icon-wedge-pink10-dark
+{
+    background-position: -324px 0px;
+}
+
+
+/* Classes defining the dominant colour of each marker, for use in map legends etc. */
+
+/* grey */
+.bg-grey1-bright    { background-color: #f6f6f6; }
+.bg-grey2-bright    { background-color: #ededed; }
+.bg-grey3-bright    { background-color: #e4e4e4; }
+.bg-grey4-bright    { background-color: #dbdbdb; }
+.bg-grey5-bright    { background-color: #d2d2d2; }
+.bg-grey6-bright    { background-color: #c9c9c9; }
+.bg-grey7-bright    { background-color: #c0c0c0; }
+.bg-grey8-bright    { background-color: #b7b7b7; }
+.bg-grey9-bright    { background-color: #aeaeae; }
+.bg-grey10-bright   { background-color: #a5a5a5; }
+
+.bg-grey1-dark      { background-color: #ececec; }
+.bg-grey2-dark      { background-color: #d9d9d9; }
+.bg-grey3-dark      { background-color: #c6c6c6; }
+.bg-grey4-dark      { background-color: #b4b4b4; }
+.bg-grey5-dark      { background-color: #a1a1a1; }
+.bg-grey6-dark      { background-color: #8e8e8e; }
+.bg-grey7-dark      { background-color: #7c7c7c; }
+.bg-grey8-dark      { background-color: #696969; }
+.bg-grey9-dark      { background-color: #565656; }
+.bg-grey10-dark     { background-color: #444444; }
+
+/* red */
+.bg-red1-bright     { background-color: #ffe5e5; }
+.bg-red2-bright     { background-color: #ffcccc; }
+.bg-red3-bright     { background-color: #ffb2b2; }
+.bg-red4-bright     { background-color: #ff9999; }
+.bg-red5-bright     { background-color: #ff7f7f; }
+.bg-red6-bright     { background-color: #ff6666; }
+.bg-red7-bright     { background-color: #ff4c4c; }
+.bg-red8-bright     { background-color: #ff3333; }
+.bg-red9-bright     { background-color: #ff1919; }
+.bg-red10-bright    { background-color: #ff0000; }
+
+.bg-red1-dark       { background-color: #f3e5e5; }
+.bg-red2-dark       { background-color: #e7cccc; }
+.bg-red3-dark       { background-color: #dcb2b2; }
+.bg-red4-dark       { background-color: #d09999; }
+.bg-red5-dark       { background-color: #c57f7f; }
+.bg-red6-dark       { background-color: #b96666; }
+.bg-red7-dark       { background-color: #ad4c4c; }
+.bg-red8-dark       { background-color: #a23333; }
+.bg-red9-dark       { background-color: #961919; }
+.bg-red10-dark      { background-color: #8b0000; }
+
+/* orange */
+.bg-orange1-bright  { background-color: #fff2e5; }
+.bg-orange2-bright  { background-color: #ffe5cc; }
+.bg-orange3-bright  { background-color: #ffd9b2; }
+.bg-orange4-bright  { background-color: #ffcc99; }
+.bg-orange5-bright  { background-color: #ffc07f; }
+.bg-orange6-bright  { background-color: #ffb366; }
+.bg-orange7-bright  { background-color: #ffa64c; }
+.bg-orange8-bright  { background-color: #ff9a33; }
+.bg-orange9-bright  { background-color: #ff8d19; }
+.bg-orange10-bright { background-color: #ff8100; }
+
+.bg-orange1-dark    { background-color: #f7efe8; }
+.bg-orange2-dark    { background-color: #f0e0d1; }
+.bg-orange3-dark    { background-color: #e8d1ba; }
+.bg-orange4-dark    { background-color: #e1c2a3; }
+.bg-orange5-dark    { background-color: #dab38c; }
+.bg-orange6-dark    { background-color: #d2a475; }
+.bg-orange7-dark    { background-color: #cb955e; }
+.bg-orange8-dark    { background-color: #c38647; }
+.bg-orange9-dark    { background-color: #bc7730; }
+.bg-orange10-dark   { background-color: #b56819; }
+
+/* yellow */
+.bg-yellow1-bright  { background-color: #fdffe5; }
+.bg-yellow2-bright  { background-color: #fcffcc; }
+.bg-yellow3-bright  { background-color: #fbffb2; }
+.bg-yellow4-bright  { background-color: #faff99; }
+.bg-yellow5-bright  { background-color: #f9ff7f; }
+.bg-yellow6-bright  { background-color: #f7ff66; }
+.bg-yellow7-bright  { background-color: #f6ff4c; }
+.bg-yellow8-bright  { background-color: #f5ff33; }
+.bg-yellow9-bright  { background-color: #f4ff19; }
+.bg-yellow10-bright { background-color: #f3ff00; }
+
+.bg-yellow1-dark    { background-color: #fafbe7; }
+.bg-yellow2-dark    { background-color: #f5f7cf; }
+.bg-yellow3-dark    { background-color: #f0f3b7; }
+.bg-yellow4-dark    { background-color: #ebef9f; }
+.bg-yellow5-dark    { background-color: #e7eb87; }
+.bg-yellow6-dark    { background-color: #e2e76f; }
+.bg-yellow7-dark    { background-color: #dde357; }
+.bg-yellow8-dark    { background-color: #d8df3f; }
+.bg-yellow9-dark    { background-color: #d3db27; }
+.bg-yellow10-dark   { background-color: #cfd810; }
+
+/* green */
+.bg-green1-bright   { background-color: #e7fae7; }
+.bg-green2-bright   { background-color: #cff5cf; }
+.bg-green3-bright   { background-color: #b8f1b8; }
+.bg-green4-bright   { background-color: #a0eca0; }
+.bg-green5-bright   { background-color: #89e889; }
+.bg-green6-bright   { background-color: #71e371; }
+.bg-green7-bright   { background-color: #59de59; }
+.bg-green8-bright   { background-color: #42da42; }
+.bg-green9-bright   { background-color: #2ad52a; }
+.bg-green10-bright  { background-color: #13d113; }
+
+.bg-green1-dark     { background-color: #e5ffe5; }
+.bg-green2-dark     { background-color: #cce5cc; }
+.bg-green3-dark     { background-color: #b2d8b2; }
+.bg-green4-dark     { background-color: #99cb99; }
+.bg-green5-dark     { background-color: #7fbf7f; }
+.bg-green6-dark     { background-color: #66b266; }
+.bg-green7-dark     { background-color: #4ca54c; }
+.bg-green8-dark     { background-color: #339833; }
+.bg-green9-dark     { background-color: #198b19; }
+.bg-green10-dark    { background-color: #007f00; }
+
+/* blue */
+.bg-blue1-bright    { background-color: #e5e5ff; }
+.bg-blue2-bright    { background-color: #ccccff; }
+.bg-blue3-bright    { background-color: #b2b2ff; }
+.bg-blue4-bright    { background-color: #9999ff; }
+.bg-blue5-bright    { background-color: #7f7fff; }
+.bg-blue6-bright    { background-color: #6666ff; }
+.bg-blue7-bright    { background-color: #4c4cff; }
+.bg-blue8-bright    { background-color: #3333ff; }
+.bg-blue9-bright    { background-color: #1919ff; }
+.bg-blue10-bright   { background-color: #0000ff; }
+
+.bg-blue1-dark      { background-color: #e5e5f2; }
+.bg-blue2-dark      { background-color: #cccce5; }
+.bg-blue3-dark      { background-color: #b2b2d8; }
+.bg-blue4-dark      { background-color: #9999cc; }
+.bg-blue5-dark      { background-color: #8080bf; }
+.bg-blue6-dark      { background-color: #6666b2; }
+.bg-blue7-dark      { background-color: #4d4da6; }
+.bg-blue8-dark      { background-color: #333399; }
+.bg-blue9-dark      { background-color: #1a1a8c; }
+.bg-blue10-dark     { background-color: #01017f; }
+
+/* purple */
+.bg-purple1-bright  { background-color: #f1e5ff; }
+.bg-purple2-bright  { background-color: #e3ccff; }
+.bg-purple3-bright  { background-color: #d6b2ff; }
+.bg-purple4-bright  { background-color: #c899ff; }
+.bg-purple5-bright  { background-color: #bb7fff; }
+.bg-purple6-bright  { background-color: #ad66ff; }
+.bg-purple7-bright  { background-color: #9f4cff; }
+.bg-purple8-bright  { background-color: #9233ff; }
+.bg-purple9-bright  { background-color: #8419ff; }
+.bg-purple10-bright { background-color: #7700ff; }
+
+.bg-purple1-dark    { background-color: #ece7f2; }
+.bg-purple2-dark    { background-color: #d9cfe6; }
+.bg-purple3-dark    { background-color: #c7b7d9; }
+.bg-purple4-dark    { background-color: #b49fcd; }
+.bg-purple5-dark    { background-color: #a287c1; }
+.bg-purple6-dark    { background-color: #8f6fb4; }
+.bg-purple7-dark    { background-color: #7c57a8; }
+.bg-purple8-dark    { background-color: #6a3f9b; }
+.bg-purple9-dark    { background-color: #57278f; }
+.bg-purple10-dark   { background-color: #450f83; }
+
+/* pink */
+.bg-pink1-bright    { background-color: #ffe5fa; }
+.bg-pink2-bright    { background-color: #ffccf5; }
+.bg-pink3-bright    { background-color: #ffb2f1; }
+.bg-pink4-bright    { background-color: #ff99ec; }
+.bg-pink5-bright    { background-color: #ff7fe8; }
+.bg-pink6-bright    { background-color: #ff66e3; }
+.bg-pink7-bright    { background-color: #ff4cdf; }
+.bg-pink8-bright    { background-color: #ff33da; }
+.bg-pink9-bright    { background-color: #ff19d6; }
+.bg-pink10-bright   { background-color: #ff00d1; }
+
+.bg-pink1-dark      { background-color: #f7e8f4; }
+.bg-pink2-dark      { background-color: #efd2ea; }
+.bg-pink3-dark      { background-color: #e7bbdf; }
+.bg-pink4-dark      { background-color: #dfa5d5; }
+.bg-pink5-dark      { background-color: #d88ecb; }
+.bg-pink6-dark      { background-color: #d078c0; }
+.bg-pink7-dark      { background-color: #c861b6; }
+.bg-pink8-dark      { background-color: #c04bab; }
+.bg-pink9-dark      { background-color: #b834a1; }
+.bg-pink10-dark     { background-color: #b11e97; }
