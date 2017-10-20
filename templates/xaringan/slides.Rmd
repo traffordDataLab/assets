@@ -1,0 +1,93 @@
+---
+title: "<br><br>Trafford Data Lab"
+subtitle: "Employee name"
+author: "`r Sys.Date()`"
+date: "[\\@traffordDataLab](https://twitter.com/trafforddatalab)"
+output:
+  xaringan::moon_reader:
+    css: ["default", "stylesheet.css"]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      countIncrementalSlides: false
+      navigation:
+        scroll: false
+        click: false
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+library(tidyverse) ; library(leaflet) ; library(widgetframe)
+```
+
+background-image: url(https://trafforddatalab.github.io/assets/logo/trafforddatalab_logo.svg)
+background-size: 300px
+background-position: 50% 37%
+class: center, middle
+
+Supporting decision-making in Trafford by revealing patterns in data through visualisation
+
+---
+class: center, middle
+# Transition slide
+
+---
+class: center, middle, inverse
+# Transition slide
+
+---
+layout: true
+background-image: url(https://upload.wikimedia.org/wikipedia/commons/9/97/Sir_Ernest_Rutherfords_laboratory%2C_early_20th_century._%289660575343%29.jpg)
+background-size: cover
+class: center, bottom, inverse
+# Background image
+---
+
+---
+layout: false
+# Presentation structure
+
+--
+
+- Part one
+
+--
+
+- Part two
+
+--
+
+- Part three
+
+---
+## Example visual
+
+Where is the Trafford Data Lab?
+<br>
+
+```{r, echo=FALSE}
+leaflet() %>% 
+  addTiles(urlTemplate = "http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+           attribution = '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attribution">CartoDB</a>, <a href="https://www.ons.gov.uk/methodology/geography/licences">| Contains OS data © Crown copyright and database right (2017)</a>',
+           options = tileOptions(minZoom = 14, maxZoom = 17)) %>% 
+  addMarkers(lng = -2.329774, lat = 53.421981, popup="Trafford Data Lab") %>% 
+  frameWidget(height='325')
+```
+
+---
+
+## Code
+
+```{r fig.height = 3, dev = 'svg'}
+library(ggplot2)
+ggplot(mtcars, aes(wt, mpg)) +
+  geom_point() +
+  labs(x="Fuel efficiency (mpg)", y="Weight (tons)",
+       title="Fuel economy declines as weight increases")
+```
+
+---
+class: center, middle, inverse
+# Questions?

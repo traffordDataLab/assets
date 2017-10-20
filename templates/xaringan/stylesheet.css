@@ -1,0 +1,81 @@
+/*  import Roboto and Open Sans Google Fonts  */
+@import url(https://fonts.googleapis.com/css?family=Open+Sans|Roboto);
+
+/* add Rutherford lab (with blur) as the background image of the title slide */
+.title-slide 
+{
+  background-image: filter(url(https://upload.wikimedia.org/wikipedia/commons/9/97/Sir_Ernest_Rutherfords_laboratory%2C_early_20th_century._%289660575343%29.jpg), blur(5px));
+  background-size: cover;
+}
+
+/* add Trafford Council logo in footer */
+.remark-slide-content:after {
+    content: "";
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    height: 40px;
+    width: 120px;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-image: url(http://www.trafford.gov.uk/SiteElements/Images/TClogo2.png);
+}
+
+/* Set title slide h1 as Roboto, with text underlined in orange */
+.title-slide h1 
+{
+  text-shadow: none;
+  font-family: Roboto, sans-serif; 
+  color: #FFFFFF;
+  font-size: 80px;
+  margin-top: -70px;
+  margin-left: 10px;
+  border-bottom: 1px solid #fc6721;
+}
+
+/* Set title slide h2 and h3 as Roboto and adjust line spacing */
+.title-slide h2, .title-slide h3 
+{
+  text-shadow: none;
+  font-family: Roboto, sans-serif; 
+  color: #FFFFFF;
+  font-size: 30px;
+  line-height: 0.3em;
+  margin-left: 378px;
+  text-align: left;
+}
+
+/* Hide the slide number from title slide */
+.title-slide .remark-slide-number 
+{
+  display: none;
+}
+
+/*  Set headers to Roboto font  */
+h1, h2, h3
+{
+  font-family: 'Roboto', sans-serif; 
+  font-weight: normal;
+  color: #757575;
+}
+
+/*  Set text to Open Sans font  */
+body 
+{ 
+  font-family: 'Open Sans', sans-serif; 
+  font-weight: normal;
+  color: #212121;
+}
+
+/* set link colour */
+a
+{
+  color: #fc6721;
+  text-decoration: none;
+}
+
+/*  add underline with hover */
+a:hover
+{
+  text-decoration: underline;
+}
