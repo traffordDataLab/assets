@@ -27,7 +27,7 @@ source("https://github.com/traffordDataLab/assets/raw/master/theme/plotly/theme_
 
 ``` r
 # load the necessary packages
-library(plotly) ; library(tidyverse)
+library(plotly) ; library(tidyverse) ; library(htmlwidgets)
 
 source("/Users/henrypartridge/Desktop/OGI/scripts/plotly_theme/plotly_theme_lab.R")
 
@@ -97,5 +97,19 @@ plot_ly(data = df, x = ~count, y = ~religion, type = "bar", color = '#fc6721',
                 xref = 'paper', x = 1,
                 yref = 'paper', y = -0.3)))
 ```
+
+# save as png
+``` r
+export(plot, file='example.png')
+``` 
+
+# save as html
+``` r
+saveWidget(plot, "example.html")
+```
+
+<br />
+
+<img src="https://trafforddatalab.github.io/assets/theme/plotly/example.png" width="500">
 
 <br />
