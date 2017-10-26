@@ -105,4 +105,4 @@ saveWidget(plot, "example.html")
 ```
 
 
-<img src="https://trafforddatalab.github.io/assets/theme/plotly/example.gif" width="500">
+<img src="https://trafforddatalab.github.io/assets/theme/plotly/example.gif" width="700">
