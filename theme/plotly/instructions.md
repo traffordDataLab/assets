@@ -18,7 +18,7 @@ library(plotly)
 **2. Provide a source path to the URL containing the custom theme**
 
 ``` r
-source("https://github.com/traffordDataLab/assets/raw/master/theme/plotly/theme_lab.R")
+source("https://trafforddatalab.github.io/assets/theme/plotly/theme_lab.R")
 ```
 
 ------------------------------------------------------------------------
