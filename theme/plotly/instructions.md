@@ -29,7 +29,7 @@ source("https://trafforddatalab.github.io/assets/theme/plotly/theme_lab.R")
 # load the necessary packages
 library(plotly) ; library(tidyverse) ; library(htmlwidgets)
 
-source("/Users/henrypartridge/Desktop/OGI/scripts/plotly_theme/plotly_theme_lab.R")
+source("https://trafforddatalab.github.io/assets/theme/plotly/theme_lab.R")
 
 # load some data
 df <- data.frame(
