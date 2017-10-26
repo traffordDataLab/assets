@@ -96,15 +96,11 @@ plot_ly(data = df, x = ~count, y = ~religion, type = "bar", color = '#fc6721',
                 showarrow = FALSE,
                 xref = 'paper', x = 1,
                 yref = 'paper', y = -0.3)))
-```
 
 # save as png
-``` r
 export(plot, file='example.png')
-``` 
 
 # save as html
-``` r
 saveWidget(plot, "example.html")
 ```
 
