@@ -104,8 +104,5 @@ export(plot, file='example.png')
 saveWidget(plot, "example.html")
 ```
 
-<br />
 
 <img src="https://trafforddatalab.github.io/assets/theme/plotly/example.gif" width="500">
-
-<br />
