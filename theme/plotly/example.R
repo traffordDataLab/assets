@@ -1,7 +1,7 @@
 # load the necessary packages
 library(plotly) ; library(tidyverse) ; library(htmlwidgets)
 
-source("https://github.com/traffordDataLab/assets/raw/master/theme/plotly/theme_lab.R")
+source("https://trafforddatalab.github.io/assets/theme/plotly/theme_lab.R")
 
 # load some data
 df <- data.frame(
