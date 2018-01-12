@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>Lab Leaflet Map Template</title>
+
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ==" crossorigin=""/>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+        <link rel="stylesheet" href="http://www.trafforddatalab.io/css/labBase.css"/>
+        <link rel="stylesheet" href="http://www.trafforddatalab.io/assets/leaflet/labLeafletMap.css"/>
+        <!-- Uncomment if markers are required
+        <link rel="stylesheet" href="http://www.trafforddatalab.io/assets/leaflet/extended_markers/extended_markers_base.css"/>
+        <link rel="stylesheet" href="http://www.trafforddatalab.io/assets/leaflet/extended_markers/extended_markers_mixed.css"/>
+        -->
+
+        <style>
+
+        </style>
+    </head>
+
+    <body>
+        <div id="map" class="mapFullScreen"></div>
+
+        <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js" integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log==" crossorigin=""></script>
+        <script src="http://www.trafforddatalab.io/assets/javascript/labError.js"></script>
+        <script src="http://www.trafforddatalab.io/assets/javascript/labAjax.js"></script>
+        <script src="http://www.trafforddatalab.io/assets/leaflet/leaflet.resetMapView.js"></script>
+        <script src="http://www.trafforddatalab.io/assets/leaflet/labCreateTileLayer.js"></script>
+        <script src="http://www.trafforddatalab.io/assets/leaflet/labLeafletMap.js"></script>
+        <!-- Uncomment if markers are required
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.min.js"></script>
+        -->
+
+        <script>
+            var labMap = new LabLeafletMap({
+                title: 'Insert Title',
+                about: 'Insert information about the map'
+            });
+
+            // Choose the base/tile layer for the map
+            labMap.baseLayers['Light'].addTo(labMap.map);
+
+            // Add the Trafford boundary
+            labAjax('http://www.trafforddatalab.io/spatial_data/local_authority/2016/trafford_local_authority_full_resolution.geojson', function (data) {
+                var stylePoly = {
+                    "color": "#212121"
+                }
+
+                var traffordBoundary = L.geoJSON(data, { attribution: labMap.attributionOS, style: stylePoly }).addTo(labMap.map);
+            });
+        </script>
+    </body>
+</html>
