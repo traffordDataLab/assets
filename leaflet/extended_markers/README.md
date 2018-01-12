@@ -2,7 +2,7 @@
 
 Replacement marker graphics for Leaflet maps using the 'awesome markers' plugin.
 
-![](https://trafforddatalab.github.io/assets/extended_markers/trafforddatalab_markers-standard-mixed.png "Standard marker shape, mixed colours")<br />
+![](https://trafforddatalab.github.io/assets/leaflet/extended_markers/trafforddatalab_markers-standard-mixed.png "Standard marker shape, mixed colours")<br />
 
 These files are for use with creating maps using the [Leaflet javascript library](http://www.leafletjs.com) created by [Vladimir Agafonkin](http://agafonkin.com/en/). They also require the leaflet plugin ['awesome markers'](https://github.com/lvoogdt/Leaflet.awesome-markers) which was created by [Lennard Voogdt](http://www.lennardvoogdt.nl).
 
@@ -15,35 +15,35 @@ The file '**extended_markers_base.css**' contains the style declarations which r
 ### Options Available:
 
 **Standard marker shape, mixed colours**:<br />
-![](https://trafforddatalab.github.io/assets/extended_markers/trafforddatalab_markers-standard-mixed.png "Standard marker shape, mixed colours")
+![](https://trafforddatalab.github.io/assets/leaflet/extended_markers/trafforddatalab_markers-standard-mixed.png "Standard marker shape, mixed colours")
 
 **Tab marker shape, mixed colours**:<br />
-![](https://trafforddatalab.github.io/assets/extended_markers/trafforddatalab_markers-tab-mixed.png "Tab marker shape, mixed colours")
+![](https://trafforddatalab.github.io/assets/leaflet/extended_markers/trafforddatalab_markers-tab-mixed.png "Tab marker shape, mixed colours")
 
 **Wedge marker shape, mixed colours**:<br />
-![](https://trafforddatalab.github.io/assets/extended_markers/trafforddatalab_markers-wedge-mixed.png "Wedge marker shape, mixed colours")
+![](https://trafforddatalab.github.io/assets/leaflet/extended_markers/trafforddatalab_markers-wedge-mixed.png "Wedge marker shape, mixed colours")
 
 **Circular pin, mixed colours**:<br />
-![](https://trafforddatalab.github.io/assets/extended_markers/trafforddatalab_pins-circle-mixed.png "Circular pin, mixed colours")
+![](https://trafforddatalab.github.io/assets/leaflet/extended_markers/trafforddatalab_pins-circle-mixed.png "Circular pin, mixed colours")
 
 **Square pin, mixed colours**:<br />
-![](https://trafforddatalab.github.io/assets/extended_markers/trafforddatalab_pins-square-mixed.png "Square pin, mixed colours")
+![](https://trafforddatalab.github.io/assets/leaflet/extended_markers/trafforddatalab_pins-square-mixed.png "Square pin, mixed colours")
 
 **Triangular pin, mixed colours**:<br />
-![](https://trafforddatalab.github.io/assets/extended_markers/trafforddatalab_pins-triangle-mixed.png "Triangle pin, mixed colours")
+![](https://trafforddatalab.github.io/assets/leaflet/extended_markers/trafforddatalab_pins-triangle-mixed.png "Triangle pin, mixed colours")
 
 
 In addition to the above, we have also created gradient ribbons for the standard, tab and wedge markers for each of the colours available in the ribbon with the exception of white and black. Some examples are shown below:
 
 
 **Standard marker shape, bright orange gradient**:<br />
-![](https://trafforddatalab.github.io/assets/extended_markers/trafforddatalab_markers-standard-orange-bright.png "Standard marker shape, bright orange gradient")
+![](https://trafforddatalab.github.io/assets/leaflet/extended_markers/trafforddatalab_markers-standard-orange-bright.png "Standard marker shape, bright orange gradient")
 
 **Tab marker shape, dark green gradient**:<br />
-![](https://trafforddatalab.github.io/assets/extended_markers/trafforddatalab_markers-tab-green-dark.png "Tab marker shape, dark green gradient")
+![](https://trafforddatalab.github.io/assets/leaflet/extended_markers/trafforddatalab_markers-tab-green-dark.png "Tab marker shape, dark green gradient")
 
 **Wedge marker shape, bright purple gradient**:<br />
-![](https://trafforddatalab.github.io/assets/extended_markers/trafforddatalab_markers-wedge-purple-bright.png "Wedge marker shape, bright purple gradient")
+![](https://trafforddatalab.github.io/assets/leaflet/extended_markers/trafforddatalab_markers-wedge-purple-bright.png "Wedge marker shape, bright purple gradient")
 
 ---
 
