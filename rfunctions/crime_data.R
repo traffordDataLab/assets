@@ -10,6 +10,8 @@ get_coords <- function(x) {
   coords_df <- st_coordinates(x) %>%
     as_tibble() %>%
     select(lng = X, lat = Y) %>%
+    mutate(lng = sprintf("%0.5f", lng),
+           lat = sprintf("%0.5f", lat)) %>% 
     mutate(lng = sub("$", ":", lng),
            lat = sub("$", ",", lat)) 
   
