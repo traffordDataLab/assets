@@ -6,7 +6,7 @@
 */
 function LabLeafletMap(objOptions) {
 	// ### Properties ###
-    this.attributes = (objOptions['attributes'] == null) ? { center: [53.4189, -2.36574], zoom: 12, minZoom: 10 } : objOptions['attributes'];  // The attributes object contains the lat, lng, zoom etc. parameters to control the appearance of the map on load.
+    this.attributes = (objOptions['attributes'] == null) ? { center: [53.4189, -2.33], zoom: 12, minZoom: 10 } : objOptions['attributes'];  // The attributes object contains the lat, lng, zoom etc. parameters to control the appearance of the map on load.
     this.attributes['zoomControl'] = false;           // added manually as we need to reference the container
     this.attributes['attributionControl'] = false;    // added manually so that we can put it in the bottom-left corner
 
