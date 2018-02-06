@@ -18,8 +18,8 @@ theme_lab <- function () {
       axis.ticks = element_blank(),
       axis.line = element_line(color = "#FFFFFF", size = 0.3),
       # modify the bottom margins of the title and subtitle
-      plot.title = element_text(size = 18, colour = "#757575", hjust = 0, margin = margin(b = 15)),
-      plot.subtitle = element_text(size = 12, colour = "#757575", hjust = 0, margin = margin(b = 5)),
+      plot.title = element_text(size = 18, colour = "#757575", hjust = 0, margin = margin(b = 4)),
+      plot.subtitle = element_text(size = 12, colour = "#757575", hjust = 0, margin = margin(b = 10)),
       # add padding to the caption
       plot.caption = element_text(size = 10, colour = "#212121", hjust = 1, margin = margin(t = 15)),
       # change to Open Sans for axes titles, tick labels, legend title and legend key, and strip text
