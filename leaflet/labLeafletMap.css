@@ -35,6 +35,16 @@
     color: #fc6721;
 }
 
+.leaflet-bar a.leaflet-disabled
+{
+    background-color: rgba(200, 200, 200, 0.8);
+}
+
+.leaflet-bar a.leaflet-disabled:hover
+{
+    color: #bbb;
+}
+
 /* The following styles are to ensure the sizes of all 'button' controls are consistent across all browsers (including touch-capable) */
 .leaflet-bar a,
 .leaflet-bar a:hover,
