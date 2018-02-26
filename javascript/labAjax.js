@@ -50,6 +50,10 @@ function labAjax(url, callback, objOptions) {
                     if (def_cache === true) def_cacheObj[url] = ajaxResult;   // Cache the data if required
                     callback(ajaxResult);
                 }
+                else if (xmlhttp.status == 404) {
+                    xmlhttp.abort();
+                    callback(null);
+                }
             }
 
             xmlhttp.open(def_method, url + '?t=' + Math.random(), true);   // ?t= etc. to avoid potential cache issues on the source
