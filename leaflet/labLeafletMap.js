@@ -150,7 +150,7 @@ function LabLeafletMap(objOptions) {
         this.infoDockContainer.appendChild(this.infoContainer);
     }
 
-    // Prevent the map from scrolling/zooming when the mouse pointer is within the main panel
+    // Prevent the map from scrolling/zooming when the mouse pointer is within the main panel or the legend
     this.stopProp = L.DomEvent.stopPropagation;
     this.clickEventHandler = L.Browser.touch && ('ontouchstart' in document.documentElement) ? 'touchstart' : 'click';
 
@@ -159,4 +159,10 @@ function LabLeafletMap(objOptions) {
         .on(this.mainPanelContainer, 'mousedown', this.stopProp)
         .on(this.mainPanelContainer, 'dblclick', this.stopProp)
         .on(this.mainPanelContainer, 'mousewheel', this.stopProp)
+        .on(this.mainPanelContainer, 'pointerdown', this.stopProp)
+        .on(this.legendControlContainer, this.clickEventHandler, this.stopProp)
+        .on(this.legendControlContainer, 'mousedown', this.stopProp)
+        .on(this.legendControlContainer, 'dblclick', this.stopProp)
+        .on(this.legendControlContainer, 'mousewheel', this.stopProp)
+        .on(this.legendControlContainer, 'pointerdown', this.stopProp)
 }
