@@ -88,7 +88,7 @@
     font-size: 14px;
 }
 
-.mainPanelControl:hover
+.mainPanelControl:hover, .legendControl:hover
 {
     background: rgba(255, 255, 255, 0.9);
 }
