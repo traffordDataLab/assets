@@ -5,6 +5,8 @@
     Licence:        http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
 */
 function LabLeafletMap(objOptions) {
+    var context = this;
+
 	// ### Properties ###
     this.attributes = (objOptions['attributes'] == null) ? { center: [53.4189, -2.33], zoom: 12, minZoom: 10 } : objOptions['attributes'];  // The attributes object contains the lat, lng, zoom etc. parameters to control the appearance of the map on load.
     this.attributes['zoomControl'] = false;           // added manually as we need to reference the container
@@ -14,6 +16,7 @@ function LabLeafletMap(objOptions) {
     this.map = (objOptions['map'] == null) ? L.map(this.containerId, this.attributes) : objOptions['map'];      // The actual Leaflet map object. In the Leaflet docs, everywhere they refer to 'map' we write 'this.map'.
     this.title = (objOptions['title'] == null) ? '' : String(objOptions['title']);                              // String content for the map title. Can contain HTML.
     this.about = (objOptions['about'] == null) ? '' : String(objOptions['about']);                              // String content for information about the map. Can contain HTML.
+    this.aboutToggle = (objOptions['aboutToggle'] == 1) ? 1 : 0;                                                // Toggle state for whether the info panel is visible or not. Default is hidden.
     this.filterGUI = (objOptions['filterGUI'] == null) ? '' : String(objOptions['filterGUI']);                  // HTML content to create form elements used to filter some aspect(s) of the content being displayed on the map.
     this.info = (objOptions['info'] == null) ? '' : String(objOptions['info']);                                 // Default string content to display within the info container. This is primarily used to display data values when hovering/selecting elements on the map.
     this.infoDockId = (objOptions['infoDockId'] == null) ? '' : String(objOptions['infoDockId']);               // The id of the div which contains the infoContainer div. This allows for the info content to scroll within the dock. If no id is supplied a div is created automatically and added to the main panel control. Supplying an id allows for flexible displays where the info panel is outside the map container.
@@ -97,13 +100,38 @@ function LabLeafletMap(objOptions) {
     };
     this.updateLegend(this.legend);     // call the legend update function in case we have default content to display
 
-    // map title - to be displayed within the mainPanel control
-    this.titleContainer = L.DomUtil.create('div', 'titleContainer');
-    this.titleContainer.innerHTML = this.title;
+    // map title and toggle button to hide/show the about panel - to be displayed within the mainPanel control
+    this.toggleAboutStyles = function () {
+        if (context.aboutToggle == 0) {
+            // about section is currently hidden
+            L.DomUtil.addClass(context.toggleAboutBtn, 'aboutToggleHiddenState');
+            L.DomUtil.addClass(context.aboutContainer, 'hideContent');
+        }
+        else {
+            // about section is currently visible
+            L.DomUtil.removeClass(context.toggleAboutBtn, 'aboutToggleHiddenState');
+            L.DomUtil.removeClass(context.aboutContainer, 'hideContent');
+        }
+    };
+
+    this.toggleAbout = function () {
+        context.aboutToggle = Math.abs(context.aboutToggle - 1);  // toggle the value between 0 and 1
+        context.toggleAboutStyles();
+    };
+
+    this.titleContainer = L.DomUtil.create('div', 'titleContainer');            // the container for the title content
+    this.toggleAboutBtn = document.createElement('div');                        // creating the toggle button..
+    this.toggleAboutBtn.setAttribute('class', 'fa fa-info-circle aboutToggle'); // ..adding the CSS..
+    this.toggleAboutBtn.addEventListener('click', this.toggleAbout);            // ..and the click event..
+    this.titleContainer.appendChild(this.toggleAboutBtn);                       // ..finally adding it to the title container
+    this.titleContainer.appendChild(document.createTextNode(this.title));       // add the title text to the title container
 
     // about this map information
     this.aboutContainer = L.DomUtil.create('div', 'aboutContainer');
     this.aboutContainer.innerHTML = this.about;
+
+    // Add classes based on whether we are initially showing the about section or not to both the toggle button and the about container
+    this.toggleAboutStyles();
 
     // potential filter controls
     this.filterContainer = L.DomUtil.create('div', 'filterContainer');
@@ -119,7 +147,7 @@ function LabLeafletMap(objOptions) {
     this.updateInfo = function (content) {
         if (content == null) content = this.info;   // This ensures any default text is displayed if nothing is passed to the function
         this.infoContainer.innerHTML = content;
-    }
+    };
     this.updateInfo();     // call the info panel update function in case we want to display default text
 
     // create the main display panel control which contains the map title, about description, any dataset/filtering options and the information to be displayed when hovering over objects on the map

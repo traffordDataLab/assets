@@ -101,6 +101,23 @@
     font-weight: bold;
 }
 
+.aboutToggle
+{
+    color: #ccc;
+    float: right;
+}
+
+.aboutToggle:hover
+{
+    cursor: pointer;
+    color: #fc6721;
+}
+
+.aboutToggleHiddenState
+{
+    color: #fc6721;
+}
+
 .infoDockContainer
 {
     margin-top: 10px;
