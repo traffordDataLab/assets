@@ -59,7 +59,7 @@ function LabLeafletMap(objOptions) {
 
     // ### Map Controls ###
     // add the attribution control so that we can position it in the bottom-left
-    this.attribution = L.control.attribution({ position: 'bottomleft', prefix: 'Drawn by <a href="http://www.trafforddatalab.io">Trafford Data Lab</a> using <a href="http://www.leafletjs.com">Leaflet</a>' }).addTo(this.map);
+    this.attribution = L.control.attribution({ position: 'bottomleft', prefix: 'Drawn by <a href="https://www.trafforddatalab.io">Trafford Data Lab</a> using <a href="http://www.leafletjs.com">Leaflet</a>' }).addTo(this.map);
 
     // add the zoom control manually so that we can reference it to add the reset map view button to it
     this.zoom = L.control.zoom().addTo(this.map);
