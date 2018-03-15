@@ -6,9 +6,9 @@
 */
 function labAjax(url, callback, objOptions) {
     var def_method = 'GET';         // The request method to use, e.g. GET, POST etc.
-    var def_type = 'json';          // The data format we are returning
+    var def_type = 'json';          // The data format we are returning - default is JSON as this is the most common usage for us
     var def_header = null;          // If we need to send a header along with the request, in the format { header: "string", value: "string" }
-    var def_cache = true;           // Whether we want to cache the data once we've loaded it
+    var def_cache = false;          // Whether we want to cache the data once we've loaded it
     var def_cacheObj = ajaxCache;   // Object to store the cached data - either one passed to us in the options or using the global var
     var def_forceRefresh = false;   // Whether to load the data from source irrespective of whether there is a cached version
 
@@ -16,7 +16,7 @@ function labAjax(url, callback, objOptions) {
         if (objOptions['method'] != null) def_method = String(objOptions['method']);
         if (objOptions['type'] != null) def_type = String(objOptions['type']);
         if (objOptions['header'] != null) def_header = objOptions['header'];
-        if (objOptions['cache'] === false) def_cache = false;
+        if (objOptions['cache'] === true) def_cache = true;
         if (objOptions['cacheObj'] != null) def_cacheObj = objOptions['cacheObj'];
         if (objOptions['forceRefresh'] === true) def_forceRefresh = true;
     }
@@ -50,7 +50,8 @@ function labAjax(url, callback, objOptions) {
                     if (def_cache === true) def_cacheObj[url] = ajaxResult;   // Cache the data if required
                     callback(ajaxResult);
                 }
-                else if (xmlhttp.status == 404) {
+                else if (xmlhttp.status >= 300) {
+                    // Not a successful response so abort
                     xmlhttp.abort();
                     callback(null);
                 }
