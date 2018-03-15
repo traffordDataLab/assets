@@ -57,9 +57,14 @@ function labAjax(url, callback, objOptions) {
                 }
             }
 
-            xmlhttp.open(def_method, url + '?t=' + Math.random(), true);   // ?t= etc. to avoid potential cache issues on the source
-            if (def_header !== null) xmlhttp.setRequestHeader(String(def_header['header']), String(def_header['value'])); // Optional headers to send along with the XMLHttpRequest
-            xmlhttp.send();
+            try {
+                xmlhttp.open(def_method, url + '?t=' + Math.random(), true);   // ?t= etc. to avoid potential cache issues on the source
+                if (def_header !== null) xmlhttp.setRequestHeader(String(def_header['header']), String(def_header['value'])); // Optional headers to send along with the XMLHttpRequest
+                xmlhttp.send();
+            }
+            catch(e) {
+                callback(null); // failed to process the request - perhaps bad arguments. Quit nicely
+            }
         }
         else {
             labError(new LabException("Error in labAjax(). Failed to load the following: " + url + " as browser doesn't support XMLHttpRequest."));
