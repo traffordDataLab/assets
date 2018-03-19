@@ -81,6 +81,11 @@
     font-size: 18px;
 }
 
+.mainPanelControl, .legendControl
+{
+    box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+}
+
 .mainPanelControl
 {
     padding-left: 8px;
