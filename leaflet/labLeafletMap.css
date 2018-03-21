@@ -18,6 +18,11 @@
     color: #fc6721;    /* all links to be orange as per Lab style */
 }
 
+.leaflet-top
+{
+    margin-top: 10px;   /* move controls away from the top of the screen a little more so that on mobile users don't accidentally activate the URL bar */
+}
+
 .leaflet-bar a, .leaflet-control-layers, .leaflet-control-attribution, .labMapControls
 {
     background: #fff;
@@ -57,6 +62,12 @@
     line-height: 40px;
 }
 
+/* Fix for the layer control as we are positioning it ourselves - prevents the expanded list wrapping */
+.leaflet-control-layers-expanded .leaflet-control-layers-list
+{
+    white-space: nowrap;
+}
+
 
 /* ### Specific common styles for Trafford Data Lab Leaflet maps ### */
 .mapFullScreen
@@ -79,6 +90,18 @@
 .resetMapControl
 {
     font-size: 18px;
+}
+
+.geoLocateMapControl
+{
+    font-size: 24px;
+}
+
+.layerControl   /* An additional style added to the layer control within labLeafletMap.js to control its position */
+{
+    top: 0;
+    position: absolute;
+    left: 50px;
 }
 
 .mainPanelControl, .legendControl

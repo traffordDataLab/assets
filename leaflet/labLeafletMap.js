@@ -61,17 +61,36 @@ function LabLeafletMap(objOptions) {
     // add the attribution control so that we can position it in the bottom-left
     this.attribution = L.control.attribution({ position: 'bottomleft', prefix: 'Drawn by <a href="https://www.trafforddatalab.io">Trafford Data Lab</a> using <a href="http://www.leafletjs.com">Leaflet</a>' }).addTo(this.map);
 
-    // add the zoom control manually so that we can reference it to add the reset map view button to it
+    // add the zoom control manually so that we can reference it to add other controls to it e.g. geolocate
     this.zoom = L.control.zoom().addTo(this.map);
 
-    // create the reset map control and display it as part of the zoom control
-    this.reset = L.control.resetMapView({ container: this.zoom.getContainer(), content: '', cssClass: 'fa fa-home resetMapControl' }).addTo(this.map);
+    // Add the geolocate control - within a try/catch in case the plugin can't be loaded from the CDN
+    try {
+        this.locate = L.control.locate({
+            icon: 'fa fa-compass',
+            iconLoading: 'fa fa-spinner fa-pulse',
+            position: 'bottomright',
+            strings: { title: 'Show/hide my location' },
+            createButtonCallback: function (container, options) {
+                L.DomUtil.addClass(container, 'hideContent')  // We're not using the container supplied from the plugin - we're using the zoom control as the container
+                var link = L.DomUtil.create('a', 'leaflet-bar-part leaflet-bar-part-single geoLocateMapControl', context.zoom.getContainer());
+                link.title = options.strings.title;
+                var icon = L.DomUtil.create(options.iconElementTag, options.icon, link);
+                return { link: link, icon: icon };
+            }
+        }).addTo(this.map);
+    }
+    catch (e) {
+        // Do nothing - for some reason we couldn't create the geoLocate control but it's not critical
+        this.locate = null;
+    }
 
     // map layer control
     // function so that we can call it when required e.g. when layers are dynamically created
     this.updateLayerControl = function () {
         if (this.layerControl !== undefined) this.layerControl.remove(); // remove existing control from the map
         this.layerControl = L.control.layers(this.baseLayers, this.overlayLayers, { position: 'topleft', sortLayers: true }).addTo(this.map);
+        L.DomUtil.addClass(this.layerControl.getContainer(), 'layerControl');
     };
     this.updateLayerControl();      // call the layer control update function to initially display the control
 
