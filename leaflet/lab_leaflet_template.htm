@@ -24,14 +24,18 @@
         <div id="map" class="mapFullScreen"></div>
 
         <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js" integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log==" crossorigin=""></script>
-        <script src="https://www.trafforddatalab.io/assets/javascript/labError.js"></script>
-        <script src="https://www.trafforddatalab.io/assets/javascript/labAjax.js"></script>
-        <script src="https://www.trafforddatalab.io/assets/leaflet/leaflet.resetMapView.js"></script>
-        <script src="https://www.trafforddatalab.io/assets/leaflet/labCreateTileLayer.js"></script>
-        <script src="https://www.trafforddatalab.io/assets/leaflet/labLeafletMap.js"></script>
         <!-- Uncomment if markers are required
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.min.js"></script>
         -->
+        <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.62.0/dist/L.Control.Locate.min.js"></script>
+        <script src="https://www.trafforddatalab.io/assets/javascript/labError.js"></script>
+        <script src="https://www.trafforddatalab.io/assets/javascript/labAjax.js"></script>
+        <!-- Uncomment if reset map control is required
+        <script src="https://www.trafforddatalab.io/assets/leaflet/leaflet.resetMapView.js"></script>
+        -->
+        <script src="https://www.trafforddatalab.io/assets/leaflet/labCreateTileLayer.js"></script>
+        <script src="https://www.trafforddatalab.io/assets/leaflet/labLeafletMap.js"></script>
+
 
         <script>
             var labMap = new LabLeafletMap({
@@ -45,7 +49,10 @@
             // Add the Trafford boundary
             labAjax('https://www.trafforddatalab.io/spatial_data/local_authority/2016/trafford_local_authority_full_resolution.geojson', function (data) {
                 var stylePoly = {
-                    "color": "#212121"
+                    color: '#212121',
+                    weight: 2,
+                    dashArray: '3',
+                    fillOpacity: 0
                 }
 
                 var traffordBoundary = L.geoJSON(data, { attribution: labMap.attributionOS, style: stylePoly }).addTo(labMap.map);
