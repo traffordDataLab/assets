@@ -15,12 +15,12 @@
 
 .leaflet-container a
 {
-    color: #fc6721;    /* all links to be orange as per Lab style */
+    color: #fc6721;     /* all links to be orange as per Lab style */
 }
 
-.leaflet-top
+.leaflet-top.leaflet-left
 {
-    margin-top: 10px;   /* move controls away from the top of the screen a little more so that on mobile users don't accidentally activate the URL bar */
+    z-index: 100000;    /* ensures the layer control expanded state appears above all other controls */
 }
 
 .leaflet-bar a, .leaflet-control-layers, .leaflet-control-attribution, .labMapControls
@@ -57,15 +57,9 @@
 .leaflet-touch .leaflet-bar a,
 .leaflet-touch .leaflet-control-layers-toggle
 {
-    width: 40px;
-    height: 40px;
-    line-height: 40px;
-}
-
-/* Fix for the layer control as we are positioning it ourselves - prevents the expanded list wrapping */
-.leaflet-control-layers-expanded .leaflet-control-layers-list
-{
-    white-space: nowrap;
+    width: 38px;
+    height: 38px;
+    line-height: 38px;
 }
 
 
@@ -77,7 +71,7 @@
     height: 100%;
 }
 
-/* common styling features for custom Leaflet controls such as our logo, the info panel etc. */
+/* common styling features for custom Leaflet controls such as the main panel, legend etc. */
 .labMapControls
 {
     /* background styles set in the leaflet.css override section as common with other Leaflet controls */
@@ -97,13 +91,6 @@
     font-size: 24px;
 }
 
-.layerControl   /* An additional style added to the layer control within labLeafletMap.js to control its position */
-{
-    top: 0;
-    position: absolute;
-    left: 50px;
-}
-
 .mainPanelControl, .legendControl
 {
     box-shadow: 0 1px 5px rgba(0,0,0,0.65);
@@ -113,6 +100,10 @@
 {
     padding-left: 8px;
     padding-right: 8px;
+}
+
+.mainPanelControl, .infoContainer
+{
     font-size: 14px;
 }
 
@@ -129,18 +120,19 @@
     font-weight: bold;
 }
 
-.aboutToggle
+.toggleGadget
 {
     color: #a5a5a5;
     float: right;
+    font-size: 22px;
 }
 
-.aboutToggle:hover
+.toggleGadget:hover
 {
     cursor: pointer;
 }
 
-.aboutToggleHiddenState
+.toggleGadgetHiddenState
 {
     color: #fc6721;
 }
@@ -151,11 +143,6 @@
     padding-top: 10px;
     border-top: 2px dotted #ccc;
     overflow: auto;
-}
-
-.infoContainer
-{
-    font-size: 14px;
 }
 
 .legendKey
@@ -189,4 +176,28 @@
                  1px -1px 10px #757575,
                  1px 1px 10px #757575,
                  -1px 1px 10px #757575;
+}
+
+/* Alterations to ensure correct display on mobiles */
+@media (max-width:620px)
+{
+    .mainPanelControl
+    {
+        width: 240px;
+    }
+
+    .mainPanelControl, .infoContainer
+    {
+        font-size: 12px;
+    }
+
+    .titleContainer
+    {
+        font-size: 20px;
+    }
+
+    .legendControl
+    {
+        max-width: 300px;
+    }
 }
