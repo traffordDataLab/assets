@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en-GB">
     <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
         <meta charset="UTF-8"/>
         <meta name="keywords" content=""/>
         <meta name="description" content=""/>
-        <title>Lab Leaflet Map Template</title>
+        <title>Trafford Data Lab: MAP TITLE</title>
 
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ==" crossorigin=""/>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
@@ -16,7 +17,18 @@
         -->
 
         <style>
+            @media (min-width:621px)
+            {
+                .mainPanelControl
+                {
+                    width: 280px;   /* set this to desired width when not on mobiles */
+                }
+            }
 
+            .infoDockContainer
+            {
+                max-height: 200px;  /* this is just a suggested size */
+            }
         </style>
     </head>
 
@@ -56,6 +68,8 @@
                 }
 
                 var traffordBoundary = L.geoJSON(data, { attribution: labMap.attributionOS, style: stylePoly }).addTo(labMap.map);
+
+                labMap.map.fitBounds(traffordBoundary.getBounds()); // adjust the zoom to fit the boundary to the screen size
             });
         </script>
     </body>
