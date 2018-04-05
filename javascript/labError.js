@@ -5,7 +5,7 @@
     Notes:          Assumes that all live environments we will be running from will be www. subdomains
 */
 function labError(e) {
-    if (location.href.substring(0, 12) = 'https://www.') {
+    if (location.href.substring(0, 12) == 'https://www.') {
     	// If we're running from a live environment redirect to the error page
         location.href = "https://www.trafforddatalab.io/error.html";
     }
