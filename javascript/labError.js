@@ -5,10 +5,9 @@
     Notes:          Assumes that all live environments we will be running from will be www. subdomains
 */
 function labError(e) {
-    if (location.href.indexOf("://www.") > -1) {
-    	// If we're running from a live environment redirect to the error page and try to log the error in the console for phone/email support
-        location.href = "http://www.traffordDataLab.io/error.html";
-        if (window.console && console.log) console.log("Trafford Data Lab Error: " + e.message);
+    if (location.href.substring(0, 12) = 'https://www.') {
+    	// If we're running from a live environment redirect to the error page
+        location.href = "https://www.trafforddatalab.io/error.html";
     }
     else {
     	// Otherwise show the error as we are running from a development environment
