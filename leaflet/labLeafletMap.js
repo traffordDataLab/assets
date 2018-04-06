@@ -46,17 +46,15 @@ function LabLeafletMap(objOptions) {
 
 
     // ######### Map Pane Setup #########
-    // create custom map panes to control the order (z-index) in which layers are displayed
-    this.map.createPane("pane_geography_overlay");
-    this.map.createPane("pane_labels");
+    // create custom map panes for specific case where we need to control the order (z-index) in which layers are displayed
+    this.map.createPane("pane_data_overlay");       // intended for non-administrative boundary data e.g. parks, watercourses etc.
+    this.map.createPane("pane_geography_overlay");  // intended for administrative boundaries created using polylines so that you can interact with layers below
+    this.map.createPane("pane_labels");             // intended for labelling for the either of the above layers
 
     // set the z-index of the panes to required values (NOTE: default overlay panes are 400, shadow panes are 500 and markers are 600)
+    this.map.getPane("pane_data_overlay").style.zIndex = 425;
     this.map.getPane("pane_geography_overlay").style.zIndex = 450;
-    this.map.getPane("pane_labels").style.zIndex = 490;
-
-    // disable pointer events on the geography overlay and labels panes so that the layers underneath register the clicks/taps
-    this.map.getPane("pane_geography_overlay").style.pointerEvents = "none";
-    this.map.getPane("pane_labels").style.pointerEvents = "none";
+    this.map.getPane("pane_labels").style.zIndex = 475;
     // ###########################
 
 
