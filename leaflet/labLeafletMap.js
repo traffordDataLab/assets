@@ -189,30 +189,31 @@ function LabLeafletMap(objOptions) {
 
     // ######### Main Panel (and sub-items) Control #########
     // map title and toggle button to hide/show the about panel - to be displayed within the mainPanel control
-    this.titleContainer = L.DomUtil.create('div', 'titleContainer');                        // the container for the title content
-    this.toggleAboutBtn = document.createElement('div');                                    // creating the toggle button..
+    this.titleText = document.createTextNode(this.title);                                   // Text node to hold the title Text
+    this.updateTitle = function (content) {
+        this.titleText.nodeValue = content;
+    };
+    this.toggleAboutBtn = document.createElement('div');                                    // create the toggle button for the about section..
     this.toggleAboutBtn.setAttribute('class', 'fa fa-chevron-circle-down toggleGadget');    // ..adding the CSS..
     this.toggleAboutBtn.addEventListener('click', this.toggleAbout);                        // ..and the click event..
-    this.titleContainer.appendChild(this.toggleAboutBtn);                                   // ..finally adding it to the title container
-    this.titleContainer.appendChild(document.createTextNode(this.title));                   // add the title text to the title container
+    this.titleContainer = L.DomUtil.create('div', 'titleContainer');                        // create the container for the title content
+    this.titleContainer.appendChild(this.toggleAboutBtn);                                   // add the toggle button to the title container...
+    this.titleContainer.appendChild(this.titleText);                                        // ...and finally the title text
 
-    // about this map information
+    // container for information about this map
     this.aboutContainer = L.DomUtil.create('div', 'aboutContainer');
-    this.aboutContainer.innerHTML = this.about;
+    this.updateAbout = function (content) {
+        this.aboutContainer.innerHTML = content;
+    }
+    this.updateAbout(this.about);   // call the update function in case we have content to display
+    this.toggleAbout(false);        // Add classes based on whether we are initially showing the about section or not to both the toggle button and the about container
 
-    // Add classes based on whether we are initially showing the about section or not to both the toggle button and the about container
-    this.toggleAbout(false);
-
-    // potential filter controls
+    // container for potential filter controls
     this.filterContainer = L.DomUtil.create('div', 'filterContainer');
-    // function so that we can call it when required e.g. when layers are dynamically created
     this.updateFilterGUI = function (content) {
         this.filterContainer.innerHTML = content;
     };
-    this.updateFilterGUI(this.filterGUI);     // call the filter GUI update function in case we have content to display
-
-    // info panel for displaying values on-hover etc.
-    this.infoContainer = L.DomUtil.create('div', 'infoContainer');
+    this.updateFilterGUI(this.filterGUI);   // call the update function in case we have content to display
 
     // create the main display panel control which contains the map title, about description, any dataset/filtering options and the information to be displayed when hovering over objects on the map
     this.mainPanelControl = L.control({ position: 'topright' });
@@ -222,12 +223,14 @@ function LabLeafletMap(objOptions) {
     };
     this.mainPanelControl.addTo(this.map);
 
-    // add all containers to be displayed within the mainPanel control to its container
+    // add title, about and filter containers to be displayed within the mainPanel control to its container
     this.mainPanelContainer = this.mainPanelControl.getContainer();
     this.mainPanelContainer.appendChild(this.titleContainer);
     this.mainPanelContainer.appendChild(this.aboutContainer);
     this.mainPanelContainer.appendChild(this.filterContainer);
 
+    // create the info panel for displaying values on-hover etc.
+    this.infoContainer = L.DomUtil.create('div', 'infoContainer');
     if (this.infoDockId == '') {
         // We are adding the info container to the main panel, so we need to create the dock div to add it to, allowing scrolling to occur etc.
         this.infoDockContainer = L.DomUtil.create('div', 'infoDockContainer');
