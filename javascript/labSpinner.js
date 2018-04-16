@@ -2,7 +2,7 @@
     Created:        2018/04/06 by James Austin - Trafford Data Lab
     Purpose:        Inform the user that something is happening
     Dependencies:   Font-awesome (external CSS)
-    Licence:        http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
+    Licence:        https://www.trafforddatalab.io/assets/LICENSE.txt
 */
 var lab_spinner = {     // Use non-standard naming convention to avoid conflicts
     container: null,

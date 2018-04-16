@@ -2,7 +2,7 @@
     Created:        2017/12/15 by James Austin - Trafford Data Lab
     Purpose:        Create Leaflet map tile layers
     Dependencies:   Leaflet.js (http://www.leafletjs.com)
-    Licence:        http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
+    Licence:        https://www.trafforddatalab.io/assets/LICENSE.txt
     Notes:          MaxZoom fixed to 19 for consistency
 */
 function labCreateTileLayer(type) {

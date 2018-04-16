@@ -2,7 +2,7 @@
     Created:        2017/12/15 by James Austin - Trafford Data Lab
     Purpose:        To fetch data from files, APIs, SPARQL sources etc. via AJAX and pass the data back via a callback function.
     Dependencies:   labError.js (internal library)
-    Licence:        http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
+    Licence:        https://www.trafforddatalab.io/assets/LICENSE.txt
 */
 function labAjax(url, callback, objOptions) {
     var def_method = 'GET';             // The request method to use, e.g. GET, POST etc.

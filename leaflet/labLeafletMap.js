@@ -2,7 +2,7 @@
     Created:        2017/12/19 by James Austin - Trafford Data Lab
     Purpose:        Main library for creating Lab maps using Leaflet
     Dependencies:   Leaflet.js (external library), labCreateTileLayer.js (internal library)
-    Licence:        http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
+    Licence:        https://www.trafforddatalab.io/assets/LICENSE.txt
 */
 function LabLeafletMap(objOptions) {
     var context = this;

@@ -2,7 +2,7 @@
     Created:        2018/04/05 by James Austin - Trafford Data Lab
     Purpose:        To obtain data passed via a query string in the URL or an optional string
     Dependencies:   None
-    Licence:        http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
+    Licence:        https://www.trafforddatalab.io/assets/LICENSE.txt
 */
 function labGetQryStrValByKey(key, str) {
     var def_str = (str === null) ? location.search : str;   // unless we have been given a specific string, search the URL query string for the key

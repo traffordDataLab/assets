@@ -1,7 +1,7 @@
 /*
     Created:        2017/12/18 by James Austin - Trafford Data Lab
     Purpose:        To handle the event of errors correctly whether we are running on the live or development environment
-    Licence:        http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
+    Licence:        https://www.trafforddatalab.io/assets/LICENSE.txt
     Notes:          Assumes that all live environments we will be running from will be www. subdomains
 */
 function labError(e) {

@@ -2,7 +2,7 @@
     Created:        2017/12/20 by James Austin - Trafford Data Lab
     Purpose:        Simple control to reset a Leaflet map to its default view, (i.e. lat, lng and zoom settings)
     Dependencies:   Leaflet.js (external library)
-    Licence:        http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
+    Licence:        https://www.trafforddatalab.io/assets/LICENSE.txt
     Notes:          Can be displayed as a stand-alone control or as part of an existing group, e.g. zoom control. Content can be html or an icon etc.
 */
 L.Control.ResetMapView = L.Control.extend({
