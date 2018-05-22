@@ -26,8 +26,9 @@ function LabLeafletMap(objOptions) {
     // Create the base layers object if it hasn't been supplied. This object is used in the layer control to change the tile layers of the map
     if (objOptions['baseLayers'] == null) {
         this.baseLayers = {
-            "Light": labCreateTileLayer("CartoDB.Positron"),
-            "Satellite": labCreateTileLayer("Esri.WorldImagery"),
+            "Aerial": labCreateTileLayer("Esri.WorldImagery"),
+            "High detail": labCreateTileLayer("OpenStreetMap.Mapnik"),
+            "Low detail": labCreateTileLayer("CartoDB.Positron"),
             "None": labCreateTileLayer(null)
         }
     }
