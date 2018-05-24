@@ -5,7 +5,7 @@
     Licence:        https://www.trafforddatalab.io/assets/LICENSE.txt
 */
 function labGetQryStrValByKey(key, str) {
-    var def_str = (str === null) ? location.search : str;   // unless we have been given a specific string, search the URL query string for the key
+    var def_str = (str == null) ? location.search : str;   // unless we have been given a specific string, search the URL query string for the key
 
     var qsVal = decodeURIComponent((RegExp(key + '=' + '(.+?)(&|$)').exec(def_str) || [, ])[1]);
     return (qsVal === "undefined") ? null : qsVal;
