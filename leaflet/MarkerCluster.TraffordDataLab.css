@@ -1,0 +1,63 @@
+/*
+    Custom styles for leaflet.markercluster plugin by Dave Leaver, https://github.com/Leaflet/Leaflet.markercluster
+    Replaces https://unpkg.com/leaflet.markercluster@1.3.0/dist/MarkerCluster.Default.css
+*/
+
+.marker-cluster-small, .marker-cluster-medium, .marker-cluster-large
+{
+    background-color: rgba(255, 255, 255, 0.6);    /* The halo around the clusters */
+}
+.marker-cluster-small div
+{
+    background-color: rgba(249, 136, 67, 0.8);
+}
+.marker-cluster-medium div
+{
+    background-color: rgba(234, 99, 42, 0.8);
+}
+.marker-cluster-large div
+{
+    background-color: rgba(188, 66, 24, 0.8);
+}
+
+/* IE 6-8 fallback colors */
+.leaflet-oldie .marker-cluster-small, .leaflet-oldie .marker-cluster-medium, .leaflet-oldie .marker-cluster-large
+{
+    background-color: rgb(255, 255, 255);          /* The halo around the clusters */
+}
+.leaflet-oldie .marker-cluster-small div
+{
+    background-color: rgb(249, 136, 67);
+}
+.leaflet-oldie .marker-cluster-medium div
+{
+    background-color: rgb(234, 99, 42);
+}
+.leaflet-oldie .marker-cluster-large div
+{
+    background-color: rgb(188, 66, 24);
+}
+
+.marker-cluster
+{
+    background-clip: padding-box;
+    border-radius: 20px;
+}
+
+.marker-cluster div
+{
+    width: 30px;
+    height: 30px;
+    margin-left: 5px;
+    margin-top: 5px;
+
+    text-align: center;
+    border-radius: 15px;
+    font: 12px 'Roboto', sans-serif;
+    color: #fff;
+}
+
+.marker-cluster span
+{
+    line-height: 30px;
+}
