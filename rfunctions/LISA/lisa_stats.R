@@ -6,7 +6,7 @@
 # load require packages
 require(dplyr) ; require(spdep)
 
-lisa_stats <- function(x, variable, queen = FALSE, sig = 0.05){
+lisa_stats <- function(x, variable, queen = TRUE, sig = 0.05){
   if (!inherits(x, "SpatialPolygonsDataFrame")) 
     stop("MUST be a SpatialPolygonsDataFrame object")
 
