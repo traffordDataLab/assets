@@ -2,7 +2,7 @@
 
 # load the necessary R packages and Lab R functions
 library(tidyverse); library(sf) ; library(leaflet)
-source("https://github.com/traffordDataLab/assets/raw/master/rfunctions/crime_data.R")
+source("https://github.com/traffordDataLab/assets/raw/master/rfunctions/crime/crime_data.R")
 
 # create a 500m buffer from a pair of coordinates
 buffer <- c(-2.287333, 53.458472) %>%
