@@ -210,6 +210,7 @@ legend.append('text')
 .attr("x", 8)
 .attr("y", 4)
 .attr("dy", ".03em")
+.style("font-size", "12px")
 .text(function (d) {
   return d[0]["serie"]
 })
@@ -224,7 +225,7 @@ legendg.selectAll(".legends").nodes().map(function(d){
   var totalOffset = 0;
   legendg.selectAll(".legends").attr("transform", function (d, i) {
     //if(i>0) totalOffset = totalOffset+offsets[i]+25
-    if(i>0) totalOffset = totalOffset + 135
+    if(i>0) totalOffset = totalOffset + 170
     return  "translate(" + totalOffset + ",0)"
   })
 
