@@ -12,7 +12,7 @@
     ...
   ]
 */
-/*It accepts an object with the options below*/ 
+/*It accepts an object with the options below*/
 function timeSeries(obj){
 
   var data = (obj.data) ? obj.data:["",""];//data on the format described above *required
@@ -223,7 +223,8 @@ legendg.selectAll(".legends").nodes().map(function(d){
 
   var totalOffset = 0;
   legendg.selectAll(".legends").attr("transform", function (d, i) {
-    if(i>0) totalOffset = totalOffset+offsets[i]+25
+    //if(i>0) totalOffset = totalOffset+offsets[i]+25
+    if(i>0) totalOffset = totalOffset + 135
     return  "translate(" + totalOffset + ",0)"
   })
 
