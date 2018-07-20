@@ -1,0 +1,12 @@
+.isochronesControl
+{
+    font-size: 18px;
+}
+
+.isochronesControlActive
+{
+    /*
+        Added to the map container when the plugin is active in addition to leaflet-crosshair.
+        Add styles if required to further communicate to the user that the map is in generate isocrones mode
+    */
+}
