@@ -96,7 +96,7 @@ L.Control.Isochrones = L.Control.extend({
         L.DomEvent
             .on(link, 'mousedown dblclick', L.DomEvent.stopPropagation)
             .on(link, 'click', L.DomEvent.stop)
-            .on(link, 'click', this._modeSwitch, this);
+            .on(link, 'click', this._toggleMode, this);
 
         return this._mainControlContainer;
     },
@@ -105,20 +105,13 @@ L.Control.Isochrones = L.Control.extend({
         // TODO: Need to cleanly remove the plugin and associated event listeners from the map
     },
 
-    _toggle: function (toggleVal) {
-        // toggle a value passed to it between 0 and 1.  If argument is not 0 or 1 null is returned
-        return (toggleVal === 0 || toggleVal === 1) ? Math.abs(toggleVal - 1) : null;
-    },
-
-    _modeSwitch: function () {
-        this._mode = this._toggle(this._mode);
-        console.log('mode = ' + this._mode);
-
+    _toggleMode: function () {
+        // Toggle the control between active and inactive states
+        this._mode = Math.abs(this._mode - 1);
         (this._mode == 1) ? this._activateControl() : this._deactivateControl();
     },
 
     _activateControl: function () {
-        console.log('in activate');
         // Add the isochronesControlActive class to the map container to indicate the control is active
         L.DomUtil.addClass(this._mapContainer, 'isochronesControlActive');
 
@@ -134,11 +127,9 @@ L.Control.Isochrones = L.Control.extend({
 
         // Add an event handler to the map for a click event
         this._map.on('click', this._createIsochrones, this);    // "this" is very important - send the context to the event handler so that we can refer to methods within the object
-        this._mode = 1;
     },
 
     _deactivateControl: function () {
-        console.log('in deactivate');
         // Remove the isochronesControlActive class from the map container
         L.DomUtil.removeClass(this._mapContainer, 'isochronesControlActive');
 
@@ -149,12 +140,14 @@ L.Control.Isochrones = L.Control.extend({
 
         // Remove the event handler for the click event
         this._map.off('click', this._createIsochrones, this);
-        this._mode = 0;
     },
 
     _createIsochrones: function (e) {
-        console.log('in create');
         alert("You clicked the map at " + e.latlng);
+
+        //TODO: Call the API and display the icocrones
+
+        this._mode = 0;
         this._deactivateControl();
     }
 });
