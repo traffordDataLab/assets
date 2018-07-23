@@ -62,7 +62,7 @@
             });
 
             // Add the isochrones plugin
-            L.control.isochrones({
+            labMap.isoControl = L.control.isochrones({
                 mainControlStyleClass: 'isochronesControl'
             }).addTo(labMap.map);
 
@@ -79,6 +79,10 @@
                 }
 
                 var traffordBoundary = L.geoJSON(data, { attribution: labMap.attributionOS, style: stylePoly }).addTo(labMap.map);
+                traffordBoundary.on('click', function (e) {
+                    alert('This is a click on the Trafford boundary polygon');
+                    //labMap.isoControl.remove();   // testing removal of the control
+                });
 
                 labMap.map.fitBounds(traffordBoundary.getBounds()); // adjust the zoom to fit the boundary to the screen size
             });

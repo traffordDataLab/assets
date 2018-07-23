@@ -76,33 +76,36 @@ L.Control.Isochrones = L.Control.extend({
     onAdd: function (map) {
         this._map = map;
         this._mapContainer = map.getContainer();
-        this._mode = 0;         // 0 = not in create mode, 1 = create mode
+        this._mode = 0;             // 0 = not in create mode, 1 = create mode
         this._latlng = null;
+        this._iMapElements = [];    // array to hold interactive layers on the map to apply CSS to
 
         // Container for the control - either one passed in the options arguments or create a new one
         this._mainControlContainer = (!this.options.mainControlContainer) ? L.DomUtil.create('div', 'leaflet-bar') : this.options.mainControlContainer;
 
         // Create main control button as a link - as per Leaflet convention
-        var link = L.DomUtil.create('a', this.options.mainControlStyleClass, this._mainControlContainer);
-        link.innerHTML = this.options.mainControlContent;
-        link.href = '#';
-        link.title = this.options.mainControlTooltip;
+        this._mainButton = L.DomUtil.create('a', this.options.mainControlStyleClass, this._mainControlContainer);
+        this._mainButton.innerHTML = this.options.mainControlContent;
+        this._mainButton.href = '#';
+        this._mainButton.title = this.options.mainControlTooltip;
 
         // For assistive technologies e.g. screen readers
-        link.setAttribute('role', 'button');
-		link.setAttribute('aria-label', link.title);
+        this._mainButton.setAttribute('role', 'button');
+		this._mainButton.setAttribute('aria-label', this._mainButton.title);
 
         // Set events
         L.DomEvent
-            .on(link, 'mousedown dblclick', L.DomEvent.stopPropagation)
-            .on(link, 'click', L.DomEvent.stop)
-            .on(link, 'click', this._toggleMode, this);
+            .on(this._mainButton, 'mousedown dblclick', L.DomEvent.stopPropagation)
+            .on(this._mainButton, 'click', L.DomEvent.stop)
+            .on(this._mainButton, 'click', this._toggleMode, this);     // send 'this' context to the event handler
 
         return this._mainControlContainer;
     },
 
     onRemove: function (map) {
-        // TODO: Need to cleanly remove the plugin and associated event listeners from the map
+        // clean up - remove any styles and event listeners
+        this._deactivateControl();
+        this._map.off('click', this._createIsochrones, this);
     },
 
     _toggleMode: function () {
@@ -125,8 +128,8 @@ L.Control.Isochrones = L.Control.extend({
             L.DomUtil.addClass(this._iMapElements[i], 'isochronesControlActive');
         }
 
-        // Add an event handler to the map for a click event
-        this._map.on('click', this._createIsochrones, this);    // "this" is very important - send the context to the event handler so that we can refer to methods within the object
+        // Add a one-time event handler to the map for a click event
+        this._map.once('click', this._createIsochrones, this);    // send 'this' context to the event handler
     },
 
     _deactivateControl: function () {
@@ -137,9 +140,6 @@ L.Control.Isochrones = L.Control.extend({
         for (var i = 0; i < this._iMapElements.length; i++) {
             L.DomUtil.removeClass(this._iMapElements[i], 'isochronesControlActive');
         }
-
-        // Remove the event handler for the click event
-        this._map.off('click', this._createIsochrones, this);
     },
 
     _createIsochrones: function (e) {
