@@ -119,18 +119,17 @@ L.Control.Isochrones = L.Control.extend({
 
     _activateControl: function () {
         console.log('in activate');
-        // Add the isochronesControlActive and leaflet-crosshair classes to the map container to indicate the control is active
-        if (!L.DomUtil.hasClass(this._mapContainer, 'isochronesControlActive')) L.DomUtil.addClass(this._mapContainer, 'isochronesControlActive');
-        if (!L.DomUtil.hasClass(this._mapContainer, 'leaflet-crosshair')) L.DomUtil.addClass(this._mapContainer, 'leaflet-crosshair');
+        // Add the isochronesControlActive class to the map container to indicate the control is active
+        L.DomUtil.addClass(this._mapContainer, 'isochronesControlActive');
 
         /*
             The leaflet-interactive CSS class is applied to any layers added to the map which the user can interact with. This class changes the cursor to a pointer.
-            We want the cursor to be a crosshair so we need to add leaflet-crosshair class to each interactive layer so that the cursor is always a crosshair whilst in isochrone mode.
+            We want to override this with our custom class isochronesControlActive so we need to add this to each interactive layer so we get a consistent behaviour across the whole map.
             Get the list of elements each time to ensure any new interactive elements added to the map at any time are included.
         */
         this._iMapElements = document.getElementsByClassName('leaflet-interactive');
         for (var i = 0; i < this._iMapElements.length; i++) {
-            L.DomUtil.addClass(this._iMapElements[i], 'leaflet-crosshair');
+            L.DomUtil.addClass(this._iMapElements[i], 'isochronesControlActive');
         }
 
         // Add an event handler to the map for a click event
@@ -140,13 +139,12 @@ L.Control.Isochrones = L.Control.extend({
 
     _deactivateControl: function () {
         console.log('in deactivate');
-        // Remove the isochronesControlActive and leaflet-crosshair classes from the map container
-        if (L.DomUtil.hasClass(this._mapContainer, 'isochronesControlActive')) L.DomUtil.removeClass(this._mapContainer, 'isochronesControlActive');
-        if (L.DomUtil.hasClass(this._mapContainer, 'leaflet-crosshair')) L.DomUtil.removeClass(this._mapContainer, 'leaflet-crosshair');
+        // Remove the isochronesControlActive class from the map container
+        L.DomUtil.removeClass(this._mapContainer, 'isochronesControlActive');
 
-        // Remove the leaflet-crosshair class from all interactive map elements
+        // Remove the isochronesControlActive class from all interactive map elements
         for (var i = 0; i < this._iMapElements.length; i++) {
-            L.DomUtil.removeClass(this._iMapElements[i], 'leaflet-crosshair');
+            L.DomUtil.removeClass(this._iMapElements[i], 'isochronesControlActive');
         }
 
         // Remove the event handler for the click event
