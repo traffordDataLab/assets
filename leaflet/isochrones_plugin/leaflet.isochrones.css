@@ -3,9 +3,8 @@
     font-size: 18px;
 }
 
-/* Added to the map container and all interactive Leaflet layers when the plugin is activated by the user. */
+/* Added to the map container when the plugin is activated by the user. */
 .isochronesControlActive
 {
-    cursor: crosshair;
-    /* Further styles for the map container can be added to communicate to the user that the map is in create isochrones mode */
+    /* Add styles to communicate to the user that the map is in create isochrones mode */
 }

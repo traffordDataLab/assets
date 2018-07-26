@@ -9,6 +9,7 @@ L.Control.Isochrones = L.Control.extend({
     options: {
         // General plugin control options
         position: 'topleft',                        // Leaflet control pane position
+        zIndexMouseMarker: 9000,                    // Needs to be greater than any other layer in the map
         apiKey: '',                                 // openrouteservice API key - the service which returns the isochrone polygons based on the various options/parameters
 
         // Control to initialise the plugin
@@ -103,9 +104,8 @@ L.Control.Isochrones = L.Control.extend({
     },
 
     onRemove: function (map) {
-        // clean up - remove any styles and event listeners
+        // clean up - remove any styles and event listeners etc.
         this._deactivateControl();
-        this._map.off('click', this._createIsochrones, this);
     },
 
     _toggleMode: function () {
@@ -119,33 +119,59 @@ L.Control.Isochrones = L.Control.extend({
         L.DomUtil.addClass(this._mapContainer, 'isochronesControlActive');
 
         /*
-            The leaflet-interactive CSS class is applied to any layers added to the map which the user can interact with. This class changes the cursor to a pointer.
-            We want to override this with our custom class isochronesControlActive so we need to add this to each interactive layer so we get a consistent behaviour across the whole map.
-            Get the list of elements each time to ensure any new interactive elements added to the map at any time are included.
+            Using a technique deployed in Jacob Toye's Leaflet.Draw plugin:
+            We create an invisible mouse marker to capture the click event to give us a lat/lng to calculate the isochrones
         */
-        this._iMapElements = document.getElementsByClassName('leaflet-interactive');
-        for (var i = 0; i < this._iMapElements.length; i++) {
-            L.DomUtil.addClass(this._iMapElements[i], 'isochronesControlActive');
+        if (!this._mouseMarker) {
+            this._mouseMarker = L.marker(this._map.getCenter(), {
+                icon: L.divIcon({
+                    className: 'leaflet-crosshair',
+                    iconAnchor: [20, 20],
+                    iconSize: [40, 40]
+                }),
+                opacity: 0,
+                zIndexOffset: this.options.zIndexMouseMarker
+            });
         }
 
-        // Add a one-time event handler to the map for a click event
-        this._map.once('click', this._createIsochrones, this);    // send 'this' context to the event handler
+        // Add events to the marker and then add the marker to the map
+        this._mouseMarker
+            .on('mousemove', this._onMouseMove, this)
+            .once('click', this._createIsochrones, this)
+            .addTo(this._map);
+
+        // Add a duplicate mouse move event to the map in case the mouse pointer goes outside of the mouseMarker
+        this._map.on('mousemove', this._onMouseMove, this);
     },
 
     _deactivateControl: function () {
         // Remove the isochronesControlActive class from the map container
         L.DomUtil.removeClass(this._mapContainer, 'isochronesControlActive');
 
-        // Remove the isochronesControlActive class from all interactive map elements
-        for (var i = 0; i < this._iMapElements.length; i++) {
-            L.DomUtil.removeClass(this._iMapElements[i], 'isochronesControlActive');
-        }
+        // Remove the mouse marker and its events from the map and destroy the marker
+        this._mouseMarker
+            .off('mousemove', this._onMouseMove, this)
+            .removeFrom(this._map);
+        this._mouseMarker = null;
+
+        // Remove map events
+        this._map.off('mousemove', this._onMouseMove, this);
     },
+
+    _onMouseMove: function (e) {
+		var newPos = this._map.mouseEventToLayerPoint(e.originalEvent);
+		var latlng = this._map.layerPointToLatLng(newPos);
+
+        // Update the mouse marker position
+		this._mouseMarker.setLatLng(latlng);
+
+		L.DomEvent.preventDefault(e.originalEvent);
+	},
 
     _createIsochrones: function (e) {
         alert("You clicked the map at " + e.latlng);
 
-        //TODO: Call the API and display the icocrones
+        //TODO: Call the API and display the isochrones
 
         this._mode = 0;
         this._deactivateControl();
