@@ -79,7 +79,7 @@ L.Control.Isochrones = L.Control.extend({
         this._mapContainer = map.getContainer();
         this._mode = 0;             // 0 = not in create mode, 1 = create mode
         this._latlng = null;
-        this._iMapElements = [];    // array to hold interactive layers on the map to apply CSS to
+        this._mouseMarker = null;   // invisible Leaflet marker to follow the mouse pointer when control is activated
 
         // Container for the control - either one passed in the options arguments or create a new one
         this._mainControlContainer = (!this.options.mainControlContainer) ? L.DomUtil.create('div', 'leaflet-bar') : this.options.mainControlContainer;
@@ -149,10 +149,12 @@ L.Control.Isochrones = L.Control.extend({
         L.DomUtil.removeClass(this._mapContainer, 'isochronesControlActive');
 
         // Remove the mouse marker and its events from the map and destroy the marker
-        this._mouseMarker
-            .off('mousemove', this._onMouseMove, this)
-            .removeFrom(this._map);
-        this._mouseMarker = null;
+        if (this._mouseMarker !== null) {
+            this._mouseMarker
+                .off('mousemove', this._onMouseMove, this)
+                .removeFrom(this._map);
+            this._mouseMarker = null;
+        }
 
         // Remove map events
         this._map.off('mousemove', this._onMouseMove, this);
