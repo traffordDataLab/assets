@@ -10,7 +10,7 @@ L.Control.Isochrones = L.Control.extend({
         // General plugin control options
         position: 'topleft',                        // Leaflet control pane position
         zIndexMouseMarker: 9000,                    // Needs to be greater than any other layer in the map
-        apiKey: '',                                 // openrouteservice API key - the service which returns the isochrone polygons based on the various options/parameters
+        apiKey: '58d904a497c67e00015b45fc6862cde0265d4fd78ec660aa83220cdb',                                 // openrouteservice API key - the service which returns the isochrone polygons based on the various options/parameters
 
         // Control to initialise the plugin
         mainControlContainer: null,                 // the container for the plugin control to be displayed within - a value of null creates a new container, otherwise you can specify an existing control container to add this control to, e.g. the zoom control etc.
@@ -78,7 +78,6 @@ L.Control.Isochrones = L.Control.extend({
         this._map = map;
         this._mapContainer = map.getContainer();
         this._mode = 0;             // 0 = not in create mode, 1 = create mode
-        this._latlng = null;
         this._mouseMarker = null;   // invisible Leaflet marker to follow the mouse pointer when control is activated
 
         // Container for the control - either one passed in the options arguments or create a new one
@@ -171,9 +170,22 @@ L.Control.Isochrones = L.Control.extend({
 	},
 
     _createIsochrones: function (e) {
-        alert("You clicked the map at " + e.latlng);
+        var latLng = e.latlng;
 
-        //TODO: Call the API and display the isochrones
+        // Create the URL to pass to the API
+        // TODO: Needs to get values from options and internally based on the current settings
+        var apiUrl = 'https://api.openrouteservice.org/isochrones?api_key=' + this.options.apiKey;
+        apiUrl += '&locations=' + latLng.lng + '%2C' + latLng.lat;
+        apiUrl += '&profile=driving-car&range_type=time&range=60&location_type=start';
+
+        // Store the context
+        var context = this;
+
+        // Call the API
+        // TODO: need to handle this much more elegantly and factor in styling options etc.
+        labAjax(apiUrl, function (data) {
+            L.geoJSON(data).addTo(context._map);
+        });
 
         this._mode = 0;
         this._deactivateControl();
