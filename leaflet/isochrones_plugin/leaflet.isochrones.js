@@ -10,13 +10,13 @@ L.Control.Isochrones = L.Control.extend({
         // General plugin control options
         position: 'topleft',                        // Leaflet control pane position
         zIndexMouseMarker: 9000,                    // Needs to be greater than any other layer in the map
-        apiKey: '58d904a497c67e00015b45fc6862cde0265d4fd78ec660aa83220cdb',                                 // openrouteservice API key - the service which returns the isochrone polygons based on the various options/parameters
+        apiKey: '58d904a497c67e00015b45fc6862cde0265d4fd78ec660aa83220cdb',                                 // openrouteservice API key - the service which returns the isochrone polygons based on the various options/parameters TODO: Remove this when we ship the code as this is our personal key
 
         // Control to initialise the plugin
-        mainControlContainer: null,                 // the container for the plugin control to be displayed within - a value of null creates a new container, otherwise you can specify an existing control container to add this control to, e.g. the zoom control etc.
+        mainControlContainer: null,                 // The container for the plugin control to be displayed within - a value of null creates a new container, otherwise you can specify an existing control container to add this control to, e.g. the zoom control etc.
         mainControlContent: '*',                    // HTML to display within the control 'button'. If you want an icon from services like Fontawesome pass '' for this value and set the StyleClass option
-        mainControlTooltip: 'Show reachability',    // tooltip to appear on-hover
-        mainControlStyleClass: '',                  // allow options for styling - if you want to use an icon from services like fontawesome pass the declarations here, e.g. 'fa fa-home' etc.
+        mainControlTooltip: 'Show reachability',    // Tooltip to appear on-hover
+        mainControlStyleClass: '',                  // Allow options for styling - if you want to use an icon from services like fontawesome pass the declarations here, e.g. 'fa fa-home' etc.
 
         // Delete control to remove any current isochrones drawn on the map
         deleteControlContent: 'X',
@@ -34,19 +34,19 @@ L.Control.Isochrones = L.Control.extend({
         minimiseControlStyleClass: '',
 
         // The method used to create the isochrones
-        rangeType: 'distance',                      // can be either by distance or time - any value other than 'distance' is assumed to be 'time'
-        rangeTypeDistanceLabel: 'Distance',         // the label to appear next to the distance radio button option
-        rangeTypeTimeLabel: 'Travel time',          // same as above but for the time option
+        rangeType: 'distance',                      // Can be either by distance or time - any value other than 'distance' is assumed to be 'time'
+        rangeTypeDistanceLabel: 'Distance',         // The label to appear next to the distance radio button option
+        rangeTypeTimeLabel: 'Travel time',          // sSame as above but for the time option
 
         rangeControlDistanceTitle: 'Range (kilometres)',
         rangeControlDistanceMin: 0.5,
         rangeControlDistanceMax: 3,
         rangeControlDistanceInterval: 0.5,
-        rangeControlDistanceUnits: 'km',            // can be either 'm', 'km' or 'mi'
+        rangeControlDistanceUnits: 'km',            // Can be either 'm', 'km' or 'mi'
 
         rangeControlTimeTitle: 'Range (minutes)',
         rangeControlTimeMin: 5,                     // \
-        rangeControlTimeMax: 30,                    //  > all these values need to be multiplied by 60 to convert to seconds - no other unit of time is allowed
+        rangeControlTimeMax: 30,                    //  > All these values need to be multiplied by 60 to convert to seconds - no other unit of time is allowed
         rangeControlTimeInterval: 5,                // /
 
         // Options to select when choosing to create isochrones based on travel time
@@ -65,13 +65,15 @@ L.Control.Isochrones = L.Control.extend({
         travelModeCarStyleClass: '',
         travelModeCarProfile: 'driving-car',        // API options, choices are 'driving-car' and 'driving-hgv'
 
+        ajaxRequestFn: null,                        // External function to make the actual call to the API via AJAX - if null will attempt to use simpleAjaxRequest
+
         // Styling Options
-        polyStyleFn: null,                          //   -external function to call which styles the polygons returned from API call and when the user hovers over them - gives full control over the styling
+        polyStyleFn: null,                          //   -External function to call which styles the polygons returned from API call and when the user hovers over them - gives full control over the styling
         highlightFn: null,                          // /
-        markerDistance: null,                       // the marker to use at the centre of isochrones based on distance
-        markerWalk: null,                           // the marker to use at the centre of isochrones based on walking time
-        markerBike: null,                           // the marker to use at the centre of isochrones based on cycling time
-        markerCar: null                             // the marker to use at the centre of isochrones based on driving time
+        markerDistance: null,                       // The marker to use at the centre of isochrones based on distance
+        markerWalk: null,                           // The marker to use at the centre of isochrones based on walking time
+        markerBike: null,                           // The marker to use at the centre of isochrones based on cycling time
+        markerCar: null,                            // The marker to use at the centre of isochrones based on driving time
     },
 
     onAdd: function (map) {
@@ -136,11 +138,14 @@ L.Control.Isochrones = L.Control.extend({
         // Add events to the marker and then add the marker to the map
         this._mouseMarker
             .on('mousemove', this._onMouseMove, this)
-            .once('click', this._createIsochrones, this)
+            .once('click', this._callApi, this)
             .addTo(this._map);
 
         // Add a duplicate mouse move event to the map in case the mouse pointer goes outside of the mouseMarker
         this._map.on('mousemove', this._onMouseMove, this);
+
+        // Fire an event to indicate that the control is active - in case we want to run some external code etc.
+        this._map.fire('isochrones:activated');
     },
 
     _deactivateControl: function () {
@@ -157,6 +162,9 @@ L.Control.Isochrones = L.Control.extend({
 
         // Remove map events
         this._map.off('mousemove', this._onMouseMove, this);
+
+        // Fire an event to indicate that the control is active - in case we want to run some external code etc.
+        this._map.fire('isochrones:deactivated');
     },
 
     _onMouseMove: function (e) {
@@ -169,7 +177,7 @@ L.Control.Isochrones = L.Control.extend({
 		L.DomEvent.preventDefault(e.originalEvent);
 	},
 
-    _createIsochrones: function (e) {
+    _callApi: function (e) {
         var latLng = e.latlng;
 
         // Create the URL to pass to the API
@@ -178,17 +186,41 @@ L.Control.Isochrones = L.Control.extend({
         apiUrl += '&locations=' + latLng.lng + '%2C' + latLng.lat;
         apiUrl += '&profile=driving-car&range_type=time&range=60&location_type=start';
 
-        // Store the context
+        // Ensure the control is deactivated
+        this._mode = 0;
+        this._deactivateControl();
+
+        // Inform that we are calling the API - could be useful for starting a spinner etc. to indicate to the user that something is happening if there is a delay
+        this._map.fire('isochrones:api_call_start');
+
+        // Store the context for use within the API callback below
         var context = this;
 
         // Call the API
-        // TODO: need to handle this much more elegantly and factor in styling options etc.
-        labAjax(apiUrl, function (data) {
-            L.geoJSON(data).addTo(context._map);
-        });
+        try {
+            var ajaxFn = this.options.ajaxRequestFn;            // This is the external function to use which makes the actual AJAX request to the API
+            if (ajaxFn == null) ajaxFn = simpleAjaxRequest;     // If it is null, attempt to use the simple function included in leaflet.isochrones_utilities.js
 
-        this._mode = 0;
-        this._deactivateControl();
+            ajaxFn(apiUrl, function (data) {
+                if (data == null) {
+                    alert('something went wrong');
+                }
+                else {
+                    // TODO: styling options for the GeoJSON and put in a separate layer etc.
+                    L.geoJSON(data).addTo(context._map);
+                }
+
+                // Inform that we have completed calling the API - could be useful for stopping a spinner etc. to indicate to the user that something was happening. Doesn't indicate success
+                context._map.fire('isochrones:api_call_end');
+            });
+        }
+        catch(e) {
+            // Log the error in the console
+            if (console.log) console.log('Leaflet.isochrones.js error attempting to call API.\nLikely cause is function simpleAjaxRequest has not been included and no alternative has been specified.\nSee docs for more details, actual error below.\n' + e);
+
+            // Inform that we have completed calling the API - could be useful for stopping a spinner etc. to indicate to the user that something was happening. Doesn't indicate success
+            context._map.fire('isochrones:api_call_end');
+        }
     }
 });
 

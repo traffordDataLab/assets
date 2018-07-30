@@ -49,6 +49,7 @@
         <script src="https://www.trafforddatalab.io/assets/leaflet/labCreateTileLayer.js"></script>
         <script src="https://www.trafforddatalab.io/assets/leaflet/labLeafletMap.js"></script>
 
+        <script src="leaflet.isochrones_utilities.js"></script>
         <script src="leaflet.isochrones.js"></script>
 
         <script>
@@ -61,9 +62,18 @@
                 alert('This is a click on the map');
             });
 
+            labMap.map.on('isochrones:api_call_start', function (e) {
+                alert('starting the API call');
+            });
+
+            labMap.map.on('isochrones:api_call_end', function (e) {
+                alert('ending the API call');
+            });
+
             // Add the isochrones plugin
             labMap.isoControl = L.control.isochrones({
-                mainControlStyleClass: 'isochronesControl'
+                mainControlStyleClass: 'isochronesControl'/*,
+                ajaxRequestFn: labAjax*/
             }).addTo(labMap.map);
 
             // Choose the base/tile layer for the map
