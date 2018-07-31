@@ -46,3 +46,29 @@ function simpleAjaxRequest(url, callback) {
         callback(null);
     }
 }
+
+
+// Example function to style the isochrone polygons when they are returned from the API call
+function styleIsochrones(feature) {
+    // NOTE: You can do some conditional styling by reading the properties of the feature parameter passed to the function
+
+    return {
+        color: '#fc6721',
+        fillColor: '#fc6721',
+        opacity: 0.5,
+        fillOpacity: 0.2
+    };
+}
+
+// Example function to style the isochrone polygons when the user hovers over them
+function hoverIsochrones(feature) {
+    // NOTE: You can do some conditional styling by reading the properties of the feature parameter passed to the function
+    
+    return {
+        color: '#ffea00',
+        weight: 3,
+        fillColor: '#ffff00',
+        fillOpacity: '0.5',
+        opacity: '1'
+    };
+}

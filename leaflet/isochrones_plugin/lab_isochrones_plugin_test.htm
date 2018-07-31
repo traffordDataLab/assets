@@ -43,6 +43,7 @@
         <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.62.0/dist/L.Control.Locate.min.js"></script>
         <script src="https://www.trafforddatalab.io/assets/javascript/labError.js"></script>
         <script src="https://www.trafforddatalab.io/assets/javascript/labAjax.js"></script>
+        <script src="https://www.trafforddatalab.io/assets/javascript/labSpinner.js"></script>
         <!-- Uncomment if reset map control is required
         <script src="https://www.trafforddatalab.io/assets/leaflet/leaflet.resetMapView.js"></script>
         -->
@@ -63,17 +64,20 @@
             });
 
             labMap.map.on('isochrones:api_call_start', function (e) {
-                alert('starting the API call');
+                //alert('starting the API call');
+                startLabSpinner();
             });
 
             labMap.map.on('isochrones:api_call_end', function (e) {
-                alert('ending the API call');
+                //alert('ending the API call');
+                stopLabSpinner();
             });
 
             // Add the isochrones plugin
             labMap.isoControl = L.control.isochrones({
-                mainControlStyleClass: 'isochronesControl'/*,
-                ajaxRequestFn: labAjax*/
+                mainControlStyleClass: 'isochronesControl',
+                polyStyleFn: styleIsochrones,
+                hoverPolyStyleFn: hoverIsochrones
             }).addTo(labMap.map);
 
             // Choose the base/tile layer for the map
