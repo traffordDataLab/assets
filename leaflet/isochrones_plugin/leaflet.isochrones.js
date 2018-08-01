@@ -207,19 +207,116 @@ L.Control.Isochrones = L.Control.extend({
                     if (console.log) console.log('Leaflet.isochrones.js error calling API, no data returned. Likely cause is API unavailable or bad parameters.');
                 }
                 else {
-                    // TODO: reverse the order for the GeoJSON layers so that the smallest is on top - this allows each to have a hover event
+                    /*
+                        ISSUE: The GeoJSON features returned from the API are in the order smallest to largest in terms of the area of the polygons.
+                        This causes us a problem as when they are displayed on the map, the largest polygon covers all the others, preventing us hovering over the other polygons.
+                        The plan is to reverse the order of the features, however this is not as simple as sorting due to how Leaflet deals with layers.
+                        Each layer is given an id. When you add layers to layergroup objects, it doesn't matter the order you add them, what matters is the id sequence.
+                        Therefore we need to generate new a new id for each layer, with the larger polygon layers given lower ids than the smaller.
+                    */
+
+                    // Create a Leaflet GeoJSON feature group object from the GeoJSON returned from the API
+                    var geoJsonFromApi = L.geoJSON(data);
+
+                    // Create an empty Leaflet GeoJSON feature group object to hold the same layers as above but in reverse order
+                    var newGeoJson = L.geoJSON();
+
+                    // Load the layers into an array so that we can...
+                    var arrLayers = geoJsonFromApi.getLayers();
+
+                    // ...sort it in decending order of the internal Leaflet id
+                    arrLayers.sort(function (a, b) { return b['_leaflet_id'] - a['_leaflet_id'] });
+
+                    console.log(arrLayers);
+
+                    for (var i = 0; i < arrLayers.length; i++) {
+                        arrLayers[i]['old_id'] = arrLayers[i]['_leaflet_id'];
+
+                        // Wipe the internal Leaflet layer id and...
+                        arrLayers[i]['_leaflet_id'] = null;
+
+                        // ...force Leaflet to assign a new one
+                        L.Util.stamp(arrLayers[i]);
+
+                        // Now add the layer with its new id to the new Leaflet GeoJSON feature group object
+                        newGeoJson.addLayer(arrLayers[i]);
+                    }
+
+                    newGeoJson.eachLayer(function (layer) {
+                        console.log('newGeoJson: ' + newGeoJson.getLayerId(layer) + ', old: ' + layer.old_id);
+                        layer.on({
+                            mouseover: (function (e) { e.target.setStyle(context.options.hoverPolyStyleFn(layer)) }),
+                            mouseout: (function (e) { newGeoJson.resetStyle(e.target) })
+                        });
+                    });
+
+                    newGeoJson.addTo(context._map);
+
+                    /*
+                    geoJsonFromApi.eachLayer(function (layer) {
+                        console.log('geoJsonFromApi: ' + geoJsonFromApi.getLayerId(layer));
+                        arrLayers.push({ 'id': geoJsonFromApi.getLayerId(layer), 'layer': layer });
+                    });
+
+                    var newLayer;
+                    arrLayers.sort(function (a, b) { return b['id'] - a['id'] });
+                    for (var i = 0; i < arrLayers.length; i++) {
+                        console.log('adding: ' + arrLayers[i]['id']);
+                        newLayer = new L.Layer;
+                        newGeoJson.addLayer(arrLayers[i]['layer']);
+                    }
+
+                    newGeoJson.eachLayer(function (layer) {
+                        console.log('newGeoJson: ' + newGeoJson.getLayerId(layer));
+                    });
+
+                    newGeoJson.addTo(context._map);
+                    */
+
+
+
+
+
+
+
+                    /*
+                    // Create a geoJson layer with the data returned from the API
                     context._geoJsonLayer = L.geoJSON(data, { style: context.options.polyStyleFn }).addTo(context._layer);
+                    //context._geoJsonLayer = L.geoJSON(data, { style: context.options.polyStyleFn });
 
                     if (context.options.hoverPolyStyleFn != null) {
+                        //var arrLayers = [];
+
                         context._geoJsonLayer.eachLayer(function (layer) {
+                            //console.log('current: ' + context._geoJsonLayer.getLayerId(layer));
+                            //arrLayers.push({ 'id': context._geoJsonLayer.getLayerId(layer), 'layer': layer });
+
                             layer.on({
                                 mouseover: (function (e) { e.target.setStyle(context.options.hoverPolyStyleFn(layer)) }),
                                 mouseout: (function (e) { context._geoJsonLayer.resetStyle(e.target) })
                             });
-                        });
-                    }
 
-                    context._layer.addTo(context._map);
+                            layer.bringToFront();
+                        });
+
+                    */
+                        /*
+                        // TODO: reverse the order for the GeoJSON layers so that the smallest is on top - this allows each to have a hover event
+                        arrLayers.sort(function (a, b) { return b['id'] - a['id'] });
+                        //context._geoJsonLayer.clearLayers();
+                        for (var i = 0; i < arrLayers.length; i++) {
+                            console.log('adding: ' + arrLayers[i]['id']);
+                            context._geoJsonLayer.addLayer(arrLayers[i]['layer']);
+                        }
+
+                        context._geoJsonLayer.eachLayer(function (layer) {
+                            console.log('added: ' + context._geoJsonLayer.getLayerId(layer));
+                        });
+                        */
+                    //}
+
+                    //context._geoJsonLayer.addTo(context._layer);
+                    //context._layer.addTo(context._map);
                 }
 
                 // Inform that we have completed calling the API - could be useful for stopping a spinner etc. to indicate to the user that something was happening. Doesn't indicate success
