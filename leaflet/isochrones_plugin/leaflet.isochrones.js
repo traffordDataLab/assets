@@ -216,41 +216,41 @@ L.Control.Isochrones = L.Control.extend({
                     */
 
                     // Create a Leaflet GeoJSON feature group object from the GeoJSON returned from the API
-                    var geoJsonFromApi = L.geoJSON(data);
+                    var geoJsonFromApi = L.geoJSON(data, { style: context.options.polyStyleFn });
+
+                    // Load the layers into an array so that we can sort them in decending id order if there are more than 1
+                    var arrLayers = geoJsonFromApi.getLayers();
 
                     // Create an empty Leaflet GeoJSON feature group object to hold the same layers as above but in reverse order
                     var newGeoJson = L.geoJSON();
 
-                    // Load the layers into an array so that we can...
-                    var arrLayers = geoJsonFromApi.getLayers();
+                    if (arrLayers.length > 0) {
+                        // Sort the array in decending order of the internal Leaflet id
+                        arrLayers.sort(function (a, b) { return b['_leaflet_id'] - a['_leaflet_id'] });
 
-                    // ...sort it in decending order of the internal Leaflet id
-                    arrLayers.sort(function (a, b) { return b['_leaflet_id'] - a['_leaflet_id'] });
+                        for (var i = 0; i < arrLayers.length; i++) {
+                            // Wipe the internal Leaflet layer id and...
+                            arrLayers[i]['_leaflet_id'] = null;
 
-                    console.log(arrLayers);
+                            // ...force Leaflet to assign a new one
+                            L.Util.stamp(arrLayers[i]);
 
-                    for (var i = 0; i < arrLayers.length; i++) {
-                        arrLayers[i]['old_id'] = arrLayers[i]['_leaflet_id'];
+                            // Now add the layer with its new id to the new Leaflet GeoJSON feature group object
+                            newGeoJson.addLayer(arrLayers[i]);
+                        }
 
-                        // Wipe the internal Leaflet layer id and...
-                        arrLayers[i]['_leaflet_id'] = null;
-
-                        // ...force Leaflet to assign a new one
-                        L.Util.stamp(arrLayers[i]);
-
-                        // Now add the layer with its new id to the new Leaflet GeoJSON feature group object
-                        newGeoJson.addLayer(arrLayers[i]);
-                    }
-
-                    newGeoJson.eachLayer(function (layer) {
-                        console.log('newGeoJson: ' + newGeoJson.getLayerId(layer) + ', old: ' + layer.old_id);
-                        layer.on({
-                            mouseover: (function (e) { e.target.setStyle(context.options.hoverPolyStyleFn(layer)) }),
-                            mouseout: (function (e) { newGeoJson.resetStyle(e.target) })
+                        newGeoJson.eachLayer(function (layer) {
+                            layer.on({
+                                mouseover: (function (e) { e.target.setStyle(context.options.hoverPolyStyleFn(layer)) }),
+                                mouseout: (function (e) { geoJsonFromApi.resetStyle(e.target) })
+                            });
                         });
-                    });
 
-                    newGeoJson.addTo(context._map);
+                        newGeoJson.addTo(context._map);
+                    }
+                    else {
+                        if (console.log) console.log('Leaflet.isochrones.js: API returned data but no GeoJSON layers.');
+                    }
 
                     /*
                     geoJsonFromApi.eachLayer(function (layer) {
