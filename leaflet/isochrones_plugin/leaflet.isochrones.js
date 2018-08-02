@@ -236,17 +236,14 @@ L.Control.Isochrones = L.Control.extend({
 
                             // Now add the layer with its new id to the Leaflet GeoJSON feature group object
                             context.isochrones.addLayer(arrLayers[i]);
-                        }
 
-                        // Iterate through the layers again adding events
-                        // NOTE: can this be done in the above loop instead?
-                        // TODO: what about click events, and shouldn't we just pass the layer to the external fn and let the coder decide what to do?
-                        context.isochrones.eachLayer(function (layer) {
-                            layer.on({
-                                mouseover: (function (e) { e.target.setStyle(context.options.hoverPolyStyleFn(layer)) }),
+                            // Add events to the layer - do here whilst we're looping through the array rather than after using the Leaflet eachLayer() method
+                            // TODO: what about click events, and shouldn't we just pass the layer to the external fn and let the coder decide what to do?
+                            arrLayers[i].on({
+                                mouseover: (function (e) { e.target.setStyle(context.options.hoverPolyStyleFn(arrLayers[i])) }),
                                 mouseout: (function (e) { context.isochrones.resetStyle(e.target) })
                             });
-                        });
+                        }
 
                         // Add the GeoJSON FeatureGroup to the map
                         context.isochrones.addTo(context._map);
