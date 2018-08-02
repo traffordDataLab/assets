@@ -51,7 +51,6 @@ function simpleAjaxRequest(url, callback) {
 // Example function to style the isochrone polygons when they are returned from the API call
 function styleIsochrones(feature) {
     // NOTE: You can do some conditional styling by reading the properties of the feature parameter passed to the function
-
     return {
         color: '#fc6721',
         fillColor: '#fc6721',
@@ -61,14 +60,22 @@ function styleIsochrones(feature) {
 }
 
 // Example function to style the isochrone polygons when the user hovers over them
-function hoverIsochrones(feature) {
-    // NOTE: You can do some conditional styling by reading the properties of the feature parameter passed to the function
-    
-    return {
+function highlightIsochrones(e, objLeafletGeoJson) {
+    // NOTE: from the Leaflet example of a choropleth map, e.target = the layer being hovered over
+    e.target.setStyle({
         color: '#ffea00',
         weight: 3,
         fillColor: '#ffff00',
         fillOpacity: '0.5',
         opacity: '1'
-    };
+    });
+}
+
+// Example function to reset the style of the isochrone polygons when the user stops hovers over them
+function resetIsochrones(e, objLeafletGeoJson) {
+    objLeafletGeoJson.resetStyle(e.target);
+}
+
+function clickIsochrones(e, objLeafletGeoJson) {
+    console.log(e.target);
 }

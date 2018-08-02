@@ -11,8 +11,11 @@ L.Control.Isochrones = L.Control.extend({
         position: 'topleft',                        // Leaflet control pane position
         zIndexMouseMarker: 9000,                    // Needs to be greater than any other layer in the map
         apiKey: '58d904a497c67e00015b45fc6862cde0265d4fd78ec660aa83220cdb',                                 // openrouteservice API key - the service which returns the isochrone polygons based on the various options/parameters TODO: Remove this when we ship the code as this is our personal key
-        ajaxRequestFn: null,                        // External function to make the actual call to the API via AJAX - if null will attempt to use simpleAjaxRequest
         pane: 'overlayPane',                        // Leaflet pane to add the GeoJSON layer to
+        ajaxRequestFn: null,                        // External function to make the actual call to the API via AJAX - if null will attempt to use simpleAjaxRequest
+        mouseOverFn: null,                          // External function to call when a mouseover event occurs on an isochrone
+        mouseOutFn: null,                           // External function to call when a mouseout event occurs on an isochrone
+        clickFn: null,                              // External function to call when a click event occurs on an isochrone
 
         // Control to initialise the plugin
         mainControlContainer: null,                 // The container for the plugin control to be displayed within - a value of null creates a new container, otherwise you can specify an existing control container to add this control to, e.g. the zoom control etc.
@@ -67,9 +70,8 @@ L.Control.Isochrones = L.Control.extend({
         travelModeCarStyleClass: '',
         travelModeCarProfile: 'driving-car',        // API options, choices are 'driving-car' and 'driving-hgv'
 
-        // Styling Options
-        polyStyleFn: null,                          //   -External function to call which styles the polygons returned from API call and when the user hovers over them - gives full control over the styling
-        hoverPolyStyleFn: null,                     // /
+        // Styling
+        styleFn: null,                              // External function to call which styles the polygons returned from API call
         markerDistance: null,                       // The marker to use at the centre of isochrones based on distance
         markerWalk: null,                           // The marker to use at the centre of isochrones based on walking time
         markerBike: null,                           // The marker to use at the centre of isochrones based on cycling time
@@ -81,6 +83,7 @@ L.Control.Isochrones = L.Control.extend({
         this._mapContainer = map.getContainer();
         this._mode = 0;             // 0 = not in create mode, 1 = create mode
         this._mouseMarker = null;   // invisible Leaflet marker to follow the mouse pointer when control is activated
+        this.isochrones = null;     // set to a Leaflet GeoJSON FeatureGroup when the API returns data
 
         // Container for the control - either one passed in the options arguments or create a new one
         this._mainControlContainer = (!this.options.mainControlContainer) ? L.DomUtil.create('div', 'leaflet-bar') : this.options.mainControlContainer;
@@ -186,7 +189,7 @@ L.Control.Isochrones = L.Control.extend({
         apiUrl += '&locations=' + latLng.lng + '%2C' + latLng.lat;
         apiUrl += '&profile=driving-car&range_type=time&range=180&interval=60&location_type=start';
 
-        // Ensure the control is deactivated
+        // Deactivate the control now in case there are issues with the API call
         this._mode = 0;
         this._deactivateControl();
 
@@ -214,8 +217,8 @@ L.Control.Isochrones = L.Control.extend({
                         Therefore we need to generate new a new id for each layer, with the larger polygon layers given lower ids than the smaller.
                     */
 
-                    // Create a Leaflet GeoJSON feature group object from the GeoJSON returned from the API (NOTE: this object is accessible externally)
-                    context.isochrones = L.geoJSON(data, { style: context.options.polyStyleFn, pane: context.options.pane });
+                    // Create a Leaflet GeoJSON FeatureGroup object from the GeoJSON returned from the API (NOTE: this object is accessible externally)
+                    context.isochrones = L.geoJSON(data, { style: context.options.styleFn, pane: context.options.pane });
 
                     // Load the layers into an array so that we can sort them in decending id order if there are more than 1
                     var arrLayers = context.isochrones.getLayers();
@@ -234,14 +237,14 @@ L.Control.Isochrones = L.Control.extend({
                             // ...force Leaflet to assign a new one
                             L.Util.stamp(arrLayers[i]);
 
-                            // Now add the layer with its new id to the Leaflet GeoJSON feature group object
+                            // Now add the layer with its new id to the Leaflet GeoJSON FeatureGroup object
                             context.isochrones.addLayer(arrLayers[i]);
 
                             // Add events to the layer - do here whilst we're looping through the array rather than after using the Leaflet eachLayer() method
-                            // TODO: what about click events, and shouldn't we just pass the layer to the external fn and let the coder decide what to do?
                             arrLayers[i].on({
-                                mouseover: (function (e) { e.target.setStyle(context.options.hoverPolyStyleFn(arrLayers[i])) }),
-                                mouseout: (function (e) { context.isochrones.resetStyle(e.target) })
+                                mouseover: (function (e) { if (context.options.mouseOverFn != null) context.options.mouseOverFn(e, context.isochrones) }),
+                                mouseout: (function (e) { if (context.options.mouseOutFn != null) context.options.mouseOutFn(e, context.isochrones) }),
+                                click: (function (e) { if (context.options.clickFn != null) context.options.clickFn(e, context.isochrones) })
                             });
                         }
 

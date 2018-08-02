@@ -59,26 +59,29 @@
                 about: 'Test page for Lab isochrones plugin.'
             });
 
+            // Add the isochrones plugin
+            labMap.isoControl = L.control.isochrones({
+                mainControlStyleClass: 'isochronesControl',
+                styleFn: styleIsochrones,
+                mouseOverFn: highlightIsochrones,
+                mouseOutFn: resetIsochrones,
+                clickFn: clickIsochrones
+            }).addTo(labMap.map);
+
+            // Add events
             labMap.map.on('click', function (e) {
                 alert('This is a click on the map');
             });
 
             labMap.map.on('isochrones:api_call_start', function (e) {
-                //alert('starting the API call');
+                // example to listen for the start of the API call
                 startLabSpinner();
             });
 
             labMap.map.on('isochrones:api_call_end', function (e) {
-                //alert('ending the API call');
+                // example to listen for the end of the API call
                 stopLabSpinner();
             });
-
-            // Add the isochrones plugin
-            labMap.isoControl = L.control.isochrones({
-                mainControlStyleClass: 'isochronesControl',
-                polyStyleFn: styleIsochrones,
-                hoverPolyStyleFn: hoverIsochrones
-            }).addTo(labMap.map);
 
             // Choose the base/tile layer for the map
             labMap.baseLayers['Low detail'].addTo(labMap.map);
