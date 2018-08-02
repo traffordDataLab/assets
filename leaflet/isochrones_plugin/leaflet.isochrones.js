@@ -215,14 +215,14 @@ L.Control.Isochrones = L.Control.extend({
                         Therefore we need to generate new a new id for each layer, with the larger polygon layers given lower ids than the smaller.
                     */
 
-                    // Create a Leaflet GeoJSON feature group object from the GeoJSON returned from the API
-                    var geoJsonFromApi = L.geoJSON(data, { style: context.options.polyStyleFn });
+                    // Create a Leaflet GeoJSON feature group object from the GeoJSON returned from the API (NOTE: this object is accessible externally)
+                    context.isochrones = L.geoJSON(data, { style: context.options.polyStyleFn });
 
                     // Load the layers into an array so that we can sort them in decending id order if there are more than 1
-                    var arrLayers = geoJsonFromApi.getLayers();
+                    var arrLayers = context.isochrones.getLayers();
 
-                    // Create an empty Leaflet GeoJSON feature group object to hold the same layers as above but in reverse order
-                    var newGeoJson = L.geoJSON();
+                    // Now remove all the layers from the object - we will be adding them back once we've reorded them
+                    context.isochrones.clearLayers();
 
                     if (arrLayers.length > 0) {
                         // Sort the array in decending order of the internal Leaflet id
@@ -235,18 +235,22 @@ L.Control.Isochrones = L.Control.extend({
                             // ...force Leaflet to assign a new one
                             L.Util.stamp(arrLayers[i]);
 
-                            // Now add the layer with its new id to the new Leaflet GeoJSON feature group object
-                            newGeoJson.addLayer(arrLayers[i]);
+                            // Now add the layer with its new id to the Leaflet GeoJSON feature group object
+                            context.isochrones.addLayer(arrLayers[i]);
                         }
 
-                        newGeoJson.eachLayer(function (layer) {
+                        // Iterate through the layers again adding events
+                        // NOTE: can this be done in the above loop instead?
+                        // TODO: what about click events, and shouldn't we just pass the layer to the external fn and let the coder decide what to do?
+                        context.isochrones.eachLayer(function (layer) {
                             layer.on({
                                 mouseover: (function (e) { e.target.setStyle(context.options.hoverPolyStyleFn(layer)) }),
-                                mouseout: (function (e) { geoJsonFromApi.resetStyle(e.target) })
+                                mouseout: (function (e) { context.isochrones.resetStyle(e.target) })
                             });
                         });
 
-                        newGeoJson.addTo(context._map);
+                        // TODO: Need to add the GeoJSON to a containing layer first, then add that layer to the map - easier to remove etc.
+                        context.isochrones.addTo(context._map);
                     }
                     else {
                         if (console.log) console.log('Leaflet.isochrones.js: API returned data but no GeoJSON layers.');
