@@ -81,7 +81,6 @@ L.Control.Isochrones = L.Control.extend({
         this._mapContainer = map.getContainer();
         this._mode = 0;             // 0 = not in create mode, 1 = create mode
         this._mouseMarker = null;   // invisible Leaflet marker to follow the mouse pointer when control is activated
-        this._layer = new L.LayerGroup({ pane: this.options.pane });
 
         // Container for the control - either one passed in the options arguments or create a new one
         this._mainControlContainer = (!this.options.mainControlContainer) ? L.DomUtil.create('div', 'leaflet-bar') : this.options.mainControlContainer;
@@ -209,14 +208,14 @@ L.Control.Isochrones = L.Control.extend({
                 else {
                     /*
                         ISSUE: The GeoJSON features returned from the API are in the order smallest to largest in terms of the area of the polygons.
-                        This causes us a problem as when they are displayed on the map, the largest polygon covers all the others, preventing us hovering over the other polygons.
-                        The plan is to reverse the order of the features, however this is not as simple as sorting due to how Leaflet deals with layers.
+                        This causes us a problem as when they are displayed on the map, the largest polygon covers all the others, preventing us interacting with the other polygons.
+                        The solution is to reverse the order of the features, however this is not as simple as sorting due to how Leaflet deals with layers.
                         Each layer is given an id. When you add layers to layergroup objects, it doesn't matter the order you add them, what matters is the id sequence.
                         Therefore we need to generate new a new id for each layer, with the larger polygon layers given lower ids than the smaller.
                     */
 
                     // Create a Leaflet GeoJSON feature group object from the GeoJSON returned from the API (NOTE: this object is accessible externally)
-                    context.isochrones = L.geoJSON(data, { style: context.options.polyStyleFn });
+                    context.isochrones = L.geoJSON(data, { style: context.options.polyStyleFn, pane: context.options.pane });
 
                     // Load the layers into an array so that we can sort them in decending id order if there are more than 1
                     var arrLayers = context.isochrones.getLayers();
@@ -249,78 +248,12 @@ L.Control.Isochrones = L.Control.extend({
                             });
                         });
 
-                        // TODO: Need to add the GeoJSON to a containing layer first, then add that layer to the map - easier to remove etc.
+                        // Add the GeoJSON FeatureGroup to the map
                         context.isochrones.addTo(context._map);
                     }
                     else {
                         if (console.log) console.log('Leaflet.isochrones.js: API returned data but no GeoJSON layers.');
                     }
-
-                    /*
-                    geoJsonFromApi.eachLayer(function (layer) {
-                        console.log('geoJsonFromApi: ' + geoJsonFromApi.getLayerId(layer));
-                        arrLayers.push({ 'id': geoJsonFromApi.getLayerId(layer), 'layer': layer });
-                    });
-
-                    var newLayer;
-                    arrLayers.sort(function (a, b) { return b['id'] - a['id'] });
-                    for (var i = 0; i < arrLayers.length; i++) {
-                        console.log('adding: ' + arrLayers[i]['id']);
-                        newLayer = new L.Layer;
-                        newGeoJson.addLayer(arrLayers[i]['layer']);
-                    }
-
-                    newGeoJson.eachLayer(function (layer) {
-                        console.log('newGeoJson: ' + newGeoJson.getLayerId(layer));
-                    });
-
-                    newGeoJson.addTo(context._map);
-                    */
-
-
-
-
-
-
-
-                    /*
-                    // Create a geoJson layer with the data returned from the API
-                    context._geoJsonLayer = L.geoJSON(data, { style: context.options.polyStyleFn }).addTo(context._layer);
-                    //context._geoJsonLayer = L.geoJSON(data, { style: context.options.polyStyleFn });
-
-                    if (context.options.hoverPolyStyleFn != null) {
-                        //var arrLayers = [];
-
-                        context._geoJsonLayer.eachLayer(function (layer) {
-                            //console.log('current: ' + context._geoJsonLayer.getLayerId(layer));
-                            //arrLayers.push({ 'id': context._geoJsonLayer.getLayerId(layer), 'layer': layer });
-
-                            layer.on({
-                                mouseover: (function (e) { e.target.setStyle(context.options.hoverPolyStyleFn(layer)) }),
-                                mouseout: (function (e) { context._geoJsonLayer.resetStyle(e.target) })
-                            });
-
-                            layer.bringToFront();
-                        });
-
-                    */
-                        /*
-                        // TODO: reverse the order for the GeoJSON layers so that the smallest is on top - this allows each to have a hover event
-                        arrLayers.sort(function (a, b) { return b['id'] - a['id'] });
-                        //context._geoJsonLayer.clearLayers();
-                        for (var i = 0; i < arrLayers.length; i++) {
-                            console.log('adding: ' + arrLayers[i]['id']);
-                            context._geoJsonLayer.addLayer(arrLayers[i]['layer']);
-                        }
-
-                        context._geoJsonLayer.eachLayer(function (layer) {
-                            console.log('added: ' + context._geoJsonLayer.getLayerId(layer));
-                        });
-                        */
-                    //}
-
-                    //context._geoJsonLayer.addTo(context._layer);
-                    //context._layer.addTo(context._map);
                 }
 
                 // Inform that we have completed calling the API - could be useful for stopping a spinner etc. to indicate to the user that something was happening. Doesn't indicate success
