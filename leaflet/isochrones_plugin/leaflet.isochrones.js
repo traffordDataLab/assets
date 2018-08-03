@@ -12,7 +12,7 @@ L.Control.Isochrones = L.Control.extend({
         zIndexMouseMarker: 9000,                    // Needs to be greater than any other layer in the map
         apiKey: '58d904a497c67e00015b45fc6862cde0265d4fd78ec660aa83220cdb',                                 // openrouteservice API key - the service which returns the isochrone polygons based on the various options/parameters TODO: Remove this when we ship the code as this is our personal key
         pane: 'overlayPane',                        // Leaflet pane to add the GeoJSON layer to
-        drawMultiple: false,                        // Can we draw multiple isochrones on the map or just a single one?
+        drawMultiple: true,                         // Can we draw multiple isochrones on the map or just a single one?
         ajaxRequestFn: null,                        // External function to make the actual call to the API via AJAX - if null will attempt to use simpleAjaxRequest
         mouseOverFn: null,                          // External function to call when a mouseover event occurs on an isochrone
         mouseOutFn: null,                           // External function to call when a mouseout event occurs on an isochrone
@@ -83,6 +83,7 @@ L.Control.Isochrones = L.Control.extend({
         this._map = map;
         this._mapContainer = map.getContainer();
         this._mode = 0;             // 0 = not in create mode, 1 = create mode
+        this._deleteMode = 1;       // 0 = not in delete mode, 1 = delete mode
         this._drawMultiple = this.options.drawMultiple;
         this._mouseMarker = null;   // invisible Leaflet marker to follow the mouse pointer when control is activated
         this.isochrones = null;     // set to a Leaflet GeoJSON FeatureGroup when the API returns data
@@ -245,6 +246,14 @@ L.Control.Isochrones = L.Control.extend({
                     // Create a Leaflet GeoJSON FeatureGroup object from the GeoJSON returned from the API (NOTE: this object is accessible externally)
                     context.isochrones = L.geoJSON(data, { style: context.options.styleFn, pane: context.options.pane });
 
+                    // Add a click event to this FeatureGroup which only fires if the plugin is activated and in delete mode
+                    /*context.isochrones.on({ click: function(e) {
+                        if (context._deleteMode == 1) {
+                            L.DomEvent.stopPropagation;
+                            context._delete(e);
+                        }
+                    } });*/
+
                     // Load the layers into an array so that we can sort them in decending id order if there are more than 1
                     var arrLayers = context.isochrones.getLayers();
 
@@ -269,7 +278,17 @@ L.Control.Isochrones = L.Control.extend({
                             arrLayers[i].on({
                                 mouseover: (function (e) { if (context.options.mouseOverFn != null) context.options.mouseOverFn(e, context.isochrones) }),
                                 mouseout: (function (e) { if (context.options.mouseOutFn != null) context.options.mouseOutFn(e, context.isochrones) }),
-                                click: (function (e) { if (context.options.clickFn != null) context.options.clickFn(e, context.isochrones) })
+                                click: (function(e) {
+                                    if (context._deleteMode == 1) {
+                                        // If we're in delete mode, call the delete function
+                                        L.DomEvent.stopPropagation(e);
+                                        context._delete(e);
+                                    }
+                                    else {
+                                        // Otherwise, if there is a user-defined click function, call that instead
+                                        if (context.options.clickFn != null) context.options.clickFn(e, context.isochrones);
+                                    }
+                                })
                             });
                         }
 
@@ -305,6 +324,19 @@ L.Control.Isochrones = L.Control.extend({
             // Log the error in the console
             if (console.log) console.log('Leaflet.isochrones.js error attempting to call API.\nLikely cause is function simpleAjaxRequest has not been included and no alternative has been specified.\nSee docs for more details, actual error below.\n' + e);
         }
+    },
+
+    _delete: function(e) {
+        // Removes a particular FeatureGroup of isochrones from the LayerGroup.
+        // Called when an isochrone FeatureGroup is clicked on whilst the plugin is in delete mode
+        var parent = e.sourceTarget._eventParents;
+
+        for (var key in parent) {
+            if (parent.hasOwnProperty(key) && key != '<prototype>') parent[key].removeFrom(this.layerGroup);
+        }
+
+        // Inform that an isochrone FeatureGroup has been deleted
+        this._map.fire('isochrones:delete');
     }
 });
 
