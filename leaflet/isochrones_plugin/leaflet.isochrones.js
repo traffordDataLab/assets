@@ -86,7 +86,7 @@ L.Control.Isochrones = L.Control.extend({
         this._drawMultiple = this.options.drawMultiple;
         this._mouseMarker = null;   // invisible Leaflet marker to follow the mouse pointer when control is activated
         this.isochrones = null;     // set to a Leaflet GeoJSON FeatureGroup when the API returns data
-        this.layerGroup = L.layerGroup();   // holds the GeoJSON FeatureGroup(s)
+        this.layerGroup = L.layerGroup();   // holds the isochrone GeoJSON FeatureGroup(s)
 
         // Add the LayerGroup to the map ready for the isochrones to be added
         this.layerGroup.addTo(this._map);
@@ -110,6 +110,9 @@ L.Control.Isochrones = L.Control.extend({
             .on(this._mainButton, 'click', L.DomEvent.stop)
             .on(this._mainButton, 'click', this._toggleMode, this);     // send 'this' context to the event handler
 
+        // Fire event to inform that the control has been added to the map
+        this._map.fire('isochrones:control_added');
+
         return this._mainControlContainer;
     },
 
@@ -117,6 +120,10 @@ L.Control.Isochrones = L.Control.extend({
         // clean up - remove any styles, event listeners, layers etc.
         this._deactivateControl();
         this.layerGroup.removeFrom(this._map);
+        this.layerGroup.clearLayers();
+
+        // Fire event to inform that the control has been removed from the map
+        this._map.fire('isochrones:control_removed');
     },
 
     _toggleMode: function () {
@@ -220,6 +227,10 @@ L.Control.Isochrones = L.Control.extend({
 
             ajaxFn(apiUrl, function (data) {
                 if (data == null) {
+                    // Fire event to inform that no data was returned
+                    context._map.fire('isochrones:no_data');
+
+                    // Log more specific details in the javascript console
                     if (console.log) console.log('Leaflet.isochrones.js error calling API, no data returned. Likely cause is API unavailable or bad parameters.');
                 }
                 else {
@@ -264,8 +275,15 @@ L.Control.Isochrones = L.Control.extend({
 
                         // Add the GeoJSON FeatureGroup to the LayerGroup
                         context.isochrones.addTo(context.layerGroup);
+
+                        // Fire event to inform that isochrones have been drawn successfully
+                        context._map.fire('isochrones:displayed');
                     }
                     else {
+                        // Fire event to inform that no data was returned
+                        context._map.fire('isochrones:no_data');
+
+                        // Log more specific details in the javascript console
                         if (console.log) console.log('Leaflet.isochrones.js: API returned data but no GeoJSON layers.');
                     }
                 }
@@ -275,11 +293,17 @@ L.Control.Isochrones = L.Control.extend({
             });
         }
         catch(e) {
+            // Fire event to inform that an error occurred calling the API
+            context._map.fire('isochrones:error');
+
+            // Fire event to inform that no data was returned
+            context._map.fire('isochrones:no_data');
+
+            // Inform that we have completed calling the API - could be useful for stopping a spinner etc. to indicate to the user that something was happening.
+            context._map.fire('isochrones:api_call_end');
+
             // Log the error in the console
             if (console.log) console.log('Leaflet.isochrones.js error attempting to call API.\nLikely cause is function simpleAjaxRequest has not been included and no alternative has been specified.\nSee docs for more details, actual error below.\n' + e);
-
-            // Inform that we have completed calling the API - could be useful for stopping a spinner etc. to indicate to the user that something was happening. Doesn't indicate success
-            context._map.fire('isochrones:api_call_end');
         }
     }
 });
