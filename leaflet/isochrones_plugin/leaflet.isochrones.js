@@ -12,7 +12,7 @@ L.Control.Isochrones = L.Control.extend({
         zIndexMouseMarker: 9000,                    // Needs to be greater than any other layer in the map
         apiKey: '58d904a497c67e00015b45fc6862cde0265d4fd78ec660aa83220cdb',                                 // openrouteservice API key - the service which returns the isochrone polygons based on the various options/parameters TODO: Remove this when we ship the code as this is our personal key
         pane: 'overlayPane',                        // Leaflet pane to add the GeoJSON layer to
-        drawMultiple: true,                         // Can we draw multiple isochrones on the map or just a single one?
+        drawMultiple: false,                        // Can we draw multiple isochrones on the map or just a single one?
         ajaxRequestFn: null,                        // External function to make the actual call to the API via AJAX - if null will attempt to use simpleAjaxRequest
         mouseOverFn: null,                          // External function to call when a mouseover event occurs on an isochrone
         mouseOutFn: null,                           // External function to call when a mouseout event occurs on an isochrone
@@ -86,6 +86,10 @@ L.Control.Isochrones = L.Control.extend({
         this._drawMultiple = this.options.drawMultiple;
         this._mouseMarker = null;   // invisible Leaflet marker to follow the mouse pointer when control is activated
         this.isochrones = null;     // set to a Leaflet GeoJSON FeatureGroup when the API returns data
+        this.layerGroup = L.layerGroup();   // holds the GeoJSON FeatureGroup(s)
+
+        // Add the LayerGroup to the map ready for the isochrones to be added
+        this.layerGroup.addTo(this._map);
 
         // Container for the control - either one passed in the options arguments or create a new one
         this._mainControlContainer = (!this.options.mainControlContainer) ? L.DomUtil.create('div', 'leaflet-bar') : this.options.mainControlContainer;
@@ -110,8 +114,9 @@ L.Control.Isochrones = L.Control.extend({
     },
 
     onRemove: function (map) {
-        // clean up - remove any styles and event listeners etc.
+        // clean up - remove any styles, event listeners, layers etc.
         this._deactivateControl();
+        this.layerGroup.removeFrom(this._map);
     },
 
     _toggleMode: function () {
@@ -154,6 +159,8 @@ L.Control.Isochrones = L.Control.extend({
     },
 
     _deactivateControl: function () {
+        this._mode = 0;     // ensure we explicitly set the mode - we may not have come here from a click on the main control
+
         // Remove the isochronesControlActive class from the map container
         L.DomUtil.removeClass(this._mapContainer, 'isochronesControlActive');
 
@@ -193,8 +200,10 @@ L.Control.Isochrones = L.Control.extend({
         apiUrl += '&profile=driving-car&range_type=time&range=180&interval=60&location_type=start';
 
         if (this._drawMultiple == false) {
-            // Deactivate the control as we are not in drawMultiple mode
-            this._mode = 0;
+            // Remove any previous isochrones
+            this.layerGroup.clearLayers();
+
+            // Deactivate the control
             this._deactivateControl();
         }
 
@@ -253,8 +262,8 @@ L.Control.Isochrones = L.Control.extend({
                             });
                         }
 
-                        // Add the GeoJSON FeatureGroup to the map
-                        context.isochrones.addTo(context._map);
+                        // Add the GeoJSON FeatureGroup to the LayerGroup
+                        context.isochrones.addTo(context.layerGroup);
                     }
                     else {
                         if (console.log) console.log('Leaflet.isochrones.js: API returned data but no GeoJSON layers.');
