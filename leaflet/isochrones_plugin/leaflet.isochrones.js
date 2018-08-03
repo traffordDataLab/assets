@@ -12,6 +12,7 @@ L.Control.Isochrones = L.Control.extend({
         zIndexMouseMarker: 9000,                    // Needs to be greater than any other layer in the map
         apiKey: '58d904a497c67e00015b45fc6862cde0265d4fd78ec660aa83220cdb',                                 // openrouteservice API key - the service which returns the isochrone polygons based on the various options/parameters TODO: Remove this when we ship the code as this is our personal key
         pane: 'overlayPane',                        // Leaflet pane to add the GeoJSON layer to
+        drawMultiple: true,                         // Can we draw multiple isochrones on the map or just a single one?
         ajaxRequestFn: null,                        // External function to make the actual call to the API via AJAX - if null will attempt to use simpleAjaxRequest
         mouseOverFn: null,                          // External function to call when a mouseover event occurs on an isochrone
         mouseOutFn: null,                           // External function to call when a mouseout event occurs on an isochrone
@@ -82,6 +83,7 @@ L.Control.Isochrones = L.Control.extend({
         this._map = map;
         this._mapContainer = map.getContainer();
         this._mode = 0;             // 0 = not in create mode, 1 = create mode
+        this._drawMultiple = this.options.drawMultiple;
         this._mouseMarker = null;   // invisible Leaflet marker to follow the mouse pointer when control is activated
         this.isochrones = null;     // set to a Leaflet GeoJSON FeatureGroup when the API returns data
 
@@ -141,7 +143,7 @@ L.Control.Isochrones = L.Control.extend({
         // Add events to the marker and then add the marker to the map
         this._mouseMarker
             .on('mousemove', this._onMouseMove, this)
-            .once('click', this._callApi, this)
+            .on('click', this._callApi, this)
             .addTo(this._map);
 
         // Add a duplicate mouse move event to the map in case the mouse pointer goes outside of the mouseMarker
@@ -159,6 +161,7 @@ L.Control.Isochrones = L.Control.extend({
         if (this._mouseMarker !== null) {
             this._mouseMarker
                 .off('mousemove', this._onMouseMove, this)
+                .off('click', this._callApi, this)
                 .removeFrom(this._map);
             this._mouseMarker = null;
         }
@@ -189,9 +192,11 @@ L.Control.Isochrones = L.Control.extend({
         apiUrl += '&locations=' + latLng.lng + '%2C' + latLng.lat;
         apiUrl += '&profile=driving-car&range_type=time&range=180&interval=60&location_type=start';
 
-        // Deactivate the control now in case there are issues with the API call
-        this._mode = 0;
-        this._deactivateControl();
+        if (this._drawMultiple == false) {
+            // Deactivate the control as we are not in drawMultiple mode
+            this._mode = 0;
+            this._deactivateControl();
+        }
 
         // Inform that we are calling the API - could be useful for starting a spinner etc. to indicate to the user that something is happening if there is a delay
         this._map.fire('isochrones:api_call_start');
