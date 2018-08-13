@@ -3,43 +3,38 @@
     Purpose:        Uses openrouteservice API to create isochrones showing areas within reach of certain travel times based on different modes of travel or distance. See https://wiki.openstreetmap.org/wiki/Isochrone for more information
     Dependencies:   Leaflet.js (external library), openrouteservice.org API (requires a key - free service available via registration)
     Licence:        https://www.trafforddatalab.io/assets/LICENSE.txt
-    Notes:          Can be displayed as a stand-alone control or as part of an existing group, e.g. zoom control. Content for all GUI elements can be html or an icon etc.
+    Notes:          Can be displayed in a collapsed or expanded state. Content for all GUI elements can be html or an icon etc.
 */
 L.Control.Isochrones = L.Control.extend({
     options: {
-        // General plugin control options
+        // Leaflet positioning options
         position: 'topleft',                        // Leaflet control pane position
-        zIndexMouseMarker: 9000,                    // Needs to be greater than any other layer in the map
-        apiKey: '58d904a497c67e00015b45fc6862cde0265d4fd78ec660aa83220cdb',                                 // openrouteservice API key - the service which returns the isochrone polygons based on the various options/parameters TODO: Remove this when we ship the code as this is our personal key
-        pane: 'overlayPane',                        // Leaflet pane to add the GeoJSON layer to
-        drawMultiple: true,                         // Can we draw multiple isochrones on the map or just a single one?
-        ajaxRequestFn: null,                        // External function to make the actual call to the API via AJAX - if null will attempt to use simpleAjaxRequest
-        mouseOverFn: null,                          // External function to call when a mouseover event occurs on an isochrone
-        mouseOutFn: null,                           // External function to call when a mouseout event occurs on an isochrone
-        clickFn: null,                              // External function to call when a click event occurs on an isochrone
+        layerGroup: null,                           // Leaflet layer to add the isochones to
+        pane: 'overlayPane',                        // Leaflet pane to add the layerGroup to
+        zIndexMouseMarker: 9000,                    // Needs to be greater than any other layer in the map - this is an invisible marker tied to the mouse pointer when the control is activated to prevent clicks interacting with other map objects
 
-        // Control to initialise the plugin
-        mainControlContainer: null,                 // The container for the plugin control to be displayed within - a value of null creates a new container, otherwise you can specify an existing control container to add this control to, e.g. the zoom control etc.
-        mainControlContent: '*',                    // HTML to display within the control 'button'. If you want an icon from services like Fontawesome pass '' for this value and set the StyleClass option
-        mainControlTooltip: 'Show reachability',    // Tooltip to appear on-hover
-        mainControlStyleClass: '',                  // Allow options for styling - if you want to use an icon from services like fontawesome pass the declarations here, e.g. 'fa fa-home' etc.
+        // Main control settings and styling
+        collapsed: true,                            // Operates in the same way as the Leaflet layer control - can be collapsed into a standard single control which expands on-click (true) or is displayed fully expanded (false)
+        drawMultiple: true,                         // Can we draw multiple isochrones on the map or just a single one?
+        containerStyleClass: '',                    // The container for the plugin control will usually be styled with the standard Leaflet control styling, however this option allows for customisation
+        containerUIStyleClass: 'isochronesSettingsContainer',                  // The container holding the user interface controls which is displayed if collapsed is false, or when the user expands the control by clicking on the toggle button
+        containerToggleStyleClass: '',              // Allow options for styling - if you want to use an icon from services like fontawesome pass the declarations here, e.g. 'fa fa-home' etc.
+        containerToggleContent: '&Delta;',          // HTML to display within the control if it is collapsed. If you want an icon from services like Fontawesome pass '' for this value and set the StyleClass option
+        containerToggleTooltip: 'Show reachability options',     // Tooltip to appear on-hover
+
+        // Collapse button
+        collapseButtonContent: 'X',
+        collapseButtonStyleClass: '',
+        collapseButtonTooltip: 'Hide reachability options',
 
         // Delete control to remove any current isochrones drawn on the map
-        deleteControlContent: 'X',
-        deleteControlTooltip: 'Remove reachability',
+        deleteControlContent: 'D',
+        deleteControlTooltip: 'Delete reachability',
         deleteControlStyleClass: '',
 
-        // Settings control to display the various options available for creating isochrones
-        settingsControlContent: 'S',
-        settingsControlTooltip: 'Change settings',
-        settingsControlStyleClass: '',
-
-        // Minimise the settings UI once opened via the settings control
-        minimiseControlContent: '-',
-        minimiseControlTooltip: 'Minimise settings',
-        minimiseControlStyleClass: '',
-
-        // The method used to create the isochrones
+        // API settings
+        ajaxRequestFn: null,                        // External function to make the actual call to the API via AJAX - if null will attempt to use simpleAjaxRequest
+        apiKey: '58d904a497c67e00015b45fc6862cde0265d4fd78ec660aa83220cdb',                                 // openrouteservice API key - the service which returns the isochrone polygons based on the various options/parameters TODO: Remove this when we ship the code as this is our personal key
         rangeType: 'distance',                      // Can be either by distance or time - any value other than 'distance' is assumed to be 'time'
         rangeTypeDistanceLabel: 'Distance',         // The label to appear next to the distance radio button option
         rangeTypeTimeLabel: 'Travel time',          // sSame as above but for the time option
@@ -55,7 +50,7 @@ L.Control.Isochrones = L.Control.extend({
         rangeControlTimeMax: 30,                    //  > All these values need to be multiplied by 60 to convert to seconds - no other unit of time is allowed
         rangeControlTimeInterval: 5,                // /
 
-        // Options to select when choosing to create isochrones based on travel time
+        // Mode of travel options based on travel time
         travelModeWalkContent:  'W',
         travelModeWalkTooltip: 'Walking',
         travelModeWalkStyleClass: '',
@@ -71,55 +66,65 @@ L.Control.Isochrones = L.Control.extend({
         travelModeCarStyleClass: '',
         travelModeCarProfile: 'driving-car',        // API options, choices are 'driving-car' and 'driving-hgv'
 
-        // Styling
-        styleFn: null,                              // External function to call which styles the polygons returned from API call
-        markerDistance: null,                       // The marker to use at the centre of isochrones based on distance
-        markerWalk: null,                           // The marker to use at the centre of isochrones based on walking time
-        markerBike: null,                           // The marker to use at the centre of isochrones based on cycling time
-        markerCar: null,                            // The marker to use at the centre of isochrones based on driving time
+        travelModeWheelchairContent: 'A',
+        travelModeCarTooltip: 'Wheelchair',
+        travelModeCarStyleClass: '',
+        travelModeCarProfile: 'wheelchair',        // API options
+
+        // Isocrone styling and interaction
+        styleFn: null,                              // External function to call which styles the isochrones returned from API call
+        mouseOverFn: null,                          // External function to call when a mouseover event occurs on an isochrone
+        mouseOutFn: null,                           // External function to call when a mouseout event occurs on an isochrone
+        clickFn: null,                              // External function to call when a click event occurs on an isochrone
+
+        markerDistance: null,                       // \
+        markerWalk: null,                           //  \
+        markerBike: null,                           //    > The marker to use at the centre of isochrones based on the modes of travel etc.
+        markerCar: null,                            //  /
+        markerWheelchair: null                      // /
     },
 
     onAdd: function (map) {
+        // Initial settings
         this._map = map;
-        this._mapContainer = map.getContainer();
+        this._mapContainer = map.getContainer();    // used in _activate() to add CSS if desired to indicate to the user that the plugin is activated
+        this._collapsed = this.options.collapsed;
         this._mode = 0;             // 0 = not in create mode, 1 = create mode
         this._deleteMode = 1;       // 0 = not in delete mode, 1 = delete mode
         this._drawMultiple = this.options.drawMultiple;
         this._mouseMarker = null;   // invisible Leaflet marker to follow the mouse pointer when control is activated
         this.isochrones = null;     // set to a Leaflet GeoJSON FeatureGroup when the API returns data
-        this.layerGroup = L.layerGroup();   // holds the isochrone GeoJSON FeatureGroup(s)
+        this.layerGroup = (this.options.layerGroup == null) ? L.layerGroup(null, { pane: this.options.pane }) : this.options.layerGroup;   // holds the isochrone GeoJSON FeatureGroup(s)
 
         // Add the LayerGroup to the map ready for the isochrones to be added
         this.layerGroup.addTo(this._map);
 
-        // Container for the control - either one passed in the options arguments or create a new one
-        this._mainControlContainer = (!this.options.mainControlContainer) ? L.DomUtil.create('div', 'leaflet-bar') : this.options.mainControlContainer;
+        // Main container for the control - this is added to the map in the Leaflet control pane
+        this._container = L.DomUtil.create('div', 'leaflet-bar ' + this.options.containerStyleClass);
+        L.DomEvent.disableClickPropagation(this._container);
 
-        // Create main control button as a link - as per Leaflet convention
-        this._mainButton = L.DomUtil.create('a', this.options.mainControlStyleClass, this._mainControlContainer);
-        this._mainButton.innerHTML = this.options.mainControlContent;
-        this._mainButton.href = '#';
-        this._mainButton.title = this.options.mainControlTooltip;
+        // Create the components for the user interface
+        this._createUI();
 
-        // For assistive technologies e.g. screen readers
-        this._mainButton.setAttribute('role', 'button');
-		this._mainButton.setAttribute('aria-label', this._mainButton.title);
 
-        // Set events
-        L.DomEvent
-            .on(this._mainButton, 'mousedown dblclick', L.DomEvent.stopPropagation)
-            .on(this._mainButton, 'click', L.DomEvent.stop)
-            .on(this._mainButton, 'click', this._toggleMode, this);     // send 'this' context to the event handler
+
+
+
+
+
+
+        // Create main interface control buttons as a links - as per Leaflet convention
+        //this._mainButton = this._createButton(this.options.containerCollapsedContent, this.options.containerCollapsedTooltip, this.options.containerCollapsedStyleClass, this._container, this._toggleMode);
 
         // Fire event to inform that the control has been added to the map
         this._map.fire('isochrones:control_added');
 
-        return this._mainControlContainer;
+        return this._container;
     },
 
     onRemove: function (map) {
         // clean up - remove any styles, event listeners, layers etc.
-        this._deactivateControl();
+        this._deactivate();
         this.layerGroup.removeFrom(this._map);
         this.layerGroup.clearLayers();
 
@@ -127,13 +132,72 @@ L.Control.Isochrones = L.Control.extend({
         this._map.fire('isochrones:control_removed');
     },
 
+    _createUI: function () {
+        // Container for the user interface controls - these will be displayed permanently if the collapsed option is false, otherwise when the user clicks on the collapsed control toggle button
+        this._uiContainer = L.DomUtil.create('div', this.options.containerUIStyleClass);
+        this._container.appendChild(this._uiContainer);
+
+        // Close button to toggle the user interface into the collapsed state if collapsed == true
+        if (this._collapsed) this._createButton(this.options.collapseButtonContent, this.options.collapseButtonTooltip, this.options.collapseButtonStyleClass, this._uiContainer, this._collapse);
+
+        // If the control is in its collapsed state, create a standard size control button to act as a toggle to expand
+        if (this._collapsed) {
+            // Create a container for the toggle button - because we cannot easily hide a link tag created via the _createButton function adding the .hideContent CSS class
+            this._toggleButtonContainer = L.DomUtil.create('div', '');
+            this._container.appendChild(this._toggleButtonContainer);
+
+            // Create a button to expand the control to reveal the full user interface - this is automatically added to the main container
+            this._toggleButton = this._createButton(this.options.containerToggleContent, this.options.containerToggleTooltip, this.options.containerToggleStyleClass, this._toggleButtonContainer, this._expand);
+
+            // Hide the UI initially as the control is in the collapsed state
+            L.DomUtil.addClass(this._uiContainer, 'hideContent');
+        }
+    },
+
+    _expand: function () {
+        // Show the user interface container
+        L.DomUtil.removeClass(this._uiContainer, 'hideContent');
+
+        // Hide the toggle button
+        L.DomUtil.addClass(this._toggleButtonContainer, 'hideContent');
+    },
+
+    _collapse: function () {
+        // Hide the user interface container
+        L.DomUtil.addClass(this._uiContainer, 'hideContent');
+
+        // Show the toggle button
+        L.DomUtil.removeClass(this._toggleButtonContainer, 'hideContent');
+    },
+
+    // Almost straight copy of the Leaflet.js function of the same name, (c) 2010-2018 Vladimir Agafonkin, (c) 2010-2011 CloudMade
+    _createButton: function (html, title, className, container, fn) {
+        // Create control button as a link - as per Leaflet convention
+        var link = L.DomUtil.create('a', className, container);
+        link.innerHTML = html;
+        link.href = '#';
+        link.title = title;
+
+        // For assistive technologies e.g. screen readers
+        link.setAttribute('role', 'button');
+		link.setAttribute('aria-label', title);
+
+        // Set events
+        L.DomEvent
+            .on(link, 'mousedown dblclick', L.DomEvent.stopPropagation)
+            .on(link, 'click', L.DomEvent.stop)
+            .on(link, 'click', fn, this);     // send 'this' context to the event handler
+
+		return link;
+	},
+
     _toggleMode: function () {
         // Toggle the control between active and inactive states
         this._mode = Math.abs(this._mode - 1);
-        (this._mode == 1) ? this._activateControl() : this._deactivateControl();
+        (this._mode == 1) ? this._activate() : this._deactivate();
     },
 
-    _activateControl: function () {
+    _activate: function () {
         // Add the isochronesControlActive class to the map container to indicate the control is active
         L.DomUtil.addClass(this._mapContainer, 'isochronesControlActive');
 
@@ -166,7 +230,7 @@ L.Control.Isochrones = L.Control.extend({
         this._map.fire('isochrones:activated');
     },
 
-    _deactivateControl: function () {
+    _deactivate: function () {
         this._mode = 0;     // ensure we explicitly set the mode - we may not have come here from a click on the main control
 
         // Remove the isochronesControlActive class from the map container
@@ -188,6 +252,8 @@ L.Control.Isochrones = L.Control.extend({
         this._map.fire('isochrones:deactivated');
     },
 
+    // Deals with updating the position of the invisible Leaflet marker that chases the mouse pointer.
+    // This is used to determine the coordinates on the map when the user clicks/touches to create an isochrone
     _onMouseMove: function (e) {
 		var newPos = this._map.mouseEventToLayerPoint(e.originalEvent);
 		var latlng = this._map.layerPointToLatLng(newPos);
@@ -198,6 +264,7 @@ L.Control.Isochrones = L.Control.extend({
 		L.DomEvent.preventDefault(e.originalEvent);
 	},
 
+    // Main function to make the actual call to the API and display the resultant isochrones on the map
     _callApi: function (e) {
         var latLng = e.latlng;
 
@@ -212,7 +279,7 @@ L.Control.Isochrones = L.Control.extend({
             this.layerGroup.clearLayers();
 
             // Deactivate the control
-            this._deactivateControl();
+            this._deactivate();
         }
 
         // Inform that we are calling the API - could be useful for starting a spinner etc. to indicate to the user that something is happening if there is a delay
@@ -244,15 +311,7 @@ L.Control.Isochrones = L.Control.extend({
                     */
 
                     // Create a Leaflet GeoJSON FeatureGroup object from the GeoJSON returned from the API (NOTE: this object is accessible externally)
-                    context.isochrones = L.geoJSON(data, { style: context.options.styleFn, pane: context.options.pane });
-
-                    // Add a click event to this FeatureGroup which only fires if the plugin is activated and in delete mode
-                    /*context.isochrones.on({ click: function(e) {
-                        if (context._deleteMode == 1) {
-                            L.DomEvent.stopPropagation;
-                            context._delete(e);
-                        }
-                    } });*/
+                    context.isochrones = L.geoJSON(data, { style: context.options.styleFn });
 
                     // Load the layers into an array so that we can sort them in decending id order if there are more than 1
                     var arrLayers = context.isochrones.getLayers();
@@ -326,9 +385,9 @@ L.Control.Isochrones = L.Control.extend({
         }
     },
 
+    // Removes a particular FeatureGroup of isochrones from the LayerGroup.
+    // Called when an isochrone FeatureGroup is clicked on whilst the plugin is in delete mode
     _delete: function(e) {
-        // Removes a particular FeatureGroup of isochrones from the LayerGroup.
-        // Called when an isochrone FeatureGroup is clicked on whilst the plugin is in delete mode
         var parent = e.sourceTarget._eventParents;
 
         for (var key in parent) {
