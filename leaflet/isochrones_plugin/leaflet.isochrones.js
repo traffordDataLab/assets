@@ -27,10 +27,15 @@ L.Control.Isochrones = L.Control.extend({
         collapseButtonStyleClass: '',
         collapseButtonTooltip: 'Hide reachability options',
 
+        // Draw isochrones button
+        drawButtonContent: 'I',
+        drawButtonStyleClass: '',
+        drawButtonTooltip: 'Draw reachability',
+
         // Delete control to remove any current isochrones drawn on the map
-        deleteControlContent: 'D',
-        deleteControlTooltip: 'Delete reachability',
-        deleteControlStyleClass: '',
+        deleteButtonContent: 'D',
+        deleteButtonStyleClass: '',
+        deleteButtonTooltip: 'Delete reachability',
 
         // API settings
         ajaxRequestFn: null,                        // External function to make the actual call to the API via AJAX - if null will attempt to use simpleAjaxRequest
@@ -90,7 +95,7 @@ L.Control.Isochrones = L.Control.extend({
         this._mapContainer = map.getContainer();    // used in _activate() to add CSS if desired to indicate to the user that the plugin is activated
         this._collapsed = this.options.collapsed;
         this._mode = 0;             // 0 = not in create mode, 1 = create mode
-        this._deleteMode = 1;       // 0 = not in delete mode, 1 = delete mode
+        this._deleteMode = 0;       // 0 = not in delete mode, 1 = delete mode
         this._drawMultiple = this.options.drawMultiple;
         this._mouseMarker = null;   // invisible Leaflet marker to follow the mouse pointer when control is activated
         this.isochrones = null;     // set to a Leaflet GeoJSON FeatureGroup when the API returns data
@@ -105,16 +110,6 @@ L.Control.Isochrones = L.Control.extend({
 
         // Create the components for the user interface
         this._createUI();
-
-
-
-
-
-
-
-
-        // Create main interface control buttons as a links - as per Leaflet convention
-        //this._mainButton = this._createButton(this.options.containerCollapsedContent, this.options.containerCollapsedTooltip, this.options.containerCollapsedStyleClass, this._container, this._toggleMode);
 
         // Fire event to inform that the control has been added to the map
         this._map.fire('isochrones:control_added');
@@ -140,6 +135,12 @@ L.Control.Isochrones = L.Control.extend({
         // Close button to toggle the user interface into the collapsed state if collapsed == true
         if (this._collapsed) this._createButton(this.options.collapseButtonContent, this.options.collapseButtonTooltip, this.options.collapseButtonStyleClass, this._uiContainer, this._collapse);
 
+        // Draw button - to create isochrones
+        this._drawControl = this._createButton(this.options.drawButtonContent, this.options.drawButtonTooltip, this.options.drawButtonStyleClass, this._uiContainer, this._toggleDraw);
+
+        // Delete button - to remove isochrones
+        this._deleteControl = this._createButton(this.options.deleteButtonContent, this.options.deleteButtonTooltip, this.options.deleteButtonStyleClass, this._uiContainer, this._toggleDelete);
+
         // If the control is in its collapsed state, create a standard size control button to act as a toggle to expand
         if (this._collapsed) {
             // Create a container for the toggle button - because we cannot easily hide a link tag created via the _createButton function adding the .hideContent CSS class
@@ -152,22 +153,6 @@ L.Control.Isochrones = L.Control.extend({
             // Hide the UI initially as the control is in the collapsed state
             L.DomUtil.addClass(this._uiContainer, 'hideContent');
         }
-    },
-
-    _expand: function () {
-        // Show the user interface container
-        L.DomUtil.removeClass(this._uiContainer, 'hideContent');
-
-        // Hide the toggle button
-        L.DomUtil.addClass(this._toggleButtonContainer, 'hideContent');
-    },
-
-    _collapse: function () {
-        // Hide the user interface container
-        L.DomUtil.addClass(this._uiContainer, 'hideContent');
-
-        // Show the toggle button
-        L.DomUtil.removeClass(this._toggleButtonContainer, 'hideContent');
     },
 
     // Almost straight copy of the Leaflet.js function of the same name, (c) 2010-2018 Vladimir Agafonkin, (c) 2010-2011 CloudMade
@@ -191,15 +176,62 @@ L.Control.Isochrones = L.Control.extend({
 		return link;
 	},
 
-    _toggleMode: function () {
+    _expand: function () {
+        // Show the user interface container
+        L.DomUtil.removeClass(this._uiContainer, 'hideContent');
+
+        // Hide the toggle container
+        L.DomUtil.addClass(this._toggleButtonContainer, 'hideContent');
+    },
+
+    _collapse: function () {
+        // Hide the user interface container
+        L.DomUtil.addClass(this._uiContainer, 'hideContent');
+
+        // Show the toggle container
+        L.DomUtil.removeClass(this._toggleButtonContainer, 'hideContent');
+    },
+
+    _toggleDraw: function () {
         // Toggle the control between active and inactive states
         this._mode = Math.abs(this._mode - 1);
         (this._mode == 1) ? this._activate() : this._deactivate();
     },
 
+    _toggleDelete: function () {
+        if (this._deleteMode == 0) {
+            // We want to delete some isochrones
+            var isochronesNum = this.layerGroup.getLayers().length;
+
+            if (isochronesNum > 0) {
+                // We have some isochrones to delete - how many?
+                if (isochronesNum == 1) {
+                    // Only one, so delete it automatically
+                    this.layerGroup.clearLayers();
+                    this.isochones = null;
+                }
+                else {
+                    // We have more than one so the user will need to choose which to delete
+                    this._deleteMode = 1;
+                    // TODO: change the mouse pointer?
+                }
+            }
+        }
+        else {
+            this._deleteMode = 0;
+            // TODO: remove the selected class from the delete button
+        }
+    },
+
     _activate: function () {
+        // Ensure not in delete mode if previously selected
+        this._deleteMode = 0;
+        // TODO: remove the selected class from the delete button
+
         // Add the isochronesControlActive class to the map container to indicate the control is active
         L.DomUtil.addClass(this._mapContainer, 'isochronesControlActive');
+
+        // TODO: Add active class to the draw button to show it's currently selected
 
         /*
             Using a technique deployed in Jacob Toye's Leaflet.Draw plugin:
@@ -235,6 +267,8 @@ L.Control.Isochrones = L.Control.extend({
 
         // Remove the isochronesControlActive class from the map container
         L.DomUtil.removeClass(this._mapContainer, 'isochronesControlActive');
+
+        // TODO: Remove selected class from the draw button
 
         // Remove the mouse marker and its events from the map and destroy the marker
         if (this._mouseMarker !== null) {
@@ -274,6 +308,7 @@ L.Control.Isochrones = L.Control.extend({
         apiUrl += '&locations=' + latLng.lng + '%2C' + latLng.lat;
         apiUrl += '&profile=driving-car&range_type=time&range=180&interval=60&location_type=start';
 
+        /* TODO: Remove if decided that we don't need single/multiple mode
         if (this._drawMultiple == false) {
             // Remove any previous isochrones
             this.layerGroup.clearLayers();
@@ -281,6 +316,10 @@ L.Control.Isochrones = L.Control.extend({
             // Deactivate the control
             this._deactivate();
         }
+        */
+
+        // TODO: Decide if we want to deactivate each time or let the user toggle the draw button off manually
+        this._deactivate();
 
         // Inform that we are calling the API - could be useful for starting a spinner etc. to indicate to the user that something is happening if there is a delay
         this._map.fire('isochrones:api_call_start');
