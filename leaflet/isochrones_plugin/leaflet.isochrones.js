@@ -15,7 +15,6 @@ L.Control.Isochrones = L.Control.extend({
 
         // Main control settings and styling
         collapsed: true,                            // Operates in the same way as the Leaflet layer control - can be collapsed into a standard single control which expands on-click (true) or is displayed fully expanded (false)
-        drawMultiple: true,                         // Can we draw multiple isochrones on the map or just a single one?
         containerStyleClass: '',                    // The container for the plugin control will usually be styled with the standard Leaflet control styling, however this option allows for customisation
         containerUIStyleClass: 'isochronesSettingsContainer',                  // The container holding the user interface controls which is displayed if collapsed is false, or when the user expands the control by clicking on the toggle button
         containerToggleStyleClass: '',              // Allow options for styling - if you want to use an icon from services like fontawesome pass the declarations here, e.g. 'fa fa-home' etc.
@@ -92,11 +91,10 @@ L.Control.Isochrones = L.Control.extend({
     onAdd: function (map) {
         // Initial settings
         this._map = map;
-        this._mapContainer = map.getContainer();    // used in _activate() to add CSS if desired to indicate to the user that the plugin is activated
+        this._mapContainer = map.getContainer();    // used in _activateDraw() to add CSS if desired to indicate to the user that the plugin is activated
         this._collapsed = this.options.collapsed;
-        this._mode = 0;             // 0 = not in create mode, 1 = create mode
+        this._drawMode = 0;             // 0 = not in create mode, 1 = create mode
         this._deleteMode = 0;       // 0 = not in delete mode, 1 = delete mode
-        this._drawMultiple = this.options.drawMultiple;
         this._mouseMarker = null;   // invisible Leaflet marker to follow the mouse pointer when control is activated
         this.isochrones = null;     // set to a Leaflet GeoJSON FeatureGroup when the API returns data
         this.layerGroup = (this.options.layerGroup == null) ? L.layerGroup(null, { pane: this.options.pane }) : this.options.layerGroup;   // holds the isochrone GeoJSON FeatureGroup(s)
@@ -119,7 +117,7 @@ L.Control.Isochrones = L.Control.extend({
 
     onRemove: function (map) {
         // clean up - remove any styles, event listeners, layers etc.
-        this._deactivate();
+        this._deactivateDraw();
         this.layerGroup.removeFrom(this._map);
         this.layerGroup.clearLayers();
 
@@ -193,12 +191,15 @@ L.Control.Isochrones = L.Control.extend({
     },
 
     _toggleDraw: function () {
-        // Toggle the control between active and inactive states
-        this._mode = Math.abs(this._mode - 1);
-        (this._mode == 1) ? this._activate() : this._deactivate();
+        // Toggle the draw control between active and inactive states
+        this._drawMode = Math.abs(this._drawMode - 1);
+        (this._drawMode == 1) ? this._activateDraw() : this._deactivateDraw();
     },
 
     _toggleDelete: function () {
+        // Toggle the delete control between active and inactive states
+        if (this._drawMode == 1) this._deactivateDraw();    // deactivate the draw control
+
         if (this._deleteMode == 0) {
             // We want to delete some isochrones
             var isochronesNum = this.layerGroup.getLayers().length;
@@ -209,10 +210,14 @@ L.Control.Isochrones = L.Control.extend({
                     // Only one, so delete it automatically
                     this.layerGroup.clearLayers();
                     this.isochones = null;
+
+                    // Inform that an isochrone FeatureGroup has been deleted
+                    this._map.fire('isochrones:delete');
                 }
                 else {
-                    // We have more than one so the user will need to choose which to delete
+                    // We have more than one so the user will need to choose which to delete. Therefore set the control in delete mode and wait for the user event
                     this._deleteMode = 1;
+                    // TODO: add the selected class to the delete button
                     // TODO: change the mouse pointer?
                 }
             }
@@ -223,7 +228,20 @@ L.Control.Isochrones = L.Control.extend({
         }
     },
 
-    _activate: function () {
+    // Removes a particular FeatureGroup of isochrones from the LayerGroup.
+    // Called when an isochrone FeatureGroup is clicked on whilst the plugin is in delete mode
+    _delete: function(e) {
+        var parent = e.sourceTarget._eventParents;
+
+        for (var key in parent) {
+            if (parent.hasOwnProperty(key) && key != '<prototype>') parent[key].removeFrom(this.layerGroup);
+        }
+
+        // Inform that an isochrone FeatureGroup has been deleted
+        this._map.fire('isochrones:delete');
+    },
+
+    _activateDraw: function () {
         // Ensure not in delete mode if previously selected
         this._deleteMode = 0;
         // TODO: remove the selected class from the delete button
@@ -262,8 +280,8 @@ L.Control.Isochrones = L.Control.extend({
         this._map.fire('isochrones:activated');
     },
 
-    _deactivate: function () {
-        this._mode = 0;     // ensure we explicitly set the mode - we may not have come here from a click on the main control
+    _deactivateDraw: function () {
+        this._drawMode = 0;     // ensure we explicitly set the mode - we may not have come here from a click on the main control
 
         // Remove the isochronesControlActive class from the map container
         L.DomUtil.removeClass(this._mapContainer, 'isochronesControlActive');
@@ -307,19 +325,6 @@ L.Control.Isochrones = L.Control.extend({
         var apiUrl = 'https://api.openrouteservice.org/isochrones?api_key=' + this.options.apiKey;
         apiUrl += '&locations=' + latLng.lng + '%2C' + latLng.lat;
         apiUrl += '&profile=driving-car&range_type=time&range=180&interval=60&location_type=start';
-
-        /* TODO: Remove if decided that we don't need single/multiple mode
-        if (this._drawMultiple == false) {
-            // Remove any previous isochrones
-            this.layerGroup.clearLayers();
-
-            // Deactivate the control
-            this._deactivate();
-        }
-        */
-
-        // TODO: Decide if we want to deactivate each time or let the user toggle the draw button off manually
-        this._deactivate();
 
         // Inform that we are calling the API - could be useful for starting a spinner etc. to indicate to the user that something is happening if there is a delay
         this._map.fire('isochrones:api_call_start');
@@ -422,19 +427,6 @@ L.Control.Isochrones = L.Control.extend({
             // Log the error in the console
             if (console.log) console.log('Leaflet.isochrones.js error attempting to call API.\nLikely cause is function simpleAjaxRequest has not been included and no alternative has been specified.\nSee docs for more details, actual error below.\n' + e);
         }
-    },
-
-    // Removes a particular FeatureGroup of isochrones from the LayerGroup.
-    // Called when an isochrone FeatureGroup is clicked on whilst the plugin is in delete mode
-    _delete: function(e) {
-        var parent = e.sourceTarget._eventParents;
-
-        for (var key in parent) {
-            if (parent.hasOwnProperty(key) && key != '<prototype>') parent[key].removeFrom(this.layerGroup);
-        }
-
-        // Inform that an isochrone FeatureGroup has been deleted
-        this._map.fire('isochrones:delete');
     }
 });
 
