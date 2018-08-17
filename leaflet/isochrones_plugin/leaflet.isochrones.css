@@ -71,10 +71,3 @@
 {
     display: none;
 }
-
-
-/* Added to the map container when the plugin is activated by the user. */
-.isochronesControlActive
-{
-    /* Add styles to communicate to the user that the map is in create isochrones mode */
-}

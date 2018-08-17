@@ -14,34 +14,46 @@ L.Control.Isochrones = L.Control.extend({
         zIndexMouseMarker: 9000,                    // Needs to be greater than any other layer in the map - this is an invisible marker tied to the mouse pointer when the control is activated to prevent clicks interacting with other map objects
 
         // Main control settings and styling
-        collapsed: true,                            // Operates in the same way as the Leaflet layer control - can be collapsed into a standard single control which expands on-click (true) or is displayed fully expanded (false)
-        containerStyleClass: '',                    // The container for the plugin control will usually be styled with the standard Leaflet control styling, however this option allows for customisation
-        containerUIStyleClass: 'isochronesSettingsContainer',                  // The container holding the user interface controls which is displayed if collapsed is false, or when the user expands the control by clicking on the toggle button
-        containerToggleStyleClass: 'isochronesControlToggle',              // Allow options for styling - if you want to use an icon from services like fontawesome pass the declarations here, e.g. 'fa fa-home' etc.
-        containerToggleContent: '&Delta;',          // HTML to display within the control if it is collapsed. If you want an icon from services like Fontawesome pass '' for this value and set the StyleClass option
-        containerToggleTooltip: 'Show reachability options',     // Tooltip to appear on-hover
+        collapsed: true,                            // Operates in a similar way to the Leaflet layer control - can be collapsed into a standard single control which expands on-click (true) or is displayed fully expanded (false)
+        controlContainerStyleClass: '',             // The container for the plugin control will usually be styled with the standard Leaflet control styling, however this option allows for customisation
 
-        // Collapse button
+        // If collapsed == true a toggle button is displayed to expand the control onclick/touch
+        toggleButtonStyleClass: 'isochronesControlToggle',              // Allow options for styling - if you want to use an icon from services like fontawesome pass the declarations here, e.g. 'fa fa-home' etc.
+        toggleButtonContent: '&Delta;',          // HTML to display within the control if it is collapsed. If you want an icon from services like Fontawesome pass '' for this value and set the StyleClass option
+        toggleButtonTooltip: 'Show reachability options',     // Tooltip to appear on-hover
+
+        settingsContainerStyleClass: 'isochronesSettingsContainer', // The container holding the user interface controls which is displayed if collapsed is false, or when the user expands the control by clicking on the toggle button
+        settingsButtonStyleClass: 'isochronesSettingsControl',      // Generic class to style the setting buttons uniformly - further customisation per button is available with specific options below
+        settingsButtonSelectedStyleClass: '',                       // Indicate to the user which button is active in the settings
+
+        // Collapse button displayed within the settings container if collapsed == true
         collapseButtonContent: '&lt;',
-        collapseButtonStyleClass: '',
+        collapseButtonStyleClass: 'collapseIsochronesSettingsControl',
         collapseButtonTooltip: 'Hide reachability options',
 
         // Draw isochrones button
-        drawButtonContent: 'I',
+        drawButtonContent: 'Draw',
         drawButtonStyleClass: '',
         drawButtonTooltip: 'Draw reachability',
 
-        // Delete control to remove any current isochrones drawn on the map
-        deleteButtonContent: 'D',
+        // Delete button to remove any current isochrones drawn on the map
+        deleteButtonContent: 'Del',
         deleteButtonStyleClass: '',
         deleteButtonTooltip: 'Delete reachability',
+
+        // Isochone calculation mode - either time or distance
+        timeButtonContent: 'Time',
+        timeButtonStyleClass: '',
+        timeButtonTooltip: 'Reachability based on time',
+
+        distanceButtonContent: 'Dist',
+        distanceButtonStyleClass: '',
+        distanceButtonTooltip: 'Reachability based on distance',
 
         // API settings
         ajaxRequestFn: null,                        // External function to make the actual call to the API via AJAX - if null will attempt to use simpleAjaxRequest
         apiKey: '58d904a497c67e00015b45fc6862cde0265d4fd78ec660aa83220cdb',                                 // openrouteservice API key - the service which returns the isochrone polygons based on the various options/parameters TODO: Remove this when we ship the code as this is our personal key
         rangeType: 'distance',                      // Can be either by distance or time - any value other than 'distance' is assumed to be 'time'
-        rangeTypeDistanceLabel: 'Distance',         // The label to appear next to the distance radio button option
-        rangeTypeTimeLabel: 'Travel time',          // sSame as above but for the time option
 
         rangeControlDistanceTitle: 'Range (kilometres)',
         rangeControlDistanceMin: 0.5,
@@ -91,10 +103,9 @@ L.Control.Isochrones = L.Control.extend({
     onAdd: function (map) {
         // Initial settings
         this._map = map;
-        this._mapContainer = map.getContainer();    // used in _activateDraw() to add CSS if desired to indicate to the user that the plugin is activated
         this._collapsed = this.options.collapsed;
-        this._drawMode = 0;             // 0 = not in create mode, 1 = create mode
-        this._deleteMode = 0;       // 0 = not in delete mode, 1 = delete mode
+        this._drawMode = false;
+        this._deleteMode = false;
         this._mouseMarker = null;   // invisible Leaflet marker to follow the mouse pointer when control is activated
         this.isochrones = null;     // set to a Leaflet GeoJSON FeatureGroup when the API returns data
         this.layerGroup = (this.options.layerGroup == null) ? L.layerGroup(null, { pane: this.options.pane }) : this.options.layerGroup;   // holds the isochrone GeoJSON FeatureGroup(s)
@@ -103,7 +114,7 @@ L.Control.Isochrones = L.Control.extend({
         this.layerGroup.addTo(this._map);
 
         // Main container for the control - this is added to the map in the Leaflet control pane
-        this._container = L.DomUtil.create('div', 'leaflet-bar ' + this.options.containerStyleClass);
+        this._container = L.DomUtil.create('div', 'leaflet-bar ' + this.options.controlContainerStyleClass);
         L.DomEvent.disableClickPropagation(this._container);
 
         // Create the components for the user interface
@@ -127,17 +138,17 @@ L.Control.Isochrones = L.Control.extend({
 
     _createUI: function () {
         // Container for the user interface controls - these will be displayed permanently if the collapsed option is false, otherwise when the user clicks on the collapsed control toggle button
-        this._uiContainer = L.DomUtil.create('div', this.options.containerUIStyleClass);
+        this._uiContainer = L.DomUtil.create('div', this.options.settingsContainerStyleClass);
         this._container.appendChild(this._uiContainer);
 
         // Close button to toggle the user interface into the collapsed state if collapsed == true
-        if (this._collapsed) this._createButton('span', this.options.collapseButtonContent, this.options.collapseButtonTooltip, 'collapseIsochronesSettingsControl ' + this.options.collapseButtonStyleClass, this._uiContainer, this._collapse);
+        if (this._collapsed) this._createButton('span', this.options.collapseButtonContent, this.options.collapseButtonTooltip, this.options.collapseButtonStyleClass, this._uiContainer, this._collapse);
 
         // Draw button - to create isochrones
-        this._drawControl = this._createButton('span', this.options.drawButtonContent, this.options.drawButtonTooltip, 'isochronesSettingsControl ' + this.options.drawButtonStyleClass, this._uiContainer, this._toggleDraw);
+        this._drawControl = this._createButton('span', this.options.drawButtonContent, this.options.drawButtonTooltip, this.options.settingsButtonStyleClass + ' ' + this.options.drawButtonStyleClass, this._uiContainer, this._toggleDraw);
 
         // Delete button - to remove isochrones
-        this._deleteControl = this._createButton('span', this.options.deleteButtonContent, this.options.deleteButtonTooltip, 'isochronesSettingsControl ' + this.options.deleteButtonStyleClass, this._uiContainer, this._toggleDelete);
+        this._deleteControl = this._createButton('span', this.options.deleteButtonContent, this.options.deleteButtonTooltip, this.options.settingsButtonStyleClass + ' ' + this.options.deleteButtonStyleClass, this._uiContainer, this._toggleDelete);
 
         // If the control is in its collapsed state, create a standard size control button to act as a toggle to expand
         if (this._collapsed) {
@@ -146,7 +157,7 @@ L.Control.Isochrones = L.Control.extend({
             this._container.appendChild(this._toggleButtonContainer);
 
             // Create a button to expand the control to reveal the full user interface - this is automatically added to the main container
-            this._toggleButton = this._createButton('a', this.options.containerToggleContent, this.options.containerToggleTooltip, this.options.containerToggleStyleClass, this._toggleButtonContainer, this._expand);
+            this._toggleButton = this._createButton('a', this.options.toggleButtonContent, this.options.toggleButtonTooltip, this.options.toggleButtonStyleClass, this._toggleButtonContainer, this._expand);
 
             // Hide the UI initially as the control is in the collapsed state
             L.DomUtil.addClass(this._uiContainer, 'hideContent');
@@ -190,66 +201,26 @@ L.Control.Isochrones = L.Control.extend({
         L.DomUtil.removeClass(this._toggleButtonContainer, 'hideContent');
     },
 
+    // Toggle the draw control between active and inactive states
     _toggleDraw: function () {
-        // Toggle the draw control between active and inactive states
-        this._drawMode = Math.abs(this._drawMode - 1);
-        (this._drawMode == 1) ? this._activateDraw() : this._deactivateDraw();
+        if (this._deleteMode) this._deactivateDelete();    // deactivate the delete control
+
+        (this._drawMode) ? this._deactivateDraw() : this._activateDraw();
     },
 
+    // Toggle the delete control between active and inactive states
     _toggleDelete: function () {
-        // Toggle the delete control between active and inactive states
-        if (this._drawMode == 1) this._deactivateDraw();    // deactivate the draw control
+        if (this._drawMode) this._deactivateDraw();    // deactivate the draw control
 
-        if (this._deleteMode == 0) {
-            // We want to delete some isochrones
-            var isochronesNum = this.layerGroup.getLayers().length;
-
-            if (isochronesNum > 0) {
-                // We have some isochrones to delete - how many?
-                if (isochronesNum == 1) {
-                    // Only one, so delete it automatically
-                    this.layerGroup.clearLayers();
-                    this.isochones = null;
-
-                    // Inform that an isochrone FeatureGroup has been deleted
-                    this._map.fire('isochrones:delete');
-                }
-                else {
-                    // We have more than one so the user will need to choose which to delete. Therefore set the control in delete mode and wait for the user event
-                    this._deleteMode = 1;
-                    // TODO: add the selected class to the delete button
-                    // TODO: change the mouse pointer?
-                }
-            }
-        }
-        else {
-            this._deleteMode = 0;
-            // TODO: remove the selected class from the delete button
-        }
-    },
-
-    // Removes a particular FeatureGroup of isochrones from the LayerGroup.
-    // Called when an isochrone FeatureGroup is clicked on whilst the plugin is in delete mode
-    _delete: function(e) {
-        var parent = e.sourceTarget._eventParents;
-
-        for (var key in parent) {
-            if (parent.hasOwnProperty(key) && key != '<prototype>') parent[key].removeFrom(this.layerGroup);
-        }
-
-        // Inform that an isochrone FeatureGroup has been deleted
-        this._map.fire('isochrones:delete');
+        (this._deleteMode) ? this._deactivateDelete() : this._activateDelete();
     },
 
     _activateDraw: function () {
-        // Ensure not in delete mode if previously selected
-        this._deleteMode = 0;
-        // TODO: remove the selected class from the delete button
-
-        // Add the isochronesControlActive class to the map container to indicate the control is active
-        L.DomUtil.addClass(this._mapContainer, 'isochronesControlActive');
-
+        this._drawMode = true;
         // TODO: Add active class to the draw button to show it's currently selected
+
+        // Deactivate delete mode if currently active
+        if (this._deleteMode) this._deactivateDelete();
 
         /*
             Using a technique deployed in Jacob Toye's Leaflet.Draw plugin:
@@ -281,11 +252,7 @@ L.Control.Isochrones = L.Control.extend({
     },
 
     _deactivateDraw: function () {
-        this._drawMode = 0;     // ensure we explicitly set the mode - we may not have come here from a click on the main control
-
-        // Remove the isochronesControlActive class from the map container
-        L.DomUtil.removeClass(this._mapContainer, 'isochronesControlActive');
-
+        this._drawMode = false;     // ensure we explicitly set the mode - we may not have come here from a click on the main control
         // TODO: Remove selected class from the draw button
 
         // Remove the mouse marker and its events from the map and destroy the marker
@@ -302,6 +269,50 @@ L.Control.Isochrones = L.Control.extend({
 
         // Fire an event to indicate that the control is active - in case we want to run some external code etc.
         this._map.fire('isochrones:deactivated');
+    },
+
+    _activateDelete: function () {
+        // We want to delete some isochrones
+        var isochronesNum = this.layerGroup.getLayers().length;
+
+        if (isochronesNum > 0) {
+            // We have some isochrones to delete - how many?
+            if (isochronesNum == 1) {
+                // Only one, so delete it automatically - no need to change the state of this._deleteMode
+                this.layerGroup.clearLayers();
+                this.isochones = null;
+
+                // Inform that an isochrone FeatureGroup has been deleted
+                this._map.fire('isochrones:delete');
+            }
+            else {
+                // We have more than one so the user will need to choose which to delete. Therefore set the control in delete mode and wait for the user event
+                this._deleteMode = true;
+                // TODO: add the selected class to the delete button
+            }
+        }
+    },
+
+    _deactivateDelete: function () {
+        // The delete control is currently activate so deactivate it now
+        this._deleteMode = false;
+        // TODO: remove the selected class from the delete button
+    },
+
+    // Removes a particular FeatureGroup of isochrones from the LayerGroup.
+    // Called when an isochrone FeatureGroup is clicked on whilst the plugin is in delete mode
+    _delete: function(e) {
+        var parent = e.sourceTarget._eventParents;
+
+        for (var key in parent) {
+            if (parent.hasOwnProperty(key) && key != '<prototype>') parent[key].removeFrom(this.layerGroup);
+        }
+
+        // Deactivate the delete control if there are no more isochrones left
+        if (this.layerGroup.getLayers().length == 0) this._deactivateDelete();
+
+        // Inform that an isochrone FeatureGroup has been deleted
+        this._map.fire('isochrones:delete');
     },
 
     // Deals with updating the position of the invisible Leaflet marker that chases the mouse pointer.
@@ -382,7 +393,7 @@ L.Control.Isochrones = L.Control.extend({
                                 mouseover: (function (e) { if (context.options.mouseOverFn != null) context.options.mouseOverFn(e, context.isochrones) }),
                                 mouseout: (function (e) { if (context.options.mouseOutFn != null) context.options.mouseOutFn(e, context.isochrones) }),
                                 click: (function(e) {
-                                    if (context._deleteMode == 1) {
+                                    if (context._deleteMode) {
                                         // If we're in delete mode, call the delete function
                                         L.DomEvent.stopPropagation(e);
                                         context._delete(e);
