@@ -17,12 +17,12 @@ L.Control.Isochrones = L.Control.extend({
         collapsed: true,                            // Operates in the same way as the Leaflet layer control - can be collapsed into a standard single control which expands on-click (true) or is displayed fully expanded (false)
         containerStyleClass: '',                    // The container for the plugin control will usually be styled with the standard Leaflet control styling, however this option allows for customisation
         containerUIStyleClass: 'isochronesSettingsContainer',                  // The container holding the user interface controls which is displayed if collapsed is false, or when the user expands the control by clicking on the toggle button
-        containerToggleStyleClass: '',              // Allow options for styling - if you want to use an icon from services like fontawesome pass the declarations here, e.g. 'fa fa-home' etc.
+        containerToggleStyleClass: 'isochronesControlToggle',              // Allow options for styling - if you want to use an icon from services like fontawesome pass the declarations here, e.g. 'fa fa-home' etc.
         containerToggleContent: '&Delta;',          // HTML to display within the control if it is collapsed. If you want an icon from services like Fontawesome pass '' for this value and set the StyleClass option
         containerToggleTooltip: 'Show reachability options',     // Tooltip to appear on-hover
 
         // Collapse button
-        collapseButtonContent: 'X',
+        collapseButtonContent: '&lt;',
         collapseButtonStyleClass: '',
         collapseButtonTooltip: 'Hide reachability options',
 
@@ -131,13 +131,13 @@ L.Control.Isochrones = L.Control.extend({
         this._container.appendChild(this._uiContainer);
 
         // Close button to toggle the user interface into the collapsed state if collapsed == true
-        if (this._collapsed) this._createButton(this.options.collapseButtonContent, this.options.collapseButtonTooltip, this.options.collapseButtonStyleClass, this._uiContainer, this._collapse);
+        if (this._collapsed) this._createButton('span', this.options.collapseButtonContent, this.options.collapseButtonTooltip, 'collapseIsochronesSettingsControl ' + this.options.collapseButtonStyleClass, this._uiContainer, this._collapse);
 
         // Draw button - to create isochrones
-        this._drawControl = this._createButton(this.options.drawButtonContent, this.options.drawButtonTooltip, this.options.drawButtonStyleClass, this._uiContainer, this._toggleDraw);
+        this._drawControl = this._createButton('span', this.options.drawButtonContent, this.options.drawButtonTooltip, 'isochronesSettingsControl ' + this.options.drawButtonStyleClass, this._uiContainer, this._toggleDraw);
 
         // Delete button - to remove isochrones
-        this._deleteControl = this._createButton(this.options.deleteButtonContent, this.options.deleteButtonTooltip, this.options.deleteButtonStyleClass, this._uiContainer, this._toggleDelete);
+        this._deleteControl = this._createButton('span', this.options.deleteButtonContent, this.options.deleteButtonTooltip, 'isochronesSettingsControl ' + this.options.deleteButtonStyleClass, this._uiContainer, this._toggleDelete);
 
         // If the control is in its collapsed state, create a standard size control button to act as a toggle to expand
         if (this._collapsed) {
@@ -146,32 +146,32 @@ L.Control.Isochrones = L.Control.extend({
             this._container.appendChild(this._toggleButtonContainer);
 
             // Create a button to expand the control to reveal the full user interface - this is automatically added to the main container
-            this._toggleButton = this._createButton(this.options.containerToggleContent, this.options.containerToggleTooltip, this.options.containerToggleStyleClass, this._toggleButtonContainer, this._expand);
+            this._toggleButton = this._createButton('a', this.options.containerToggleContent, this.options.containerToggleTooltip, this.options.containerToggleStyleClass, this._toggleButtonContainer, this._expand);
 
             // Hide the UI initially as the control is in the collapsed state
             L.DomUtil.addClass(this._uiContainer, 'hideContent');
         }
     },
 
-    // Almost straight copy of the Leaflet.js function of the same name, (c) 2010-2018 Vladimir Agafonkin, (c) 2010-2011 CloudMade
-    _createButton: function (html, title, className, container, fn) {
-        // Create control button as a link - as per Leaflet convention
-        var link = L.DomUtil.create('a', className, container);
-        link.innerHTML = html;
-        link.href = '#';
-        link.title = title;
+    // An amended version of the Leaflet.js function of the same name, (c) 2010-2018 Vladimir Agafonkin, (c) 2010-2011 CloudMade
+    _createButton: function (tag, html, title, className, container, fn) {
+        // Create a control button
+        var button = L.DomUtil.create(tag, className, container);
+        button.innerHTML = html;
+        button.title = title;
+        if (tag === 'a') button.href = '#';
 
         // For assistive technologies e.g. screen readers
-        link.setAttribute('role', 'button');
-		link.setAttribute('aria-label', title);
+        button.setAttribute('role', 'button');
+		button.setAttribute('aria-label', title);
 
         // Set events
         L.DomEvent
-            .on(link, 'mousedown dblclick', L.DomEvent.stopPropagation)
-            .on(link, 'click', L.DomEvent.stop)
-            .on(link, 'click', fn, this);     // send 'this' context to the event handler
+            .on(button, 'mousedown dblclick', L.DomEvent.stopPropagation)
+            .on(button, 'click', L.DomEvent.stop)
+            .on(button, 'click', fn, this);     // send 'this' context to the event handler
 
-		return link;
+		return button;
 	},
 
     _expand: function () {

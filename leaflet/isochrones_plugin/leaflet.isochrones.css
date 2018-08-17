@@ -1,24 +1,63 @@
 /* The button to toggle the isochrones control between collapsed and non-collapsed states */
 .isochronesControlToggle
 {
-    font-size: 18px;
+    font: bold 18px 'Lucida Console', Monaco, monospace;    /* to match the default Leaflet styling for the zoom control */
 }
+
+.leaflet-touch .isochronesControlToggle
+{
+    font-size: 22px;
+}
+
 
 /* The container for the isochrones control user interface */
 .isochronesSettingsContainer
 {
     background: #fff;
-    background: rgba(255, 255, 255, 0.8);   /* TODO: Might not include this here for the release as this is to match the Lab styling of Leaflet controls - the default is just the background: #fff */
     padding: 6px;
 }
+
+
+/* Specific class for the collapse button when the control is in a toggleable state */
+.collapseIsochronesSettingsControl
+{
+    display: block;
+    width: 22px;
+    height: 22px;
+    line-height: 22px;
+    border-radius: 11px;
+    margin-bottom: 10px;
+}
+
 
 /* General class for styling the 'button' controls in the user interface container */
 .isochronesSettingsControl
 {
+    display: inline-block;
     width: 40px;
     height: 40px;
+    line-height: 40px;
     border-radius: 20px;
+    margin-right: 10px;
 }
+
+.isochronesSettingsControl:last-child
+{
+    margin-right: 0px;
+}
+
+.isochronesSettingsControl, .collapseIsochronesSettingsControl
+{
+    text-align: center;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+.isochronesSettingsControl:hover, .collapseIsochronesSettingsControl:hover
+{
+    background-color: #f4f4f4;
+}
+
 
 /* General class for highlighting the selected 'button' controls in the user interface container */
 .isochronesSettingsSelected
@@ -26,11 +65,13 @@
     color: #fc6721;
 }
 
+
 /* When the control is used in its collapsed state, this class is used to hide the toggle control or the settings container depending on the collapsed/expanded state of the control */
 .hideContent
 {
     display: none;
 }
+
 
 /* Added to the map container when the plugin is activated by the user. */
 .isochronesControlActive
