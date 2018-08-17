@@ -301,13 +301,7 @@ L.Control.Isochrones = L.Control.extend({
         }
         else {
             // There are no isochrones to delete so warn the user by flashing the button
-            L.DomUtil.addClass(this._deleteControl, this.options.errorStyleClass);
-
-            var context = this;
-
-            setTimeout(function () {
-                L.DomUtil.removeClass(context._deleteControl, context.options.errorStyleClass);
-            }, 500);
+            this._showError(this._deleteControl);
         }
     },
 
@@ -322,7 +316,7 @@ L.Control.Isochrones = L.Control.extend({
 
     // Removes a particular FeatureGroup of isochrones from the LayerGroup.
     // Called when an isochrone FeatureGroup is clicked on whilst the plugin is in delete mode
-    _delete: function(e) {
+    _delete: function (e) {
         var parent = e.sourceTarget._eventParents;
 
         for (var key in parent) {
@@ -334,6 +328,19 @@ L.Control.Isochrones = L.Control.extend({
 
         // Inform that an isochrone FeatureGroup has been deleted
         this._map.fire('isochrones:delete');
+    },
+
+    // Show a visible error to the user if something has gone wrong
+    _showError: function (control) {
+        var css = this.options.errorStyleClass;
+
+        // Add the error class to the control
+        L.DomUtil.addClass(control, css);
+
+        // Remove the error class from the control after 0.5 seconds
+        setTimeout(function () {
+            L.DomUtil.removeClass(control, css);
+        }, 500);
     },
 
     // Deals with updating the position of the invisible Leaflet marker that chases the mouse pointer.
@@ -446,7 +453,7 @@ L.Control.Isochrones = L.Control.extend({
                 context._map.fire('isochrones:api_call_end');
             });
         }
-        catch(e) {
+        catch (e) {
             // Fire event to inform that an error occurred calling the API
             context._map.fire('isochrones:error');
 
