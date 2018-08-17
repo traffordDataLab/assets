@@ -18,18 +18,18 @@ L.Control.Isochrones = L.Control.extend({
         controlContainerStyleClass: '',             // The container for the plugin control will usually be styled with the standard Leaflet control styling, however this option allows for customisation
 
         // If collapsed == true a toggle button is displayed to expand the control onclick/touch
-        toggleButtonStyleClass: 'isochronesControlToggle',              // Allow options for styling - if you want to use an icon from services like fontawesome pass the declarations here, e.g. 'fa fa-home' etc.
+        toggleButtonStyleClass: 'isochrones-control-toggle',              // Allow options for styling - if you want to use an icon from services like fontawesome pass the declarations here, e.g. 'fa fa-home' etc.
         toggleButtonContent: '&Delta;',          // HTML to display within the control if it is collapsed. If you want an icon from services like Fontawesome pass '' for this value and set the StyleClass option
         toggleButtonTooltip: 'Show reachability options',     // Tooltip to appear on-hover
 
-        settingsContainerStyleClass: 'isochronesSettingsContainer', // The container holding the user interface controls which is displayed if collapsed is false, or when the user expands the control by clicking on the toggle button
-        settingsButtonStyleClass: 'isochronesSettingsControl',      // Generic class to style the setting buttons uniformly - further customisation per button is available with specific options below
+        settingsContainerStyleClass: 'isochrones-control-settings-container', // The container holding the user interface controls which is displayed if collapsed is false, or when the user expands the control by clicking on the toggle button
+        settingsButtonStyleClass: 'isochrones-control-settings-button',      // Generic class to style the setting buttons uniformly - further customisation per button is available with specific options below
         activeStyleClass: 'isochrones-control-active',              // Indicate to the user which button is active in the settings and the collapsed state of the control if settings are active
-        errorStyleClass: 'error',
+        errorStyleClass: 'isochrones-control-error',
 
         // Collapse button displayed within the settings container if collapsed == true
         collapseButtonContent: '&lt;',
-        collapseButtonStyleClass: 'collapseIsochronesSettingsControl',
+        collapseButtonStyleClass: 'isochrones-control-collapse-button',
         collapseButtonTooltip: 'Hide reachability options',
 
         // Draw isochrones button
@@ -153,7 +153,7 @@ L.Control.Isochrones = L.Control.extend({
 
         // If the control is in its collapsed state, create a standard size control button to act as a toggle to expand
         if (this._collapsed) {
-            // Create a container for the toggle button - because we cannot easily hide a link tag created via the _createButton function adding the .hideContent CSS class
+            // Create a container for the toggle button - because we cannot easily hide a link tag created via the _createButton function adding the .isochrones-control-hide CSS class
             this._toggleButtonContainer = L.DomUtil.create('div', '');
             this._container.appendChild(this._toggleButtonContainer);
 
@@ -161,7 +161,7 @@ L.Control.Isochrones = L.Control.extend({
             this._toggleButton = this._createButton('a', this.options.toggleButtonContent, this.options.toggleButtonTooltip, this.options.toggleButtonStyleClass, this._toggleButtonContainer, this._expand);
 
             // Hide the UI initially as the control is in the collapsed state
-            L.DomUtil.addClass(this._uiContainer, 'hideContent');
+            L.DomUtil.addClass(this._uiContainer, 'isochrones-control-hide');
         }
     },
 
@@ -188,10 +188,10 @@ L.Control.Isochrones = L.Control.extend({
 
     _expand: function () {
         // Show the user interface container
-        L.DomUtil.removeClass(this._uiContainer, 'hideContent');
+        L.DomUtil.removeClass(this._uiContainer, 'isochrones-control-hide');
 
         // Hide the toggle container
-        L.DomUtil.addClass(this._toggleButtonContainer, 'hideContent');
+        L.DomUtil.addClass(this._toggleButtonContainer, 'isochrones-control-hide');
 
         // Remove the active class from the control container if either the draw or delete modes are active
         if (L.DomUtil.hasClass(this._container, this.options.activeStyleClass)) L.DomUtil.removeClass(this._container, this.options.activeStyleClass);
@@ -199,10 +199,10 @@ L.Control.Isochrones = L.Control.extend({
 
     _collapse: function () {
         // Hide the user interface container
-        L.DomUtil.addClass(this._uiContainer, 'hideContent');
+        L.DomUtil.addClass(this._uiContainer, 'isochrones-control-hide');
 
         // Show the toggle container
-        L.DomUtil.removeClass(this._toggleButtonContainer, 'hideContent');
+        L.DomUtil.removeClass(this._toggleButtonContainer, 'isochrones-control-hide');
 
         // Add the active class to the control container if either the draw or delete modes are active
         if ((this._drawMode || this._deleteMode) && !L.DomUtil.hasClass(this._container, this.options.activeStyleClass)) L.DomUtil.addClass(this._container, this.options.activeStyleClass);

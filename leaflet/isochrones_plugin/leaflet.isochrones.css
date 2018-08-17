@@ -1,17 +1,17 @@
 /* The button to toggle the isochrones control between collapsed and non-collapsed states */
-.isochronesControlToggle
+.isochrones-control-toggle
 {
     font: bold 18px 'Lucida Console', Monaco, monospace;    /* to match the default Leaflet styling for the zoom control */
 }
 
-.leaflet-touch .isochronesControlToggle
+.leaflet-touch .isochrones-control-toggle
 {
     font-size: 22px;
 }
 
 
 /* The container for the isochrones control user interface */
-.isochronesSettingsContainer
+.isochrones-control-settings-container
 {
     background: #fff;
     padding: 6px;
@@ -19,7 +19,7 @@
 
 
 /* Specific class for the collapse button when the control is in a toggleable state */
-.collapseIsochronesSettingsControl
+.isochrones-control-collapse-button
 {
     display: block;
     width: 22px;
@@ -31,7 +31,7 @@
 
 
 /* General class for styling the 'button' controls in the user interface container */
-.isochronesSettingsControl
+.isochrones-control-settings-button
 {
     display: inline-block;
     width: 40px;
@@ -41,12 +41,12 @@
     margin-right: 10px;
 }
 
-.isochronesSettingsControl:last-child
+.isochrones-control-settings-button:last-child
 {
     margin-right: 0px;
 }
 
-.isochronesSettingsControl, .collapseIsochronesSettingsControl
+.isochrones-control-settings-button, .isochrones-control-collapse-button
 {
     text-align: center;
     border: 2px solid #757575;
@@ -54,7 +54,7 @@
     color: #757575;
 }
 
-.isochronesSettingsControl:hover, .collapseIsochronesSettingsControl:hover
+.isochrones-control-settings-button:hover, .isochrones-control-collapse-button:hover
 {
     background-color: #f4f4f4;
 }
@@ -70,13 +70,13 @@
 
 
 /* When the control is used in its collapsed state, this class is used to hide the toggle control or the settings container depending on the collapsed/expanded state of the control */
-.hideContent
+.isochrones-control-hide
 {
     display: none;
 }
 
 /* If something has gone wrong or the user tries to perform an action that isn't allowed e.g. trying to delete when there are no isochrones */
-.error, .leaflet-touch .error
+.isochrones-control-error, .leaflet-touch .isochrones-control-error
 {
     border-color: red;
     color: red;
