@@ -25,6 +25,7 @@ L.Control.Isochrones = L.Control.extend({
         settingsContainerStyleClass: 'isochronesSettingsContainer', // The container holding the user interface controls which is displayed if collapsed is false, or when the user expands the control by clicking on the toggle button
         settingsButtonStyleClass: 'isochronesSettingsControl',      // Generic class to style the setting buttons uniformly - further customisation per button is available with specific options below
         activeStyleClass: 'isochrones-control-active',              // Indicate to the user which button is active in the settings and the collapsed state of the control if settings are active
+        errorStyleClass: 'error',
 
         // Collapse button displayed within the settings container if collapsed == true
         collapseButtonContent: '&lt;',
@@ -298,12 +299,25 @@ L.Control.Isochrones = L.Control.extend({
                 L.DomUtil.addClass(this._deleteControl, this.options.activeStyleClass);   // add the selected class to the delete button
             }
         }
+        else {
+            // There are no isochrones to delete so warn the user by flashing the button
+            L.DomUtil.addClass(this._deleteControl, this.options.errorStyleClass);
+
+            var context = this;
+
+            setTimeout(function () {
+                L.DomUtil.removeClass(context._deleteControl, context.options.errorStyleClass);
+            }, 1000);
+        }
     },
 
     _deactivateDelete: function () {
         // The delete control is currently activate so deactivate it now
         this._deleteMode = false;
         L.DomUtil.removeClass(this._deleteControl, this.options.activeStyleClass); // remove the selected class from the delete button
+
+        // If collapsed == true, remove the active class from the collapsed control
+        if (L.DomUtil.hasClass(this._container, this.options.activeStyleClass)) L.DomUtil.removeClass(this._container, this.options.activeStyleClass);
     },
 
     // Removes a particular FeatureGroup of isochrones from the LayerGroup.
