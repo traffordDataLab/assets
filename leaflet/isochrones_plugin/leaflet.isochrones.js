@@ -307,7 +307,7 @@ L.Control.Isochrones = L.Control.extend({
 
             setTimeout(function () {
                 L.DomUtil.removeClass(context._deleteControl, context.options.errorStyleClass);
-            }, 1000);
+            }, 500);
         }
     },
 
