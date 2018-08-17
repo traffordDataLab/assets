@@ -24,7 +24,7 @@ L.Control.Isochrones = L.Control.extend({
 
         settingsContainerStyleClass: 'isochronesSettingsContainer', // The container holding the user interface controls which is displayed if collapsed is false, or when the user expands the control by clicking on the toggle button
         settingsButtonStyleClass: 'isochronesSettingsControl',      // Generic class to style the setting buttons uniformly - further customisation per button is available with specific options below
-        settingsButtonSelectedStyleClass: '',                       // Indicate to the user which button is active in the settings
+        activeStyleClass: 'isochrones-control-active',              // Indicate to the user which button is active in the settings and the collapsed state of the control if settings are active
 
         // Collapse button displayed within the settings container if collapsed == true
         collapseButtonContent: '&lt;',
@@ -191,6 +191,9 @@ L.Control.Isochrones = L.Control.extend({
 
         // Hide the toggle container
         L.DomUtil.addClass(this._toggleButtonContainer, 'hideContent');
+
+        // Remove the active class from the control container if either the draw or delete modes are active
+        if (L.DomUtil.hasClass(this._container, this.options.activeStyleClass)) L.DomUtil.removeClass(this._container, this.options.activeStyleClass);
     },
 
     _collapse: function () {
@@ -199,6 +202,9 @@ L.Control.Isochrones = L.Control.extend({
 
         // Show the toggle container
         L.DomUtil.removeClass(this._toggleButtonContainer, 'hideContent');
+
+        // Add the active class to the control container if either the draw or delete modes are active
+        if ((this._drawMode || this._deleteMode) && !L.DomUtil.hasClass(this._container, this.options.activeStyleClass)) L.DomUtil.addClass(this._container, this.options.activeStyleClass);
     },
 
     // Toggle the draw control between active and inactive states
@@ -216,8 +222,9 @@ L.Control.Isochrones = L.Control.extend({
     },
 
     _activateDraw: function () {
+        // Set the flag to true and add active class to the draw button to show it's currently selected
         this._drawMode = true;
-        // TODO: Add active class to the draw button to show it's currently selected
+        L.DomUtil.addClass(this._drawControl, this.options.activeStyleClass);
 
         // Deactivate delete mode if currently active
         if (this._deleteMode) this._deactivateDelete();
@@ -253,7 +260,7 @@ L.Control.Isochrones = L.Control.extend({
 
     _deactivateDraw: function () {
         this._drawMode = false;     // ensure we explicitly set the mode - we may not have come here from a click on the main control
-        // TODO: Remove selected class from the draw button
+        L.DomUtil.removeClass(this._drawControl, this.options.activeStyleClass);    // remove the selected style
 
         // Remove the mouse marker and its events from the map and destroy the marker
         if (this._mouseMarker !== null) {
@@ -288,7 +295,7 @@ L.Control.Isochrones = L.Control.extend({
             else {
                 // We have more than one so the user will need to choose which to delete. Therefore set the control in delete mode and wait for the user event
                 this._deleteMode = true;
-                // TODO: add the selected class to the delete button
+                L.DomUtil.addClass(this._deleteControl, this.options.activeStyleClass);   // add the selected class to the delete button
             }
         }
     },
@@ -296,7 +303,7 @@ L.Control.Isochrones = L.Control.extend({
     _deactivateDelete: function () {
         // The delete control is currently activate so deactivate it now
         this._deleteMode = false;
-        // TODO: remove the selected class from the delete button
+        L.DomUtil.removeClass(this._deleteControl, this.options.activeStyleClass); // remove the selected class from the delete button
     },
 
     // Removes a particular FeatureGroup of isochrones from the LayerGroup.
