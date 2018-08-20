@@ -38,6 +38,16 @@
             {
                 background: rgba(255, 255, 255, 0.8);
             }
+
+            .isochrones-control-settings-button
+            {
+                font-size: 22px;
+            }
+
+            .isochrones-control-toggle
+            {
+                font-size: 24px;
+            }
         </style>
     </head>
 
@@ -69,6 +79,14 @@
 
             // Add the isochrones plugin
             labMap.isoControl = L.control.isochrones({
+                toggleButtonStyleClass: 'isochrones-control-toggle fa fa-bullseye',
+                toggleButtonContent: '',
+                collapseButtonContent: '',
+                collapseButtonStyleClass: 'isochrones-control-collapse-button fa fa-chevron-left',
+                drawButtonContent: '',
+                drawButtonStyleClass: 'fa fa-pencil',
+                deleteButtonContent: '',
+                deleteButtonStyleClass: 'fa fa-trash',
                 mainControlStyleClass: 'isochronesControl',
                 styleFn: styleIsochrones,
                 mouseOverFn: highlightIsochrones,

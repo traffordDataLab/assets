@@ -1,7 +1,8 @@
 /* The button to toggle the isochrones control between collapsed and non-collapsed states */
 .isochrones-control-toggle
 {
-    font: bold 18px 'Lucida Console', Monaco, monospace;    /* to match the default Leaflet styling for the zoom control */
+    font-size: 18px;
+    font-weight: bold;
 }
 
 .leaflet-touch .isochrones-control-toggle
@@ -34,9 +35,9 @@
 .isochrones-control-settings-button
 {
     display: inline-block;
-    width: 40px;
-    height: 40px;
-    line-height: 40px;
+    width: 38px;
+    height: 38px;
+    line-height: 38px;
     border-radius: 5px;
     margin-right: 10px;
 }
