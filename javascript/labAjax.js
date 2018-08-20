@@ -16,6 +16,7 @@ function labAjax(url, callback, objOptions) {
     var def_eventError = null;          // Event handler for reporting an error with the transfer
     var def_eventAbort = null;          // Event handler for reporting when a transfer has been cancelled
     var def_eventEnd = null;            // Event handler for reporting when a transfer has finished, whether that's a successful load, abort or error
+    var def_unsuccessfulRequest = null; // A user defined function to be called if xmlhttp.status >= 300
     var def_cache = false;              // Whether we want to cache the data once we've loaded it
     var def_cacheObj = ajaxCache;       // Object to store the cached data - either one passed to us in the options or using the global var
     var def_forceRefresh = false;       // Whether to load the data from source irrespective of whether there is a cached version
@@ -31,6 +32,7 @@ function labAjax(url, callback, objOptions) {
         if (objOptions['eventError'] != null) def_eventError = objOptions['eventError'];
         if (objOptions['eventAbort'] != null) def_eventAbort = objOptions['eventAbort'];
         if (objOptions['eventEnd'] != null) def_eventEnd = objOptions['eventEnd'];
+        if (objOptions['unsuccessfulRequest'] != null) def_unsuccessfulRequest = objOptions['unsuccessfulRequest'];
         if (objOptions['cache'] === true) def_cache = true;
         if (objOptions['cacheObj'] != null) def_cacheObj = objOptions['cacheObj'];
         if (objOptions['forceRefresh'] === true) def_forceRefresh = true;
@@ -67,6 +69,7 @@ function labAjax(url, callback, objOptions) {
                 }
                 else if (xmlhttp.status >= 300) {
                     // Not a successful response, perhaps a 404 etc. so abort
+                    if (def_unsuccessfulRequest != null) def_unsuccessfulRequest(xmlhttp);    // call user-defined function if specified with the xmlhttp object
                     xmlhttp.abort();
                     callback(null);
                 }
