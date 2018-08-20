@@ -18,14 +18,14 @@ L.Control.Isochrones = L.Control.extend({
         controlContainerStyleClass: '',             // The container for the plugin control will usually be styled with the standard Leaflet control styling, however this option allows for customisation
 
         // If collapsed == true a toggle button is displayed to expand the control onclick/touch
-        toggleButtonStyleClass: 'isochrones-control-toggle',              // Allow options for styling - if you want to use an icon from services like fontawesome pass the declarations here, e.g. 'fa fa-home' etc.
-        toggleButtonContent: '&Delta;',          // HTML to display within the control if it is collapsed. If you want an icon from services like Fontawesome pass '' for this value and set the StyleClass option
-        toggleButtonTooltip: 'Show reachability options',     // Tooltip to appear on-hover
+        toggleButtonStyleClass: 'isochrones-control-toggle',    // Allow options for styling - if you want to use an icon from services like fontawesome pass the declarations here, e.g. 'fa fa-home' etc.
+        toggleButtonContent: '&Delta;',                         // HTML to display within the control if it is collapsed. If you want an icon from services like Fontawesome pass '' for this value and set the StyleClass option
+        toggleButtonTooltip: 'Show reachability options',       // Tooltip to appear on-hover
 
-        settingsContainerStyleClass: 'isochrones-control-settings-container', // The container holding the user interface controls which is displayed if collapsed is false, or when the user expands the control by clicking on the toggle button
-        settingsButtonStyleClass: 'isochrones-control-settings-button',      // Generic class to style the setting buttons uniformly - further customisation per button is available with specific options below
-        activeStyleClass: 'isochrones-control-active',              // Indicate to the user which button is active in the settings and the collapsed state of the control if settings are active
-        errorStyleClass: 'isochrones-control-error',
+        settingsContainerStyleClass: 'isochrones-control-settings-container',   // The container holding the user interface controls which is displayed if collapsed is false, or when the user expands the control by clicking on the toggle button
+        settingsButtonStyleClass: 'isochrones-control-settings-button',         // Generic class to style the setting buttons uniformly - further customisation per button is available with specific options below
+        activeStyleClass: 'isochrones-control-active',                          // Indicate to the user which button is active in the settings and the collapsed state of the control if settings are active
+        errorStyleClass: 'isochrones-control-error',                            // Gives feedback to the user via the buttons in the user interface that something went wrong
 
         // Collapse button displayed within the settings container if collapsed == true
         collapseButtonContent: '&lt;',
@@ -52,9 +52,9 @@ L.Control.Isochrones = L.Control.extend({
         distanceButtonTooltip: 'Reachability based on distance',
 
         // API settings
-        ajaxRequestFn: null,                        // External function to make the actual call to the API via AJAX - if null will attempt to use simpleAjaxRequest
-        apiKey: '58d904a497c67e00015b45fc6862cde0265d4fd78ec660aa83220cdb',                                 // openrouteservice API key - the service which returns the isochrone polygons based on the various options/parameters TODO: Remove this when we ship the code as this is our personal key
-        rangeType: 'distance',                      // Can be either by distance or time - any value other than 'distance' is assumed to be 'time'
+        ajaxRequestFn: simpleAjaxRequest,                                   // External function to make the actual call to the API via AJAX - default is to use the simple function included in leaflet.isochrones_utilities.js
+        apiKey: '58d904a497c67e00015b45fc6862cde0265d4fd78ec660aa83220cdb', // openrouteservice API key - the service which returns the isochrone polygons based on the various options/parameters TODO: Remove this when we ship the code as this is our personal key
+        rangeType: 'distance',                                              // Can be either by distance or time - any value other than 'distance' is assumed to be 'time'
 
         rangeControlDistanceTitle: 'Range (kilometres)',
         rangeControlDistanceMin: 0.5,
@@ -374,7 +374,6 @@ L.Control.Isochrones = L.Control.extend({
         // Call the API
         try {
             var ajaxFn = this.options.ajaxRequestFn;            // This is the external function to use which makes the actual AJAX request to the API
-            if (ajaxFn == null) ajaxFn = simpleAjaxRequest;     // If it is null, attempt to use the simple function included in leaflet.isochrones_utilities.js
 
             ajaxFn(apiUrl, function (data) {
                 if (data == null) {
@@ -383,6 +382,10 @@ L.Control.Isochrones = L.Control.extend({
 
                     // Log more specific details in the javascript console
                     if (console.log) console.log('Leaflet.isochrones.js error calling API, no data returned. Likely cause is API unavailable or bad parameters.');
+
+                    // Inform the user that something went wrong and deactivate the draw control
+                    context._showError(context._drawControl);
+                    context._deactivateDraw();
                 }
                 else {
                     /*
@@ -446,6 +449,10 @@ L.Control.Isochrones = L.Control.extend({
 
                         // Log more specific details in the javascript console
                         if (console.log) console.log('Leaflet.isochrones.js: API returned data but no GeoJSON layers.');
+
+                        // Inform the user that something went wrong and deactivate the draw control
+                        context._showError(context._drawControl);
+                        context._deactivateDraw();
                     }
                 }
 
@@ -465,6 +472,10 @@ L.Control.Isochrones = L.Control.extend({
 
             // Log the error in the console
             if (console.log) console.log('Leaflet.isochrones.js error attempting to call API.\nLikely cause is function simpleAjaxRequest has not been included and no alternative has been specified.\nSee docs for more details, actual error below.\n' + e);
+
+            // Inform the user that something went wrong and deactivate the draw control
+            context._showError(context._drawControl);
+            context._deactivateDraw();
         }
     }
 });
