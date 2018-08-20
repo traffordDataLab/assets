@@ -19,7 +19,7 @@ L.Control.Isochrones = L.Control.extend({
 
         // If collapsed == true a toggle button is displayed to expand the control onclick/touch
         toggleButtonStyleClass: 'isochrones-control-toggle',    // Allow options for styling - if you want to use an icon from services like fontawesome pass the declarations here, e.g. 'fa fa-home' etc.
-        toggleButtonContent: '&Delta;',                         // HTML to display within the control if it is collapsed. If you want an icon from services like Fontawesome pass '' for this value and set the StyleClass option
+        toggleButtonContent: '&#x2609;',                        // HTML to display within the control if it is collapsed. If you want an icon from services like Fontawesome pass '' for this value and set the StyleClass option
         toggleButtonTooltip: 'Show reachability options',       // Tooltip to appear on-hover
 
         settingsContainerStyleClass: 'isochrones-control-settings-container',   // The container holding the user interface controls which is displayed if collapsed is false, or when the user expands the control by clicking on the toggle button
@@ -142,27 +142,27 @@ L.Control.Isochrones = L.Control.extend({
         this._uiContainer = L.DomUtil.create('div', this.options.settingsContainerStyleClass);
         this._container.appendChild(this._uiContainer);
 
-        // Close button to toggle the user interface into the collapsed state if collapsed == true
-        if (this._collapsed) this._createButton('span', this.options.collapseButtonContent, this.options.collapseButtonTooltip, this.options.collapseButtonStyleClass, this._uiContainer, this._collapse);
+        // If the control is in its collapsed state we need to create buttons to toggle between collapsed and expanded states and initially hide the main UI
+        if (this._collapsed) {
+            // Create a container for the toggle button - because we cannot easily hide a link tag created via the _createButton function adding the .isochrones-control-hide CSS class
+            this._toggleButtonContainer = L.DomUtil.create('div', '');
+            this._container.appendChild(this._toggleButtonContainer);
+
+            // Create a button to expand the control to reveal the full user interface
+            this._toggleButton = this._createButton('a', this.options.toggleButtonContent, this.options.toggleButtonTooltip, this.options.toggleButtonStyleClass, this._toggleButtonContainer, this._expand);
+
+            // Create a close button to toggle the user interface into the collapsed state
+            this._createButton('span', this.options.collapseButtonContent, this.options.collapseButtonTooltip, this.options.collapseButtonStyleClass, this._uiContainer, this._collapse);
+
+            // Hide the UI initially as the control is in the collapsed state
+            L.DomUtil.addClass(this._uiContainer, 'isochrones-control-hide');
+        }
 
         // Draw button - to create isochrones
         this._drawControl = this._createButton('span', this.options.drawButtonContent, this.options.drawButtonTooltip, this.options.settingsButtonStyleClass + ' ' + this.options.drawButtonStyleClass, this._uiContainer, this._toggleDraw);
 
         // Delete button - to remove isochrones
         this._deleteControl = this._createButton('span', this.options.deleteButtonContent, this.options.deleteButtonTooltip, this.options.settingsButtonStyleClass + ' ' + this.options.deleteButtonStyleClass, this._uiContainer, this._toggleDelete);
-
-        // If the control is in its collapsed state, create a standard size control button to act as a toggle to expand
-        if (this._collapsed) {
-            // Create a container for the toggle button - because we cannot easily hide a link tag created via the _createButton function adding the .isochrones-control-hide CSS class
-            this._toggleButtonContainer = L.DomUtil.create('div', '');
-            this._container.appendChild(this._toggleButtonContainer);
-
-            // Create a button to expand the control to reveal the full user interface - this is automatically added to the main container
-            this._toggleButton = this._createButton('a', this.options.toggleButtonContent, this.options.toggleButtonTooltip, this.options.toggleButtonStyleClass, this._toggleButtonContainer, this._expand);
-
-            // Hide the UI initially as the control is in the collapsed state
-            L.DomUtil.addClass(this._uiContainer, 'isochrones-control-hide');
-        }
     },
 
     // An amended version of the Leaflet.js function of the same name, (c) 2010-2018 Vladimir Agafonkin, (c) 2010-2011 CloudMade
