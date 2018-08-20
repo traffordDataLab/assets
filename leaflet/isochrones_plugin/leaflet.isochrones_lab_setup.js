@@ -5,8 +5,26 @@
     Licence:        https://www.trafforddatalab.io/assets/LICENSE.txt
     Notes:
 */
-function labSetupIsochronesPlugin(map) {
+function labSetupIsochronesPlugin() {
     // Setup the plugin with our specific options
+    return L.control.isochrones({
+        toggleButtonStyleClass: 'isochrones-control-toggle fa fa-bullseye',
+        toggleButtonContent: '',
+        collapseButtonContent: '',
+        collapseButtonStyleClass: 'isochrones-control-collapse-button fa fa-chevron-left',
+        drawButtonContent: '',
+        drawButtonStyleClass: 'fa fa-pencil',
+        deleteButtonContent: '',
+        deleteButtonStyleClass: 'fa fa-trash',
+        distanceButtonContent: '',
+        distanceButtonStyleClass: 'fa fa-road',
+        timeButtonContent: '',
+        timeButtonStyleClass: 'fa fa-clock-o',
+        styleFn: styleIsochrones,
+        mouseOverFn: highlightIsochrones,
+        mouseOutFn: resetIsochrones,
+        clickFn: clickIsochrones
+    });
 }
 
 function labStyleIsochrones(feature) {

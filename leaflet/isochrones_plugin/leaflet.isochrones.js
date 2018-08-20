@@ -42,19 +42,19 @@ L.Control.Isochrones = L.Control.extend({
         deleteButtonStyleClass: '',
         deleteButtonTooltip: 'Delete reachability',
 
-        // Isochone calculation mode - either time or distance
-        timeButtonContent: 'Time',
-        timeButtonStyleClass: '',
-        timeButtonTooltip: 'Reachability based on time',
-
+        // Isochone calculation mode - either distance or time
         distanceButtonContent: 'Dist',
         distanceButtonStyleClass: '',
         distanceButtonTooltip: 'Reachability based on distance',
 
+        timeButtonContent: 'Time',
+        timeButtonStyleClass: '',
+        timeButtonTooltip: 'Reachability based on time',
+
         // API settings
         ajaxRequestFn: simpleAjaxRequest,                                   // External function to make the actual call to the API via AJAX - default is to use the simple function included in leaflet.isochrones_utilities.js
         apiKey: '58d904a497c67e00015b45fc6862cde0265d4fd78ec660aa83220cdb', // openrouteservice API key - the service which returns the isochrone polygons based on the various options/parameters TODO: Remove this when we ship the code as this is our personal key
-        rangeType: 'distance',                                              // Can be either by distance or time - any value other than 'distance' is assumed to be 'time'
+        rangeType: 'distance',                                              // Range can be either distance or time - any value other than 'distance' passed to the API is assumed to be 'time'
 
         rangeControlDistanceTitle: 'Range (kilometres)',
         rangeControlDistanceMin: 0.5,
@@ -107,6 +107,7 @@ L.Control.Isochrones = L.Control.extend({
         this._collapsed = this.options.collapsed;
         this._drawMode = false;
         this._deleteMode = false;
+        this._rangeIsDistance = (this.options.rangeType == 'distance') ? true : false;
         this._mouseMarker = null;   // invisible Leaflet marker to follow the mouse pointer when control is activated
         this.isochrones = null;     // set to a Leaflet GeoJSON FeatureGroup when the API returns data
         this.layerGroup = (this.options.layerGroup == null) ? L.layerGroup(null, { pane: this.options.pane }) : this.options.layerGroup;   // holds the isochrone GeoJSON FeatureGroup(s)
@@ -163,6 +164,16 @@ L.Control.Isochrones = L.Control.extend({
 
         // Delete button - to remove isochrones
         this._deleteControl = this._createButton('span', this.options.deleteButtonContent, this.options.deleteButtonTooltip, this.options.settingsButtonStyleClass + ' ' + this.options.deleteButtonStyleClass, this._uiContainer, this._toggleDelete);
+
+        // Distance setting button - to calculate isochrones based on distance
+        //this._distanceControl = this._createButton('span', this.options.distanceButtonContent, this.options.distanceButtonTooltip, this.options.settingsButtonStyleClass + ' ' + this.options.distanceButtonStyleClass, this._uiContainer, this._toggleRangeType('distance'));
+        this._distanceControl = this._createButton('span', this.options.distanceButtonContent, this.options.distanceButtonTooltip, this.options.settingsButtonStyleClass + ' ' + this.options.distanceButtonStyleClass, this._uiContainer, this._setRangeByDistance);
+
+        // Distance setting button - to calculate isochrones based on distance
+        this._timeControl = this._createButton('span', this.options.timeButtonContent, this.options.timeButtonTooltip, this.options.settingsButtonStyleClass + ' ' + this.options.timeButtonStyleClass, this._uiContainer, this._setRangeByTime);
+
+        // Select the correct range type button
+        (this._rangeIsDistance) ? L.DomUtil.addClass(this._distanceControl, this.options.activeStyleClass) : L.DomUtil.addClass(this._timeControl, this.options.activeStyleClass);
     },
 
     // An amended version of the Leaflet.js function of the same name, (c) 2010-2018 Vladimir Agafonkin, (c) 2010-2011 CloudMade
@@ -343,6 +354,31 @@ L.Control.Isochrones = L.Control.extend({
         }, 500);
     },
 
+    // Toggle the UI buttons for distance and time like radio buttons
+    _setRangeByDistance: function () {
+        this._toggleRangeType('distance');
+    },
+
+    _setRangeByTime: function () {
+        this._toggleRangeType('time');
+    },
+
+    _toggleRangeType: function (button) {
+        if ((button == 'distance' && this._rangeIsDistance == false) || (button == 'time' && this._rangeIsDistance)) {
+            // We need to change the state
+            if (button == 'distance') {
+                L.DomUtil.addClass(this._distanceControl, this.options.activeStyleClass);
+                L.DomUtil.removeClass(this._timeControl, this.options.activeStyleClass);
+                this._rangeIsDistance = true;
+            }
+            else {
+                L.DomUtil.addClass(this._timeControl, this.options.activeStyleClass);
+                L.DomUtil.removeClass(this._distanceControl, this.options.activeStyleClass);
+                this._rangeIsDistance = false;
+            }
+        }
+    },
+
     // Deals with updating the position of the invisible Leaflet marker that chases the mouse pointer.
     // This is used to determine the coordinates on the map when the user clicks/touches to create an isochrone
     _onMouseMove: function (e) {
@@ -363,7 +399,13 @@ L.Control.Isochrones = L.Control.extend({
         // TODO: Needs to get values from options and internally based on the current settings
         var apiUrl = 'https://api.openrouteservice.org/isochrones?api_key=' + this.options.apiKey;
         apiUrl += '&locations=' + latLng.lng + '%2C' + latLng.lat;
-        apiUrl += '&profile=driving-car&range_type=time&range=180&interval=60&location_type=start';
+        if (this._rangeIsDistance) {
+            apiUrl += '&range_type=distance&units=' + this.options.rangeControlDistanceUnits + '&range=3&interval=1';
+        }
+        else {
+            apiUrl += '&range_type=time&range=180&interval=60';
+        }
+        apiUrl += '&profile=driving-car&location_type=start';
 
         // Inform that we are calling the API - could be useful for starting a spinner etc. to indicate to the user that something is happening if there is a delay
         this._map.fire('isochrones:api_call_start');
