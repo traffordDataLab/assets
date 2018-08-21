@@ -1,0 +1,27 @@
+/* Overridden styles from leaflet.isochrones.css to customise the plugin in the Lab style */
+
+/* The button to toggle the isochrones control between collapsed and non-collapsed states */
+.isochrones-control-toggle, .leaflet-touch .isochrones-control-toggle
+{
+    font-size: 24px;
+}
+
+/* The container for the isochrones control user interface */
+.isochrones-control-settings-container
+{
+    background: rgba(255, 255, 255, 0.8);
+}
+
+/* General class for styling the 'button' controls in the user interface container */
+.isochrones-control-settings-button
+{
+    font-size: 22px;
+}
+
+/* General class for highlighting the selected 'button' controls in the user interface container and the collapsed control if either the draw or delete mode is active */
+.isochrones-control-active, .leaflet-touch .isochrones-control-active, .isochrones-control-active a, .leaflet-touch .isochrones-control-active a
+{
+    border-color: #fc6721;
+    color: #fc6721;
+    box-shadow: 0 1px 5px rgba(252,103,33,0.65);
+}
