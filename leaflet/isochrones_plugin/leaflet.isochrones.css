@@ -60,6 +60,14 @@
     background-color: #f4f4f4;
 }
 
+/* Dividers between the different UI sections */
+.isochrones-control-settings-block-container
+{
+    display: block;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px dotted #757575;
+}
 
 /* General class for highlighting the selected 'button' controls in the user interface container and the collapsed control if either the draw or delete mode is active */
 .isochrones-control-active, .leaflet-touch .isochrones-control-active, .isochrones-control-active a, .leaflet-touch .isochrones-control-active a

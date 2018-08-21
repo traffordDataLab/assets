@@ -33,7 +33,7 @@ L.Control.Isochrones = L.Control.extend({
         collapseButtonTooltip: 'Hide reachability options',
 
         // Draw isochrones button
-        drawButtonContent: 'Draw',
+        drawButtonContent: 'Drw',
         drawButtonStyleClass: '',
         drawButtonTooltip: 'Draw reachability',
 
@@ -42,20 +42,46 @@ L.Control.Isochrones = L.Control.extend({
         deleteButtonStyleClass: '',
         deleteButtonTooltip: 'Delete reachability',
 
-        // Isochone calculation mode - either distance or time
-        distanceButtonContent: 'Dist',
+        // Isochrone calculation mode - either distance or time
+        distanceButtonContent: 'Dst',
         distanceButtonStyleClass: '',
         distanceButtonTooltip: 'Reachability based on distance',
 
-        timeButtonContent: 'Time',
+        timeButtonContent: 'Tme',
         timeButtonStyleClass: '',
         timeButtonTooltip: 'Reachability based on time',
+
+        // Travel modes
+        drivingButtonContent: 'Drv',
+        drivingButtonStyleClass: '',
+        drivingButtonTooltip: 'Travel mode: driving',
+
+        cyclingButtonContent: 'Cyc',
+        cyclingButtonStyleClass: '',
+        cyclingButtonTooltip: 'Travel mode: cycling',
+
+        walkingButtonContent: 'Wlk',
+        walkingButtonStyleClass: '',
+        walkingButtonTooltip: 'Travel mode: walking',
+
+        accessibilityButtonContent: 'Acc',
+        accessibilityButtonStyleClass: '',
+        accessibilityButtonTooltip: 'Travel mode: wheelchair',
 
         // API settings
         ajaxRequestFn: simpleAjaxRequest,                                   // External function to make the actual call to the API via AJAX - default is to use the simple function included in leaflet.isochrones_utilities.js
         apiKey: '58d904a497c67e00015b45fc6862cde0265d4fd78ec660aa83220cdb', // openrouteservice API key - the service which returns the isochrone polygons based on the various options/parameters TODO: Remove this when we ship the code as this is our personal key
-        rangeType: 'distance',                                              // Range can be either distance or time - any value other than 'distance' passed to the API is assumed to be 'time'
 
+        travelModeDrivingProfile: 'driving-car',        // API choices are 'driving-car' and 'driving-hgv'
+        travelModeCyclingProfile: 'cycling-regular',    // API choices are 'cycling-regular', 'cycling-road', 'cycling-safe', 'cycling-mountain' and 'cycling-tour'
+        travelModeWalkingProfile: 'foot-walking',       // API choices are 'foot-walking' and 'foot-hiking'
+        travelModeAccessibilityProfile: 'wheelchair',   // API choices are 'wheelchair'
+        travelModeDefault: null,                        // Set travel mode default - if this is not equal to one of the 4 profiles above it is set to the value of travelModeDrivingProfile in the onAdd function
+
+
+
+
+        // TODO: these need altering
         rangeControlDistanceTitle: 'Range (kilometres)',
         rangeControlDistanceMin: 0.5,
         rangeControlDistanceMax: 3,
@@ -67,26 +93,11 @@ L.Control.Isochrones = L.Control.extend({
         rangeControlTimeMax: 30,                    //  > All these values need to be multiplied by 60 to convert to seconds - no other unit of time is allowed
         rangeControlTimeInterval: 5,                // /
 
-        // Mode of travel options based on travel time
-        travelModeWalkContent:  'W',
-        travelModeWalkTooltip: 'Walking',
-        travelModeWalkStyleClass: '',
-        travelModeWalkProfile: 'foot-walking',      // API options, choices are 'foot-walking' and 'foot-hiking'
 
-        travelModeBikeContent: 'B',
-        travelModeBikeTooltip: 'Bicycle',
-        travelModeBikeStyleClass: '',
-        travelModeBikeProfile: 'cycling-regular',   // API options, choices are 'cycling-regular', 'cycling-road', 'cycling-safe', 'cycling-mountain' and 'cycling-tour'
 
-        travelModeCarContent: 'C',
-        travelModeCarTooltip: 'Car',
-        travelModeCarStyleClass: '',
-        travelModeCarProfile: 'driving-car',        // API options, choices are 'driving-car' and 'driving-hgv'
 
-        travelModeWheelchairContent: 'A',
-        travelModeCarTooltip: 'Wheelchair',
-        travelModeCarStyleClass: '',
-        travelModeCarProfile: 'wheelchair',        // API options
+
+        rangeTypeDefault: 'time',                      // Range can be either distance or time - any value other than 'distance' passed to the API is assumed to be 'time'
 
         // Isocrone styling and interaction
         styleFn: null,                              // External function to call which styles the isochrones returned from API call
@@ -107,7 +118,11 @@ L.Control.Isochrones = L.Control.extend({
         this._collapsed = this.options.collapsed;
         this._drawMode = false;
         this._deleteMode = false;
-        this._rangeIsDistance = (this.options.rangeType == 'distance') ? true : false;
+        this._rangeIsDistance = (this.options.rangeTypeDefault == 'distance') ? true : false;
+
+        this._travelMode = this.options.travelModeDefault;
+        if (this._travelMode != this.options.travelModeDrivingProfile && this._travelMode != this.options.travelModeCyclingProfile && this._travelMode != this.options.travelModeWalkingProfile && this._travelMode != this.options.travelModeAccessibilityProfile) this._travelMode = this.options.travelModeDrivingProfile;
+
         this._mouseMarker = null;   // invisible Leaflet marker to follow the mouse pointer when control is activated
         this.isochrones = null;     // set to a Leaflet GeoJSON FeatureGroup when the API returns data
         this.layerGroup = (this.options.layerGroup == null) ? L.layerGroup(null, { pane: this.options.pane }) : this.options.layerGroup;   // holds the isochrone GeoJSON FeatureGroup(s)
@@ -125,6 +140,7 @@ L.Control.Isochrones = L.Control.extend({
         // Fire event to inform that the control has been added to the map
         this._map.fire('isochrones:control_added');
 
+        // Leaflet draws the control on the map
         return this._container;
     },
 
@@ -159,21 +175,42 @@ L.Control.Isochrones = L.Control.extend({
             L.DomUtil.addClass(this._uiContainer, 'isochrones-control-hide');
         }
 
+        // Container for the action and mode buttons
+        this._actionsAndModesContainer = L.DomUtil.create('div', 'isochrones-control-settings-block-container', this._uiContainer);
+
         // Draw button - to create isochrones
-        this._drawControl = this._createButton('span', this.options.drawButtonContent, this.options.drawButtonTooltip, this.options.settingsButtonStyleClass + ' ' + this.options.drawButtonStyleClass, this._uiContainer, this._toggleDraw);
+        this._drawControl = this._createButton('span', this.options.drawButtonContent, this.options.drawButtonTooltip, this.options.settingsButtonStyleClass + ' ' + this.options.drawButtonStyleClass, this._actionsAndModesContainer, this._toggleDraw);
 
         // Delete button - to remove isochrones
-        this._deleteControl = this._createButton('span', this.options.deleteButtonContent, this.options.deleteButtonTooltip, this.options.settingsButtonStyleClass + ' ' + this.options.deleteButtonStyleClass, this._uiContainer, this._toggleDelete);
+        this._deleteControl = this._createButton('span', this.options.deleteButtonContent, this.options.deleteButtonTooltip, this.options.settingsButtonStyleClass + ' ' + this.options.deleteButtonStyleClass, this._actionsAndModesContainer, this._toggleDelete);
 
         // Distance setting button - to calculate isochrones based on distance
-        //this._distanceControl = this._createButton('span', this.options.distanceButtonContent, this.options.distanceButtonTooltip, this.options.settingsButtonStyleClass + ' ' + this.options.distanceButtonStyleClass, this._uiContainer, this._toggleRangeType('distance'));
-        this._distanceControl = this._createButton('span', this.options.distanceButtonContent, this.options.distanceButtonTooltip, this.options.settingsButtonStyleClass + ' ' + this.options.distanceButtonStyleClass, this._uiContainer, this._setRangeByDistance);
+        this._distanceControl = this._createButton('span', this.options.distanceButtonContent, this.options.distanceButtonTooltip, this.options.settingsButtonStyleClass + ' ' + this.options.distanceButtonStyleClass, this._actionsAndModesContainer, this._setRangeByDistance);
 
         // Distance setting button - to calculate isochrones based on distance
-        this._timeControl = this._createButton('span', this.options.timeButtonContent, this.options.timeButtonTooltip, this.options.settingsButtonStyleClass + ' ' + this.options.timeButtonStyleClass, this._uiContainer, this._setRangeByTime);
+        this._timeControl = this._createButton('span', this.options.timeButtonContent, this.options.timeButtonTooltip, this.options.settingsButtonStyleClass + ' ' + this.options.timeButtonStyleClass, this._actionsAndModesContainer, this._setRangeByTime);
 
         // Select the correct range type button
         (this._rangeIsDistance) ? L.DomUtil.addClass(this._distanceControl, this.options.activeStyleClass) : L.DomUtil.addClass(this._timeControl, this.options.activeStyleClass);
+
+
+        // Container for the travel mode buttons
+        this._modesContainer = L.DomUtil.create('div', 'isochrones-control-settings-block-container', this._uiContainer);
+
+        // Driving profile button
+        this._drivingControl = this._createButton('span', this.options.drivingButtonContent, this.options.drivingButtonTooltip, this.options.settingsButtonStyleClass + ' ' + this.options.drivingButtonStyleClass, this._modesContainer, this._setTravelDriving);
+
+        // Cycling profile button
+        this._cyclingControl = this._createButton('span', this.options.cyclingButtonContent, this.options.cyclingButtonTooltip, this.options.settingsButtonStyleClass + ' ' + this.options.cyclingButtonStyleClass, this._modesContainer, this._setTravelCycling);
+
+        // Walking profile button
+        this._walkingControl = this._createButton('span', this.options.walkingButtonContent, this.options.walkingButtonTooltip, this.options.settingsButtonStyleClass + ' ' + this.options.walkingButtonStyleClass, this._modesContainer, this._setTravelWalking);
+
+        // Accessible profile button
+        this._accessibilityControl = this._createButton('span', this.options.accessibilityButtonContent, this.options.accessibilityButtonTooltip, this.options.settingsButtonStyleClass + ' ' + this.options.accessibilityButtonStyleClass, this._modesContainer, this._setTravelAccessibility);
+
+        // Select the correct travel mode button
+        this._toggleTravelMode(null);
     },
 
     // An amended version of the Leaflet.js function of the same name, (c) 2010-2018 Vladimir Agafonkin, (c) 2010-2011 CloudMade
@@ -356,17 +393,17 @@ L.Control.Isochrones = L.Control.extend({
 
     // Toggle the UI buttons for distance and time like radio buttons
     _setRangeByDistance: function () {
-        this._toggleRangeType('distance');
+        this._toggleRangeMode('distance');
     },
 
     _setRangeByTime: function () {
-        this._toggleRangeType('time');
+        this._toggleRangeMode('time');
     },
 
-    _toggleRangeType: function (button) {
-        if ((button == 'distance' && this._rangeIsDistance == false) || (button == 'time' && this._rangeIsDistance)) {
+    _toggleRangeMode: function (mode) {
+        if ((mode == 'distance' && this._rangeIsDistance == false) || (mode == 'time' && this._rangeIsDistance)) {
             // We need to change the state
-            if (button == 'distance') {
+            if (mode == 'distance') {
                 L.DomUtil.addClass(this._distanceControl, this.options.activeStyleClass);
                 L.DomUtil.removeClass(this._timeControl, this.options.activeStyleClass);
                 this._rangeIsDistance = true;
@@ -376,6 +413,58 @@ L.Control.Isochrones = L.Control.extend({
                 L.DomUtil.removeClass(this._distanceControl, this.options.activeStyleClass);
                 this._rangeIsDistance = false;
             }
+        }
+    },
+
+    // Toggle the UI buttons for the modes of travel
+    _setTravelDriving: function () {
+        this._toggleTravelMode(this.options.travelModeDrivingProfile);
+    },
+
+    _setTravelCycling: function () {
+        this._toggleTravelMode(this.options.travelModeCyclingProfile);
+    },
+
+    _setTravelWalking: function () {
+        this._toggleTravelMode(this.options.travelModeWalkingProfile);
+    },
+
+    _setTravelAccessibility: function () {
+        this._toggleTravelMode(this.options.travelModeAccessibilityProfile);
+    },
+
+    _toggleTravelMode: function (mode) {
+        // This function is called first to set the default active travel mode and then from then on when the user selects the different modes
+        var def_mode = (mode == null) ? this._travelMode : mode;
+
+        if (this._travelMode != mode) {
+            switch (def_mode) {
+                case this.options.travelModeCyclingProfile:
+                    L.DomUtil.removeClass(this._drivingControl, this.options.activeStyleClass);
+                    L.DomUtil.addClass(this._cyclingControl, this.options.activeStyleClass);
+                    L.DomUtil.removeClass(this._walkingControl, this.options.activeStyleClass);
+                    L.DomUtil.removeClass(this._accessibilityControl, this.options.activeStyleClass);
+                    break;
+                case this.options.travelModeWalkingProfile:
+                    L.DomUtil.removeClass(this._drivingControl, this.options.activeStyleClass);
+                    L.DomUtil.removeClass(this._cyclingControl, this.options.activeStyleClass);
+                    L.DomUtil.addClass(this._walkingControl, this.options.activeStyleClass);
+                    L.DomUtil.removeClass(this._accessibilityControl, this.options.activeStyleClass);
+                    break;
+                case this.options.travelModeAccessibilityProfile:
+                    L.DomUtil.removeClass(this._drivingControl, this.options.activeStyleClass);
+                    L.DomUtil.removeClass(this._cyclingControl, this.options.activeStyleClass);
+                    L.DomUtil.removeClass(this._walkingControl, this.options.activeStyleClass);
+                    L.DomUtil.addClass(this._accessibilityControl, this.options.activeStyleClass);
+                    break;
+                default:
+                    L.DomUtil.addClass(this._drivingControl, this.options.activeStyleClass);
+                    L.DomUtil.removeClass(this._cyclingControl, this.options.activeStyleClass);
+                    L.DomUtil.removeClass(this._walkingControl, this.options.activeStyleClass);
+                    L.DomUtil.removeClass(this._accessibilityControl, this.options.activeStyleClass);
+            }
+
+            this._travelMode = def_mode;
         }
     },
 
@@ -398,7 +487,9 @@ L.Control.Isochrones = L.Control.extend({
         // Create the URL to pass to the API
         // TODO: Needs to get values from options and internally based on the current settings
         var apiUrl = 'https://api.openrouteservice.org/isochrones?api_key=' + this.options.apiKey;
+
         apiUrl += '&locations=' + latLng.lng + '%2C' + latLng.lat;
+
         if (this._rangeIsDistance) {
             //TODO: Need to replace the range value with the current value from the slider
             apiUrl += '&range_type=distance&units=' + this.options.rangeControlDistanceUnits + '&range=3&interval=' + this.options.rangeControlDistanceInterval;
@@ -407,8 +498,8 @@ L.Control.Isochrones = L.Control.extend({
             //TODO: Need to replace the range value with the current value from the slider
             apiUrl += '&range_type=time&range=180&interval=60';
         }
-        //TODO: Need to replace the profile with the currently chosen mode
-        apiUrl += '&profile=driving-car&location_type=start';
+
+        apiUrl += '&profile=' + this._travelMode + '&location_type=start';
 
         // Inform that we are calling the API - could be useful for starting a spinner etc. to indicate to the user that something is happening if there is a delay
         this._map.fire('isochrones:api_call_start');
