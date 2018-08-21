@@ -400,11 +400,14 @@ L.Control.Isochrones = L.Control.extend({
         var apiUrl = 'https://api.openrouteservice.org/isochrones?api_key=' + this.options.apiKey;
         apiUrl += '&locations=' + latLng.lng + '%2C' + latLng.lat;
         if (this._rangeIsDistance) {
-            apiUrl += '&range_type=distance&units=' + this.options.rangeControlDistanceUnits + '&range=3&interval=1';
+            //TODO: Need to replace the range value with the current value from the slider
+            apiUrl += '&range_type=distance&units=' + this.options.rangeControlDistanceUnits + '&range=3&interval=' + this.options.rangeControlDistanceInterval;
         }
         else {
+            //TODO: Need to replace the range value with the current value from the slider
             apiUrl += '&range_type=time&range=180&interval=60';
         }
+        //TODO: Need to replace the profile with the currently chosen mode
         apiUrl += '&profile=driving-car&location_type=start';
 
         // Inform that we are calling the API - could be useful for starting a spinner etc. to indicate to the user that something is happening if there is a delay
