@@ -90,3 +90,23 @@
     color: red;
     box-shadow: 0 1px 5px rgba(255,0,0,0.65);
 }
+
+
+/* Range slider control and related items */
+.isochrones-control-slider
+{
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    background: #999;
+    margin: 0;
+    padding: 0;
+}
+
+.isochrones-control-slider-title
+{
+    font-weight: bold;
+}

@@ -22,6 +22,7 @@ L.Control.Isochrones = L.Control.extend({
         toggleButtonContent: '&#x2609;',                        // HTML to display within the control if it is collapsed. If you want an icon from services like Fontawesome pass '' for this value and set the StyleClass option
         toggleButtonTooltip: 'Show reachability options',       // Tooltip to appear on-hover
 
+        // The containing div to hold the actual user interface controls
         settingsContainerStyleClass: 'isochrones-control-settings-container',   // The container holding the user interface controls which is displayed if collapsed is false, or when the user expands the control by clicking on the toggle button
         settingsButtonStyleClass: 'isochrones-control-settings-button',         // Generic class to style the setting buttons uniformly - further customisation per button is available with specific options below
         activeStyleClass: 'isochrones-control-active',                          // Indicate to the user which button is active in the settings and the collapsed state of the control if settings are active
@@ -68,20 +69,7 @@ L.Control.Isochrones = L.Control.extend({
         accessibilityButtonStyleClass: '',
         accessibilityButtonTooltip: 'Travel mode: wheelchair',
 
-        // API settings
-        ajaxRequestFn: simpleAjaxRequest,                                   // External function to make the actual call to the API via AJAX - default is to use the simple function included in leaflet.isochrones_utilities.js
-        apiKey: '58d904a497c67e00015b45fc6862cde0265d4fd78ec660aa83220cdb', // openrouteservice API key - the service which returns the isochrone polygons based on the various options/parameters TODO: Remove this when we ship the code as this is our personal key
-
-        travelModeDrivingProfile: 'driving-car',        // API choices are 'driving-car' and 'driving-hgv'
-        travelModeCyclingProfile: 'cycling-regular',    // API choices are 'cycling-regular', 'cycling-road', 'cycling-safe', 'cycling-mountain' and 'cycling-tour'
-        travelModeWalkingProfile: 'foot-walking',       // API choices are 'foot-walking' and 'foot-hiking'
-        travelModeAccessibilityProfile: 'wheelchair',   // API choices are 'wheelchair'
-        travelModeDefault: null,                        // Set travel mode default - if this is not equal to one of the 4 profiles above it is set to the value of travelModeDrivingProfile in the onAdd function
-
-
-
-
-        // TODO: these need altering
+        // Slider control for the range parameter
         rangeControlDistanceTitle: 'Range (kilometres)',
         rangeControlDistanceMin: 0.5,
         rangeControlDistanceMax: 3,
@@ -93,11 +81,16 @@ L.Control.Isochrones = L.Control.extend({
         rangeControlTimeMax: 30,                    //  > All these values need to be multiplied by 60 to convert to seconds - no other unit of time is allowed
         rangeControlTimeInterval: 5,                // /
 
-
-
-
-
         rangeTypeDefault: 'time',                      // Range can be either distance or time - any value other than 'distance' passed to the API is assumed to be 'time'
+
+        // API settings
+        apiKey: '58d904a497c67e00015b45fc6862cde0265d4fd78ec660aa83220cdb', // openrouteservice API key - the service which returns the isochrone polygons based on the various options/parameters TODO: Remove this when we ship the code as this is our personal key
+        ajaxRequestFn: simpleAjaxRequest,                                   // External function to make the actual call to the API via AJAX - default is to use the simple function included in leaflet.isochrones_utilities.js
+        travelModeDrivingProfile: 'driving-car',        // API choices are 'driving-car' and 'driving-hgv'
+        travelModeCyclingProfile: 'cycling-regular',    // API choices are 'cycling-regular', 'cycling-road', 'cycling-safe', 'cycling-mountain' and 'cycling-tour'
+        travelModeWalkingProfile: 'foot-walking',       // API choices are 'foot-walking' and 'foot-hiking'
+        travelModeAccessibilityProfile: 'wheelchair',   // API choices are 'wheelchair'
+        travelModeDefault: null,                        // Set travel mode default - if this is not equal to one of the 4 profiles above it is set to the value of travelModeDrivingProfile in the onAdd function
 
         // Isocrone styling and interaction
         styleFn: null,                              // External function to call which styles the isochrones returned from API call
@@ -190,9 +183,6 @@ L.Control.Isochrones = L.Control.extend({
         // Distance setting button - to calculate isochrones based on distance
         this._timeControl = this._createButton('span', this.options.timeButtonContent, this.options.timeButtonTooltip, this.options.settingsButtonStyleClass + ' ' + this.options.timeButtonStyleClass, this._actionsAndModesContainer, this._setRangeByTime);
 
-        // Select the correct range type button
-        (this._rangeIsDistance) ? L.DomUtil.addClass(this._distanceControl, this.options.activeStyleClass) : L.DomUtil.addClass(this._timeControl, this.options.activeStyleClass);
-
 
         // Container for the travel mode buttons
         this._modesContainer = L.DomUtil.create('div', 'isochrones-control-settings-block-container', this._uiContainer);
@@ -209,8 +199,39 @@ L.Control.Isochrones = L.Control.extend({
         // Accessible profile button
         this._accessibilityControl = this._createButton('span', this.options.accessibilityButtonContent, this.options.accessibilityButtonTooltip, this.options.settingsButtonStyleClass + ' ' + this.options.accessibilityButtonStyleClass, this._modesContainer, this._setTravelAccessibility);
 
+
+        // Containers and sliders for the range control
+        this._rangeDistanceContainer = L.DomUtil.create('div', 'isochrones-control-hide', this._uiContainer);
+        this._rangeDistanceSliderTitle = L.DomUtil.create('div', 'isochrones-control-slider-title', this._rangeDistanceContainer);
+        this._rangeDistanceSliderTitle.innerHTML = this.options.rangeControlDistanceTitle;
+        this._rangeDistanceSlider = L.DomUtil.create('input', 'isochrones-control-slider', this._rangeDistanceContainer);
+        this._rangeDistanceSlider.setAttribute('type', 'range');
+        this._rangeDistanceSlider.setAttribute('min', this.options.rangeControlDistanceMin);
+        this._rangeDistanceSlider.setAttribute('max', this.options.rangeControlDistanceMax);
+        this._rangeDistanceSlider.setAttribute('step', this.options.rangeControlDistanceInterval);
+
+        this._rangeTimeContainer = L.DomUtil.create('div', 'isochrones-control-hide', this._uiContainer);
+        this._rangeTimeSliderTitle = L.DomUtil.create('div', 'isochrones-control-slider-title', this._rangeTimeContainer);
+        this._rangeTimeSliderTitle.innerHTML = this.options.rangeControlTimeTitle;
+        this._rangeTimeSlider = L.DomUtil.create('input', 'isochrones-control-slider', this._rangeTimeContainer);
+        this._rangeTimeSlider.setAttribute('type', 'range');
+        this._rangeTimeSlider.setAttribute('min', this.options.rangeControlTimeMin);
+        this._rangeTimeSlider.setAttribute('max', this.options.rangeControlTimeMax);
+        this._rangeTimeSlider.setAttribute('step', this.options.rangeControlTimeInterval);
+
+
+        // Select the correct range type button and show the correct slider
+        if (this._rangeIsDistance) {
+            L.DomUtil.addClass(this._distanceControl, this.options.activeStyleClass);
+            L.DomUtil.removeClass(this._rangeDistanceContainer, 'isochrones-control-hide');
+        }
+        else {
+            L.DomUtil.addClass(this._timeControl, this.options.activeStyleClass);
+            L.DomUtil.removeClass(this._rangeTimeContainer, 'isochrones-control-hide');
+        }
+
         // Select the correct travel mode button
-        this._toggleTravelMode(null);
+        this._toggleTravelMode(null);   // Null causes the function to operate in a different way, setting up the initial state
     },
 
     // An amended version of the Leaflet.js function of the same name, (c) 2010-2018 Vladimir Agafonkin, (c) 2010-2011 CloudMade
@@ -404,13 +425,25 @@ L.Control.Isochrones = L.Control.extend({
         if ((mode == 'distance' && this._rangeIsDistance == false) || (mode == 'time' && this._rangeIsDistance)) {
             // We need to change the state
             if (mode == 'distance') {
+                // The mode buttons
                 L.DomUtil.addClass(this._distanceControl, this.options.activeStyleClass);
                 L.DomUtil.removeClass(this._timeControl, this.options.activeStyleClass);
+
+                // The sliders
+                L.DomUtil.removeClass(this._rangeDistanceContainer, 'isochrones-control-hide');
+                L.DomUtil.addClass(this._rangeTimeContainer, 'isochrones-control-hide');
+
                 this._rangeIsDistance = true;
             }
             else {
+                // The mode buttons
                 L.DomUtil.addClass(this._timeControl, this.options.activeStyleClass);
                 L.DomUtil.removeClass(this._distanceControl, this.options.activeStyleClass);
+
+                // The sliders
+                L.DomUtil.removeClass(this._rangeTimeContainer, 'isochrones-control-hide');
+                L.DomUtil.addClass(this._rangeDistanceContainer, 'isochrones-control-hide');
+
                 this._rangeIsDistance = false;
             }
         }
