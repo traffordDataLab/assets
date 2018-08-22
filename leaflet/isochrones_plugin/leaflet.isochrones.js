@@ -518,18 +518,15 @@ L.Control.Isochrones = L.Control.extend({
         var latLng = e.latlng;
 
         // Create the URL to pass to the API
-        // TODO: Needs to get values from options and internally based on the current settings
         var apiUrl = 'https://api.openrouteservice.org/isochrones?api_key=' + this.options.apiKey;
 
         apiUrl += '&locations=' + latLng.lng + '%2C' + latLng.lat;
 
         if (this._rangeIsDistance) {
-            //TODO: Need to replace the range value with the current value from the slider
-            apiUrl += '&range_type=distance&units=' + this.options.rangeControlDistanceUnits + '&range=3&interval=' + this.options.rangeControlDistanceInterval;
+            apiUrl += '&range_type=distance&units=' + this.options.rangeControlDistanceUnits + '&range=' + this._rangeDistanceSlider.value + '&interval=' + this.options.rangeControlDistanceInterval;
         }
         else {
-            //TODO: Need to replace the range value with the current value from the slider
-            apiUrl += '&range_type=time&range=180&interval=60';
+            apiUrl += '&range_type=time&range=' + this._rangeTimeSlider.value * 60 + '&interval=' + this.options.rangeControlTimeInterval * 60;
         }
 
         apiUrl += '&profile=' + this._travelMode + '&location_type=start';
@@ -565,7 +562,7 @@ L.Control.Isochrones = L.Control.extend({
                         Therefore we need to generate new a new id for each layer, with the larger polygon layers given lower ids than the smaller.
                     */
 
-                    // Create a Leaflet GeoJSON FeatureGroup object from the GeoJSON returned from the API (NOTE: this object is accessible externally)
+                    // Create a Leaflet GeoJSON FeatureGroup object from the GeoJSON returned from the API (NOTE: this object is intended to be accessible externally)
                     context.isochrones = L.geoJSON(data, { style: context.options.styleFn });
 
                     // Load the layers into an array so that we can sort them in decending id order if there are more than 1
