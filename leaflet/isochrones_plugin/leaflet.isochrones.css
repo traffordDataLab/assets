@@ -104,9 +104,18 @@
     background: #999;
     margin: 0;
     padding: 0;
+    cursor: pointer;
+    outline: none;
 }
 
 .isochrones-control-slider-title
 {
     font-weight: bold;
+}
+
+/* the container for the maximum slider value. The minumum value has a class called isochrones-control-slider-min */
+.isochrones-control-slider-max
+{
+    display: inline-block;
+    float: right;
 }

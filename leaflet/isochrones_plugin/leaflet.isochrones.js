@@ -200,24 +200,35 @@ L.Control.Isochrones = L.Control.extend({
         this._accessibilityControl = this._createButton('span', this.options.accessibilityButtonContent, this.options.accessibilityButtonTooltip, this.options.settingsButtonStyleClass + ' ' + this.options.accessibilityButtonStyleClass, this._modesContainer, this._setTravelAccessibility);
 
 
-        // Containers and sliders for the range control
+        // Slider and containers etc. for the distance range control
         this._rangeDistanceContainer = L.DomUtil.create('div', 'isochrones-control-hide', this._uiContainer);
         this._rangeDistanceSliderTitle = L.DomUtil.create('div', 'isochrones-control-slider-title', this._rangeDistanceContainer);
         this._rangeDistanceSliderTitle.innerHTML = this.options.rangeControlDistanceTitle;
         this._rangeDistanceSlider = L.DomUtil.create('input', 'isochrones-control-slider', this._rangeDistanceContainer);
         this._rangeDistanceSlider.setAttribute('type', 'range');
+        this._rangeDistanceSlider.setAttribute('value', this.options.rangeControlDistanceMin);
         this._rangeDistanceSlider.setAttribute('min', this.options.rangeControlDistanceMin);
         this._rangeDistanceSlider.setAttribute('max', this.options.rangeControlDistanceMax);
         this._rangeDistanceSlider.setAttribute('step', this.options.rangeControlDistanceInterval);
+        this._rangeDistanceSliderMin = L.DomUtil.create('span', 'isochrones-control-slider-min', this._rangeDistanceContainer);
+        this._rangeDistanceSliderMin.innerHTML = this.options.rangeControlDistanceMin;
+        this._rangeDistanceSliderMax = L.DomUtil.create('span', 'isochrones-control-slider-max', this._rangeDistanceContainer);
+        this._rangeDistanceSliderMax.innerHTML = this.options.rangeControlDistanceMax;
 
+        // Slider and containers etc. for the time range control
         this._rangeTimeContainer = L.DomUtil.create('div', 'isochrones-control-hide', this._uiContainer);
         this._rangeTimeSliderTitle = L.DomUtil.create('div', 'isochrones-control-slider-title', this._rangeTimeContainer);
         this._rangeTimeSliderTitle.innerHTML = this.options.rangeControlTimeTitle;
         this._rangeTimeSlider = L.DomUtil.create('input', 'isochrones-control-slider', this._rangeTimeContainer);
         this._rangeTimeSlider.setAttribute('type', 'range');
+        this._rangeTimeSlider.setAttribute('value', this.options.rangeControlTimeMin);
         this._rangeTimeSlider.setAttribute('min', this.options.rangeControlTimeMin);
         this._rangeTimeSlider.setAttribute('max', this.options.rangeControlTimeMax);
         this._rangeTimeSlider.setAttribute('step', this.options.rangeControlTimeInterval);
+        this._rangeTimeSliderMin = L.DomUtil.create('span', 'isochrones-control-slider-min', this._rangeTimeContainer);
+        this._rangeTimeSliderMin.innerHTML = this.options.rangeControlTimeMin;
+        this._rangeTimeSliderMax = L.DomUtil.create('span', 'isochrones-control-slider-max', this._rangeTimeContainer);
+        this._rangeTimeSliderMax.innerHTML = this.options.rangeControlTimeMax;
 
 
         // Select the correct range type button and show the correct slider
