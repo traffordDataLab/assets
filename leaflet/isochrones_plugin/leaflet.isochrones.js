@@ -16,6 +16,7 @@ L.Control.Isochrones = L.Control.extend({
         // Main control settings and styling
         collapsed: true,                            // Operates in a similar way to the Leaflet layer control - can be collapsed into a standard single control which expands on-click (true) or is displayed fully expanded (false)
         controlContainerStyleClass: '',             // The container for the plugin control will usually be styled with the standard Leaflet control styling, however this option allows for customisation
+        drawActiveMouseClass: 'leaflet-crosshair',  // CSS class applied to the mouse pointer when the plugin is in draw mode
 
         // If collapsed == true a toggle button is displayed to expand the control onclick/touch
         toggleButtonStyleClass: 'isochrones-control-toggle',    // Allow options for styling - if you want to use an icon from services like fontawesome pass the declarations here, e.g. 'fa fa-home' etc.
@@ -317,9 +318,9 @@ L.Control.Isochrones = L.Control.extend({
         if (!this._mouseMarker) {
             this._mouseMarker = L.marker(this._map.getCenter(), {
                 icon: L.divIcon({
-                    className: 'leaflet-crosshair',
-                    iconAnchor: [20, 20],
-                    iconSize: [40, 40]
+                    className: this.options.drawActiveMouseClass,
+                    iconAnchor: [250, 250],
+                    iconSize: [500, 500]
                 }),
                 opacity: 0,
                 zIndexOffset: this.options.zIndexMouseMarker
