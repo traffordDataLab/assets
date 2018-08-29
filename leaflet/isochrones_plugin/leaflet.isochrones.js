@@ -319,8 +319,8 @@ L.Control.Isochrones = L.Control.extend({
             this._mouseMarker = L.marker(this._map.getCenter(), {
                 icon: L.divIcon({
                     className: this.options.drawActiveMouseClass,
-                    iconAnchor: [250, 250],
-                    iconSize: [500, 500]
+                    iconAnchor: [400, 400],
+                    iconSize: [800, 800]
                 }),
                 opacity: 0,
                 zIndexOffset: this.options.zIndexMouseMarker
