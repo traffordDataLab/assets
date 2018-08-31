@@ -75,18 +75,18 @@ L.Control.Isochrones = L.Control.extend({
         rangeControlDistanceMin: 0.5,
         rangeControlDistanceMax: 3,
         rangeControlDistanceInterval: 0.5,
-        rangeControlDistanceUnits: 'km',            // Can be either 'm', 'km' or 'mi'
+        rangeControlDistanceUnits: 'km',                // Can be either 'm', 'km' or 'mi'
 
         rangeControlTimeTitle: 'Range (minutes)',
-        rangeControlTimeMin: 5,                     // \
-        rangeControlTimeMax: 30,                    //  > All these values need to be multiplied by 60 to convert to seconds - no other unit of time is allowed
-        rangeControlTimeInterval: 5,                // /
+        rangeControlTimeMin: 5,                         // \
+        rangeControlTimeMax: 30,                        //  > All these values need to be multiplied by 60 to convert to seconds - no other unit of time is allowed
+        rangeControlTimeInterval: 5,                    // /
 
-        rangeTypeDefault: 'time',                      // Range can be either distance or time - any value other than 'distance' passed to the API is assumed to be 'time'
+        rangeTypeDefault: 'time',                       // Range can be either distance or time - any value other than 'distance' passed to the API is assumed to be 'time'
 
         // API settings
         apiKey: '58d904a497c67e00015b45fc6862cde0265d4fd78ec660aa83220cdb', // openrouteservice API key - the service which returns the isochrone polygons based on the various options/parameters TODO: Remove this when we ship the code as this is our personal key
-        ajaxRequestFn: simpleAjaxRequest,                                   // External function to make the actual call to the API via AJAX - default is to use the simple function included in leaflet.isochrones_utilities.js
+        ajaxRequestFn: simpleAjaxRequest,               // External function to make the actual call to the API via AJAX - default is to use the simple function included in leaflet.isochrones_utilities.js
         travelModeDrivingProfile: 'driving-car',        // API choices are 'driving-car' and 'driving-hgv'
         travelModeCyclingProfile: 'cycling-regular',    // API choices are 'cycling-regular', 'cycling-road', 'cycling-safe', 'cycling-mountain' and 'cycling-tour'
         travelModeWalkingProfile: 'foot-walking',       // API choices are 'foot-walking' and 'foot-hiking'
@@ -94,16 +94,16 @@ L.Control.Isochrones = L.Control.extend({
         travelModeDefault: null,                        // Set travel mode default - if this is not equal to one of the 4 profiles above it is set to the value of travelModeDrivingProfile in the onAdd function
 
         // Isocrone styling and interaction
-        styleFn: null,                              // External function to call which styles the isochrones returned from API call
-        mouseOverFn: null,                          // External function to call when a mouseover event occurs on an isochrone
-        mouseOutFn: null,                           // External function to call when a mouseout event occurs on an isochrone
-        clickFn: null,                              // External function to call when a click event occurs on an isochrone
+        styleFn: null,                                  // External function to call which styles the isochrones returned from API call
+        mouseOverFn: null,                              // External function to call when a mouseover event occurs on an isochrone
+        mouseOutFn: null,                               // External function to call when a mouseout event occurs on an isochrone
+        clickFn: null,                                  // External function to call when a click event occurs on an isochrone
 
-        markerDistance: null,                       // \
-        markerWalk: null,                           //  \
-        markerBike: null,                           //    > The marker to use at the centre of isochrones based on the modes of travel etc.
-        markerCar: null,                            //  /
-        markerWheelchair: null                      // /
+        markerDistance: null,                           // \
+        markerWalk: null,                               //  \
+        markerBike: null,                               //    > The marker to use at the centre of isochrones based on the modes of travel etc.
+        markerCar: null,                                //  /
+        markerWheelchair: null                          // /
     },
 
     onAdd: function (map) {
@@ -247,6 +247,7 @@ L.Control.Isochrones = L.Control.extend({
     },
 
     // An amended version of the Leaflet.js function of the same name, (c) 2010-2018 Vladimir Agafonkin, (c) 2010-2011 CloudMade
+    // Allows interface elements to be created using different tags, not just anchors
     _createButton: function (tag, html, title, className, container, fn) {
         // Create a control button
         var button = L.DomUtil.create(tag, className, container);
@@ -260,9 +261,9 @@ L.Control.Isochrones = L.Control.extend({
 
         // Set events
         L.DomEvent
-            .on(button, 'mousedown dblclick', L.DomEvent.stopPropagation)
+            .on(button, 'mousedown touchstart dblclick', L.DomEvent.stopPropagation)
             .on(button, 'click', L.DomEvent.stop)
-            .on(button, 'click', fn, this);     // send 'this' context to the event handler
+            .on(button, 'click', fn, this);
 
 		return button;
 	},
@@ -311,9 +312,12 @@ L.Control.Isochrones = L.Control.extend({
         // Deactivate delete mode if currently active
         if (this._deleteMode) this._deactivateDelete();
 
+        this._drawRequestRegistered = false;     // flag to indicate if a 'click-like' event has been registered
+
         /*
             Using a technique deployed in Jacob Toye's Leaflet.Draw plugin:
-            We create an invisible mouse marker to capture the click event to give us a lat/lng to calculate the isochrones
+            We create an invisible mouse marker to capture the click event to give us a lat/lng to calculate the isochrones.
+            This allows us to style the mouse pointer easily and also not interact with other map elements whilst in draw mode.
         */
         if (!this._mouseMarker) {
             this._mouseMarker = L.marker(this._map.getCenter(), {
@@ -329,12 +333,19 @@ L.Control.Isochrones = L.Control.extend({
 
         // Add events to the marker and then add the marker to the map
         this._mouseMarker
-            .on('mousemove', this._onMouseMove, this)
-            .on('click', this._callApi, this)
+            .on('mousemove', this._updatePointerMarkerPosition, this)
+            .on('click', this._registerDrawRequest, this)
             .addTo(this._map);
 
-        // Add a duplicate mouse move event to the map in case the mouse pointer goes outside of the mouseMarker
-        this._map.on('mousemove', this._onMouseMove, this);
+        /*
+            Add a duplicate events to the map for mousemove and click in case the mouse pointer goes outside of the mouseMarker.
+            The mousedown is for touch interactions to update the marker position so that the click event is registered in the correct place (Safari and Firefox seem to be the ones with issues here).
+            NOTE: not using touchdown as it isn't always supported.
+        */
+        this._map
+            .on('mousemove', this._updatePointerMarkerPosition, this)
+            .on('mousedown', this._updatePointerMarkerPosition, this)
+            .on('click', this._registerDrawRequest, this);
 
         // Fire an event to indicate that the control is active - in case we want to run some external code etc.
         this._map.fire('isochrones:activated');
@@ -347,16 +358,19 @@ L.Control.Isochrones = L.Control.extend({
         // Remove the mouse marker and its events from the map and destroy the marker
         if (this._mouseMarker !== null) {
             this._mouseMarker
-                .off('mousemove', this._onMouseMove, this)
-                .off('click', this._callApi, this)
+                .off('mousemove', this._updatePointerMarkerPosition, this)
+                .off('click', this._registerDrawRequest, this)
                 .removeFrom(this._map);
             this._mouseMarker = null;
         }
 
         // Remove map events
-        this._map.off('mousemove', this._onMouseMove, this);
+        this._map
+            .off('mousemove', this._updatePointerMarkerPosition, this)
+            .off('mousedown', this._updatePointerMarkerPosition, this)
+            .off('click', this._registerDrawRequest, this);
 
-        // Fire an event to indicate that the control is active - in case we want to run some external code etc.
+        // Fire an event to indicate that the control is no longer active - in case we want to run some external code etc.
         this._map.fire('isochrones:deactivated');
     },
 
@@ -387,7 +401,6 @@ L.Control.Isochrones = L.Control.extend({
     },
 
     _deactivateDelete: function () {
-        // The delete control is currently activate so deactivate it now
         this._deleteMode = false;
         L.DomUtil.removeClass(this._deleteControl, this.options.activeStyleClass); // remove the selected class from the delete button
 
@@ -396,7 +409,7 @@ L.Control.Isochrones = L.Control.extend({
     },
 
     // Removes a particular FeatureGroup of isochrones from the LayerGroup.
-    // Called when an isochrone FeatureGroup is clicked on whilst the plugin is in delete mode
+    // Called when an isochrone FeatureGroup is clicked on whilst the plugin is in delete mode.
     _delete: function (e) {
         var parent = e.sourceTarget._eventParents;
 
@@ -513,22 +526,33 @@ L.Control.Isochrones = L.Control.extend({
         }
     },
 
-    // Deals with updating the position of the invisible Leaflet marker that chases the mouse pointer.
+    // Deals with updating the position of the invisible Leaflet marker that chases the mouse pointer or is set to the location of a touch.
     // This is used to determine the coordinates on the map when the user clicks/touches to create an isochrone
-    _onMouseMove: function (e) {
+    _updatePointerMarkerPosition: function (e) {
 		var newPos = this._map.mouseEventToLayerPoint(e.originalEvent);
 		var latlng = this._map.layerPointToLatLng(newPos);
 
         // Update the mouse marker position
 		this._mouseMarker.setLatLng(latlng);
 
-		L.DomEvent.preventDefault(e.originalEvent);
+        // In case the mousedown event is being listened to on other objects
+        L.DomEvent.stop(e.originalEvent);
 	},
 
-    // Main function to make the actual call to the API and display the resultant isochrones on the map
-    _callApi: function (e) {
-        var latLng = e.latlng;
+    // Prevents multiple events, e.g. click on the mouse marker and map all calling the API and creating multiple isochrones.
+    _registerDrawRequest: function (e) {
+        L.DomEvent.stop(e.originalEvent);     // stop any default actions and propagation from the event
 
+        // Only take action if this is the first event to register - the reset is in _callApi
+        if (!this._drawRequestRegistered) {
+            this._drawRequestRegistered = true;
+
+            this._callApi(e.latlng);
+        }
+    },
+
+    // Main function to make the actual call to the API and display the resultant isochrones on the map
+    _callApi: function (latLng) {
         // Create the URL to pass to the API
         var apiUrl = 'https://api.openrouteservice.org/isochrones?api_key=' + this.options.apiKey;
 
@@ -618,6 +642,8 @@ L.Control.Isochrones = L.Control.extend({
                         // Add the GeoJSON FeatureGroup to the LayerGroup
                         context.isochrones.addTo(context.layerGroup);
 
+                        //TODO: Create a marker at the latlng indicating mode of travel etc.
+
                         // Fire event to inform that isochrones have been drawn successfully
                         context._map.fire('isochrones:displayed');
                     }
@@ -636,6 +662,9 @@ L.Control.Isochrones = L.Control.extend({
 
                 // Inform that we have completed calling the API - could be useful for stopping a spinner etc. to indicate to the user that something was happening. Doesn't indicate success
                 context._map.fire('isochrones:api_call_end');
+
+                // Get ready to register another draw request
+                context._drawRequestRegistered = false;
             });
         }
         catch (e) {
