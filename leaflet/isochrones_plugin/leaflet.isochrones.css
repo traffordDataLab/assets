@@ -93,89 +93,102 @@
 }
 
 
-/* Range slider control and related items */
+/* ### Range slider control and related items ### */
+/* The main slider control */
 .isochrones-control-slider
 {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 4px;
-  background: transparent;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 34px;
+    background: transparent;
+    cursor: pointer;
 }
 
-.isochrones-control-slider, .isochrones-control-slider::-webkit-slider-thumb
+/* Remove focus outline on the main slider control */
+.isochrones-control-slider:focus
 {
-  -webkit-appearance: none;
+    outline: none;
 }
-
-.isochrones-control-slider::-webkit-slider-runnable-track
+.isochrones-control-slider::-moz-focus-outer
 {
-  box-sizing: border-box;
-  border: none;
-  width: 100%;
-  height: 4px;
-  background: #999;
+    border: 0;
 }
 
-.isochrones-control-slider::-moz-range-track
-{
-  box-sizing: border-box;
-  border: none;
-  width: 100%;
-  height: 4px;
-  background: #999;
-}
-
-.isochrones-control-slider::-ms-track
-{
-  box-sizing: border-box;
-  border: none;
-  width: 100%;
-  height: 4px;
-  background: #999;
-}
-
-.isochrones-control-slider::-webkit-slider-thumb
-{
-  margin-top: -13px;
-  box-sizing: border-box;
-  border: 1px solid #0073d4;
-  box-shadow: 0 1px 5px rgba(0,115,212,0.65);
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: #fff;
-  cursor: pointer;
-}
-
-.isochrones-control-slider::-moz-range-thumb
-{
-  box-sizing: border-box;
-  border: 1px solid #0073d4;
-  box-shadow: 0 1px 5px rgba(0,115,212,0.65);
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: #fff;
-  cursor: pointer;
-}
-
-.isochrones-control-slider::-ms-thumb
-{
-  margin-top: 0;
-  box-sizing: border-box;
-  border: 1px solid #0073d4;
-  box-shadow: 0 1px 5px rgba(0,115,212,0.65);
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: #fff;
-  cursor: pointer;
-}
-
+/* Remove the default tooltip and progress track for the slider in IE */
 .isochrones-control-slider::-ms-tooltip
 {
     display: none;
+}
+.isochrones-control-slider::-ms-fill-lower
+{
+    background: transparent;
+}
+
+/* Remove default browser styling for the slider */
+.isochrones-control-slider, .isochrones-control-slider::-webkit-slider-thumb
+{
+    -webkit-appearance: none;
+}
+
+/* Slider track styles with browser variants */
+.isochrones-control-slider::-webkit-slider-runnable-track
+{
+    box-sizing: border-box;
+    border: none;
+    width: 100%;
+    height: 4px;
+    background: #999;
+}
+.isochrones-control-slider::-moz-range-track
+{
+    box-sizing: border-box;
+    border: none;
+    width: 100%;
+    height: 4px;
+    background: #999;
+}
+.isochrones-control-slider::-ms-track
+{
+    box-sizing: border-box;
+    border: none;
+    width: 100%;
+    height: 4px;
+    background: #999;
+}
+
+/* Slider thumb control with browser variants */
+.isochrones-control-slider::-webkit-slider-thumb
+{
+    margin-top: -13px;
+    box-sizing: border-box;
+    border: 1px solid #0073d4;
+    box-shadow: 0 1px 5px rgba(0,115,212,0.65);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #fff;
+}
+.isochrones-control-slider::-moz-range-thumb
+{
+    box-sizing: border-box;
+    border: 1px solid #0073d4;
+    box-shadow: 0 1px 5px rgba(0,115,212,0.65);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #fff;
+}
+.isochrones-control-slider::-ms-thumb
+{
+    margin-top: 0;
+    box-sizing: border-box;
+    border: 1px solid #0073d4;
+    box-shadow: 0 1px 5px rgba(0,115,212,0.65);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #fff;
 }
 
 /* Container for the range slider title - applies to both time and distance sliders */
@@ -189,7 +202,6 @@
 .isochrones-control-slider-min, .isochrones-control-slider-max
 {
     display: inline-block;
-    padding-top: 5px;
 }
 
 .isochrones-control-slider-max
