@@ -145,6 +145,7 @@
   height: 30px;
   border-radius: 50%;
   background: #fff;
+  cursor: pointer;
 }
 
 .isochrones-control-slider::-moz-range-thumb
@@ -156,6 +157,7 @@
   height: 30px;
   border-radius: 50%;
   background: #fff;
+  cursor: pointer;
 }
 
 .isochrones-control-slider::-ms-thumb
@@ -168,6 +170,7 @@
   height: 30px;
   border-radius: 50%;
   background: #fff;
+  cursor: pointer;
 }
 
 .isochrones-control-slider::-ms-tooltip
