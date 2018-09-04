@@ -15,6 +15,7 @@
 {
     background: #fff;
     padding: 6px;
+    border-radius: 5px;
 }
 
 
@@ -143,7 +144,7 @@
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background: #ccc;
+  background: #fff;
 }
 
 .isochrones-control-slider::-moz-range-thumb
@@ -154,7 +155,7 @@
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background: #ccc;
+  background: #fff;
 }
 
 .isochrones-control-slider::-ms-thumb
@@ -166,7 +167,7 @@
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background: #ccc;
+  background: #fff;
 }
 
 .isochrones-control-slider::-ms-tooltip
@@ -174,13 +175,14 @@
     display: none;
 }
 
+/* Container for the range slider title - applies to both time and distance sliders */
 .isochrones-control-slider-title
 {
     font-weight: bold;
     margin-bottom: 5px;
 }
 
-/* the container for the minimum maximum slider value. The minumum value has a class called isochrones-control-slider-min */
+/* Containers for the minimum and maximum slider values. */
 .isochrones-control-slider-min, .isochrones-control-slider-max
 {
     display: inline-block;
