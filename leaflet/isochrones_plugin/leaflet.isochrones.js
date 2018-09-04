@@ -231,6 +231,12 @@ L.Control.Isochrones = L.Control.extend({
         this._rangeTimeSliderMax = L.DomUtil.create('span', 'isochrones-control-slider-max', this._rangeTimeContainer);
         this._rangeTimeSliderMax.innerHTML = this.options.rangeControlTimeMax;
 
+        // Prevent the mousemove and mousedown events to attach the invisible mouse marker to the pointer from affecting the slider
+        L.DomEvent
+            .on(this._rangeDistanceContainer, 'mousemove', L.DomEvent.stopPropagation)
+            .on(this._rangeDistanceContainer, 'mousedown', L.DomEvent.stopPropagation)
+            .on(this._rangeTimeContainer, 'mousemove', L.DomEvent.stopPropagation)
+            .on(this._rangeTimeContainer, 'mousedown', L.DomEvent.stopPropagation);
 
         // Select the correct range type button and show the correct slider
         if (this._rangeIsDistance) {
