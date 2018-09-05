@@ -71,18 +71,19 @@ L.Control.Isochrones = L.Control.extend({
         accessibilityButtonTooltip: 'Travel mode: wheelchair',
 
         // Slider control for the range parameter
-        rangeControlDistanceTitle: 'Range (kilometres)',
+        rangeControlDistanceTitle: 'Distance',
         rangeControlDistanceMin: 0.5,
         rangeControlDistanceMax: 3,
         rangeControlDistanceInterval: 0.5,
         rangeControlDistanceUnits: 'km',                // Can be either 'm', 'km' or 'mi'
 
-        rangeControlTimeTitle: 'Range (minutes)',
+        rangeControlTimeTitle: 'Travel time',
         rangeControlTimeMin: 5,                         // \
         rangeControlTimeMax: 30,                        //  > All these values need to be multiplied by 60 to convert to seconds - no other unit of time is allowed
         rangeControlTimeInterval: 5,                    // /
 
         rangeTypeDefault: 'time',                       // Range can be either distance or time - any value other than 'distance' passed to the API is assumed to be 'time'
+        rangeIntervalsLabel: 'intervals',               // The 'show intervals?' checkbox label
 
         // API settings
         apiKey: '58d904a497c67e00015b45fc6862cde0265d4fd78ec660aa83220cdb', // openrouteservice API key - the service which returns the isochrone polygons based on the various options/parameters TODO: Remove this when we ship the code as this is our personal key
@@ -201,51 +202,56 @@ L.Control.Isochrones = L.Control.extend({
         this._accessibilityControl = this._createButton('span', this.options.accessibilityButtonContent, this.options.accessibilityButtonTooltip, this.options.settingsButtonStyleClass + ' ' + this.options.accessibilityButtonStyleClass, this._modesContainer, this._setTravelAccessibility);
 
 
-        // Slider and containers etc. for the distance range control
-        this._rangeDistanceContainer = L.DomUtil.create('div', 'isochrones-control-hide', this._uiContainer);
-        this._rangeDistanceSliderTitle = L.DomUtil.create('div', 'isochrones-control-slider-title', this._rangeDistanceContainer);
-        this._rangeDistanceSliderTitle.innerHTML = this.options.rangeControlDistanceTitle;
-        this._rangeDistanceSlider = L.DomUtil.create('input', 'isochrones-control-slider', this._rangeDistanceContainer);
-        this._rangeDistanceSlider.setAttribute('type', 'range');
-        this._rangeDistanceSlider.setAttribute('value', this.options.rangeControlDistanceMin);
-        this._rangeDistanceSlider.setAttribute('min', this.options.rangeControlDistanceMin);
-        this._rangeDistanceSlider.setAttribute('max', this.options.rangeControlDistanceMax);
-        this._rangeDistanceSlider.setAttribute('step', this.options.rangeControlDistanceInterval);
-        this._rangeDistanceSliderMin = L.DomUtil.create('span', 'isochrones-control-slider-min', this._rangeDistanceContainer);
-        this._rangeDistanceSliderMin.innerHTML = this.options.rangeControlDistanceMin;
-        this._rangeDistanceSliderMax = L.DomUtil.create('span', 'isochrones-control-slider-max', this._rangeDistanceContainer);
-        this._rangeDistanceSliderMax.innerHTML = this.options.rangeControlDistanceMax;
+        // Distance range title
+        this._rangeDistanceTitle = L.DomUtil.create('div', 'isochrones-control-range-title isochrones-control-hide', this._uiContainer);
+        this._rangeDistanceTitle.innerHTML = this.options.rangeControlDistanceTitle;
 
-        // Slider and containers etc. for the time range control
-        this._rangeTimeContainer = L.DomUtil.create('div', 'isochrones-control-hide', this._uiContainer);
-        this._rangeTimeSliderTitle = L.DomUtil.create('div', 'isochrones-control-slider-title', this._rangeTimeContainer);
-        this._rangeTimeSliderTitle.innerHTML = this.options.rangeControlTimeTitle;
-        this._rangeTimeSlider = L.DomUtil.create('input', 'isochrones-control-slider', this._rangeTimeContainer);
-        this._rangeTimeSlider.setAttribute('type', 'range');
-        this._rangeTimeSlider.setAttribute('value', this.options.rangeControlTimeMin);
-        this._rangeTimeSlider.setAttribute('min', this.options.rangeControlTimeMin);
-        this._rangeTimeSlider.setAttribute('max', this.options.rangeControlTimeMax);
-        this._rangeTimeSlider.setAttribute('step', this.options.rangeControlTimeInterval);
-        this._rangeTimeSliderMin = L.DomUtil.create('span', 'isochrones-control-slider-min', this._rangeTimeContainer);
-        this._rangeTimeSliderMin.innerHTML = this.options.rangeControlTimeMin;
-        this._rangeTimeSliderMax = L.DomUtil.create('span', 'isochrones-control-slider-max', this._rangeTimeContainer);
-        this._rangeTimeSliderMax.innerHTML = this.options.rangeControlTimeMax;
+        // Distance range control
+        this._rangeDistanceList = L.DomUtil.create('select', 'isochrones-control-range-list isochrones-control-hide', this._uiContainer);
+        for (var i = this.options.rangeControlDistanceMin; i <= this.options.rangeControlDistanceMax; i += this.options.rangeControlDistanceInterval) {
+            var opt = L.DomUtil.create('option', '', this._rangeDistanceList);
+            opt.setAttribute('value', i);
+            opt.innerHTML = i + ' ' + this.options.rangeControlDistanceUnits;
+        }
 
-        // Prevent the mousemove and mousedown events to attach the invisible mouse marker to the pointer from affecting the slider
-        L.DomEvent
-            .on(this._rangeDistanceContainer, 'mousemove', L.DomEvent.stopPropagation)
-            .on(this._rangeDistanceContainer, 'mousedown', L.DomEvent.stopPropagation)
-            .on(this._rangeTimeContainer, 'mousemove', L.DomEvent.stopPropagation)
-            .on(this._rangeTimeContainer, 'mousedown', L.DomEvent.stopPropagation);
 
-        // Select the correct range type button and show the correct slider
+        // Time range title
+        this._rangeTimeTitle = L.DomUtil.create('div', 'isochrones-control-range-title isochrones-control-hide', this._uiContainer);
+        this._rangeTimeTitle.innerHTML = this.options.rangeControlTimeTitle;
+
+        // Time range control
+        this._rangeTimeList = L.DomUtil.create('select', 'isochrones-control-range-list isochrones-control-hide', this._uiContainer);
+        for (var i = this.options.rangeControlTimeMin; i <= this.options.rangeControlTimeMax; i += this.options.rangeControlTimeInterval) {
+            var opt = L.DomUtil.create('option', '', this._rangeTimeList);
+            opt.setAttribute('value', i);
+            opt.innerHTML = i + ' min';
+        }
+
+
+        /*
+            Show intervals checkbox
+                - selected means that we want to show a range of isochrones, from the minimum value up to the chosen values
+                - not selected means that we want to only show one isochrone for the selected value
+        */
+        this._showIntervalContainer = L.DomUtil.create('span', 'isochrones-show-range-interval', this._uiContainer);
+        this._showInterval = L.DomUtil.create('input', '', this._showIntervalContainer);
+        this._showInterval.setAttribute('id', 'rangeInterval');
+        this._showInterval.setAttribute('type', 'checkbox');
+        this._showIntervalLabel = L.DomUtil.create('label', '', this._showIntervalContainer);
+        this._showIntervalLabel.setAttribute('for', 'rangeInterval');
+        this._showIntervalLabel.innerHTML = this.options.rangeIntervalsLabel;
+
+
+        // Select the correct range type button and show the correct range list
         if (this._rangeIsDistance) {
             L.DomUtil.addClass(this._distanceControl, this.options.activeStyleClass);
-            L.DomUtil.removeClass(this._rangeDistanceContainer, 'isochrones-control-hide');
+            L.DomUtil.removeClass(this._rangeDistanceTitle, 'isochrones-control-hide');
+            L.DomUtil.removeClass(this._rangeDistanceList, 'isochrones-control-hide');
         }
         else {
             L.DomUtil.addClass(this._timeControl, this.options.activeStyleClass);
-            L.DomUtil.removeClass(this._rangeTimeContainer, 'isochrones-control-hide');
+            L.DomUtil.removeClass(this._rangeTimeTitle, 'isochrones-control-hide');
+            L.DomUtil.removeClass(this._rangeTimeList, 'isochrones-control-hide');
         }
 
         // Select the correct travel mode button
@@ -460,9 +466,13 @@ L.Control.Isochrones = L.Control.extend({
                 L.DomUtil.addClass(this._distanceControl, this.options.activeStyleClass);
                 L.DomUtil.removeClass(this._timeControl, this.options.activeStyleClass);
 
-                // The sliders
-                L.DomUtil.removeClass(this._rangeDistanceContainer, 'isochrones-control-hide');
-                L.DomUtil.addClass(this._rangeTimeContainer, 'isochrones-control-hide');
+                // The range titles
+                L.DomUtil.removeClass(this._rangeDistanceTitle, 'isochrones-control-hide');
+                L.DomUtil.addClass(this._rangeTimeTitle, 'isochrones-control-hide');
+
+                // The range lists
+                L.DomUtil.removeClass(this._rangeDistanceList, 'isochrones-control-hide');
+                L.DomUtil.addClass(this._rangeTimeList, 'isochrones-control-hide');
 
                 this._rangeIsDistance = true;
             }
@@ -471,9 +481,13 @@ L.Control.Isochrones = L.Control.extend({
                 L.DomUtil.addClass(this._timeControl, this.options.activeStyleClass);
                 L.DomUtil.removeClass(this._distanceControl, this.options.activeStyleClass);
 
-                // The sliders
-                L.DomUtil.removeClass(this._rangeTimeContainer, 'isochrones-control-hide');
-                L.DomUtil.addClass(this._rangeDistanceContainer, 'isochrones-control-hide');
+                // The range titles
+                L.DomUtil.removeClass(this._rangeTimeTitle, 'isochrones-control-hide');
+                L.DomUtil.addClass(this._rangeDistanceTitle, 'isochrones-control-hide');
+
+                // The range lists
+                L.DomUtil.removeClass(this._rangeTimeList, 'isochrones-control-hide');
+                L.DomUtil.addClass(this._rangeDistanceList, 'isochrones-control-hide');
 
                 this._rangeIsDistance = false;
             }
@@ -565,10 +579,12 @@ L.Control.Isochrones = L.Control.extend({
         apiUrl += '&locations=' + latLng.lng + '%2C' + latLng.lat;
 
         if (this._rangeIsDistance) {
-            apiUrl += '&range_type=distance&units=' + this.options.rangeControlDistanceUnits + '&range=' + this._rangeDistanceSlider.value + '&interval=' + this.options.rangeControlDistanceInterval;
+            apiUrl += '&range_type=distance&units=' + this.options.rangeControlDistanceUnits + '&range=' + this._rangeDistanceList.value;
+            if (this._showInterval.checked) apiUrl += '&interval=' + this.options.rangeControlDistanceInterval;
         }
         else {
-            apiUrl += '&range_type=time&range=' + this._rangeTimeSlider.value * 60 + '&interval=' + this.options.rangeControlTimeInterval * 60;
+            apiUrl += '&range_type=time&range=' + this._rangeTimeList.value * 60;
+            if (this._showInterval.checked) apiUrl += '&interval=' + this.options.rangeControlTimeInterval * 60;
         }
 
         apiUrl += '&profile=' + this._travelMode + '&location_type=start';
@@ -610,10 +626,10 @@ L.Control.Isochrones = L.Control.extend({
                     // Load the layers into an array so that we can sort them in decending id order if there are more than 1
                     var arrLayers = context.isochrones.getLayers();
 
-                    // Now remove all the layers from the object - we will be adding them back once we've reorded them
-                    context.isochrones.clearLayers();
-
                     if (arrLayers.length > 0) {
+                        // Now remove all the layers from the object - we will be adding them back once we've reorded them
+                        context.isochrones.clearLayers();
+
                         // Sort the array in decending order of the internal Leaflet id
                         arrLayers.sort(function (a, b) { return b['_leaflet_id'] - a['_leaflet_id'] });
 

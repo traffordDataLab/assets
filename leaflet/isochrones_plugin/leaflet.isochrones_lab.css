@@ -25,22 +25,3 @@
     color: #fc6721;
     box-shadow: 0 1px 5px rgba(252,103,33,0.65);
 }
-
-/* Range slider control */
-.isochrones-control-slider::-webkit-slider-thumb
-{
-    border: 1px solid #fc6721;
-    box-shadow: 0 1px 5px rgba(252,103,33,0.65);
-}
-
-.isochrones-control-slider::-moz-range-thumb
-{
-    border: 1px solid #fc6721;
-    box-shadow: 0 1px 5px rgba(252,103,33,0.65);
-}
-
-.isochrones-control-slider::-ms-thumb
-{
-    border: 1px solid #fc6721;
-    box-shadow: 0 1px 5px rgba(252,103,33,0.65);
-}
