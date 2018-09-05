@@ -99,10 +99,11 @@
 {
     margin: 0;
     padding: 0;
-    width: 100%;
+    width: 198px;
     height: 34px;
     background: transparent;
     cursor: pointer;
+    display: block;
 }
 
 /* Remove focus outline on the main slider control */
