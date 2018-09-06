@@ -1,7 +1,7 @@
 /* Overridden styles from leaflet.isochrones.css to customise the plugin in the Lab style */
 
-/* The button to toggle the isochrones control between collapsed and non-collapsed states */
-.isochrones-control-toggle, .leaflet-touch .isochrones-control-toggle
+/* The button to expand the isochrones control from the collapsed state */
+.isochrones-control-expand-button, .leaflet-touch .isochrones-control-expand-button
 {
     font-size: 24px;
 }

@@ -8,8 +8,8 @@
 function labSetupIsochronesPlugin() {
     // Setup the plugin with our specific options
     return L.control.isochrones({
-        toggleButtonStyleClass: 'isochrones-control-toggle fa fa-bullseye',
-        toggleButtonContent: '',
+        expandButtonStyleClass: 'isochrones-control-expand-button fa fa-bullseye',
+        expandButtonContent: '',
         collapseButtonContent: '',
         collapseButtonStyleClass: 'isochrones-control-collapse-button fa fa-chevron-left',
         drawButtonContent: '',

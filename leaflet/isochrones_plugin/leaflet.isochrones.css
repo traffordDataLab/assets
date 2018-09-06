@@ -1,23 +1,13 @@
-/* The button to toggle the isochrones control between collapsed and non-collapsed states */
-.isochrones-control-toggle
+/* The button to expand the isochrones control from the collapsed state */
+.isochrones-control-expand-button
 {
     font-size: 18px;
     font-weight: bold;
 }
-
-.leaflet-touch .isochrones-control-toggle
+.leaflet-touch .isochrones-control-expand-button
 {
     font-size: 22px;
 }
-
-/* The container for the isochrones control user interface */
-.isochrones-control-settings-container
-{
-    background: #fff;
-    padding: 6px;
-    border-radius: 5px;
-}
-
 
 /* Specific class for the collapse button when the control is in a toggleable state */
 .isochrones-control-collapse-button
@@ -30,6 +20,13 @@
     margin-bottom: 10px;
 }
 
+/* The container for the isochrones control user interface */
+.isochrones-control-settings-container
+{
+    background: #fff;
+    padding: 6px;
+    border-radius: 5px;
+}
 
 /* General class for styling the 'button' controls in the user interface container */
 .isochrones-control-settings-button
