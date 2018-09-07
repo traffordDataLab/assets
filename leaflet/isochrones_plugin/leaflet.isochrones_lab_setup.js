@@ -11,7 +11,7 @@ function labSetupIsochronesPlugin() {
         expandButtonStyleClass: 'isochrones-control-expand-button fa fa-bullseye',
         expandButtonContent: '',
         collapseButtonContent: '',
-        collapseButtonStyleClass: 'isochrones-control-collapse-button fa fa-chevron-left',
+        collapseButtonStyleClass: 'isochrones-control-collapse-button fa fa-caret-up',
         drawButtonContent: '',
         drawButtonStyleClass: 'fa fa-pencil',
         deleteButtonContent: '',

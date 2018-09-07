@@ -25,7 +25,7 @@ L.Control.Isochrones = L.Control.extend({
 
         // Collapse button displayed within the settings container if collapsed == true
         collapseButtonStyleClass: 'isochrones-control-collapse-button',
-        collapseButtonContent: '&lt;',
+        collapseButtonContent: '^',
         collapseButtonTooltip: 'Hide reachability options',
 
         // The containing div to hold the actual user interface controls
@@ -71,13 +71,13 @@ L.Control.Isochrones = L.Control.extend({
         accessibilityButtonTooltip: 'Travel mode: wheelchair',
 
         // Slider control for the range parameter
-        rangeControlDistanceTitle: 'Distance',
+        rangeControlDistanceTitle: 'Dist.',
         rangeControlDistanceMin: 0.5,
         rangeControlDistanceMax: 3,
         rangeControlDistanceInterval: 0.5,
         rangeControlDistanceUnits: 'km',                // Can be either 'm', 'km' or 'mi'
 
-        rangeControlTimeTitle: 'Travel time',
+        rangeControlTimeTitle: 'Time',
         rangeControlTimeMin: 5,                         // \
         rangeControlTimeMax: 30,                        //  > All these values need to be multiplied by 60 to convert to seconds - no other unit of time is allowed
         rangeControlTimeInterval: 5,                    // /
@@ -154,22 +154,6 @@ L.Control.Isochrones = L.Control.extend({
         this._uiContainer = L.DomUtil.create('div', this.options.settingsContainerStyleClass);
         this._container.appendChild(this._uiContainer);
 
-        // If the control is in its collapsed state we need to create buttons to toggle between collapsed and expanded states and initially hide the main UI
-        if (this._collapsed) {
-            // Create a container for the expand button - because we cannot easily hide a link tag created via the _createButton function adding the .isochrones-control-hide CSS class
-            this._expandButtonContainer = L.DomUtil.create('div', '');
-            this._container.appendChild(this._expandButtonContainer);
-
-            // Create a button to expand the control to reveal the full user interface
-            this._createButton('a', this.options.expandButtonContent, this.options.expandButtonTooltip, this.options.expandButtonStyleClass, this._expandButtonContainer, this._expand);
-
-            // Create a button to collapse the user interface
-            this._createButton('span', this.options.collapseButtonContent, this.options.collapseButtonTooltip, this.options.collapseButtonStyleClass, this._uiContainer, this._collapse);
-
-            // Hide the UI initially as the control is in the collapsed state
-            L.DomUtil.addClass(this._uiContainer, 'isochrones-control-hide');
-        }
-
         // Container for the action and mode buttons
         this._actionsAndModesContainer = L.DomUtil.create('div', 'isochrones-control-settings-block-container', this._uiContainer);
 
@@ -203,11 +187,11 @@ L.Control.Isochrones = L.Control.extend({
 
 
         // Distance range title
-        this._rangeDistanceTitle = L.DomUtil.create('div', 'isochrones-control-range-title isochrones-control-hide', this._uiContainer);
+        this._rangeDistanceTitle = L.DomUtil.create('span', 'isochrones-control-range-title isochrones-hide-content', this._uiContainer);
         this._rangeDistanceTitle.innerHTML = this.options.rangeControlDistanceTitle;
 
         // Distance range control
-        this._rangeDistanceList = L.DomUtil.create('select', 'isochrones-control-range-list isochrones-control-hide', this._uiContainer);
+        this._rangeDistanceList = L.DomUtil.create('select', 'isochrones-control-range-list isochrones-hide-content', this._uiContainer);
         for (var i = this.options.rangeControlDistanceMin; i <= this.options.rangeControlDistanceMax; i += this.options.rangeControlDistanceInterval) {
             var opt = L.DomUtil.create('option', '', this._rangeDistanceList);
             opt.setAttribute('value', i);
@@ -216,11 +200,11 @@ L.Control.Isochrones = L.Control.extend({
 
 
         // Time range title
-        this._rangeTimeTitle = L.DomUtil.create('div', 'isochrones-control-range-title isochrones-control-hide', this._uiContainer);
+        this._rangeTimeTitle = L.DomUtil.create('span', 'isochrones-control-range-title isochrones-hide-content', this._uiContainer);
         this._rangeTimeTitle.innerHTML = this.options.rangeControlTimeTitle;
 
         // Time range control
-        this._rangeTimeList = L.DomUtil.create('select', 'isochrones-control-range-list isochrones-control-hide', this._uiContainer);
+        this._rangeTimeList = L.DomUtil.create('select', 'isochrones-control-range-list isochrones-hide-content', this._uiContainer);
         for (var i = this.options.rangeControlTimeMin; i <= this.options.rangeControlTimeMax; i += this.options.rangeControlTimeInterval) {
             var opt = L.DomUtil.create('option', '', this._rangeTimeList);
             opt.setAttribute('value', i);
@@ -245,17 +229,34 @@ L.Control.Isochrones = L.Control.extend({
         // Select the correct range type button and show the correct range list
         if (this._rangeIsDistance) {
             L.DomUtil.addClass(this._distanceControl, this.options.activeStyleClass);
-            L.DomUtil.removeClass(this._rangeDistanceTitle, 'isochrones-control-hide');
-            L.DomUtil.removeClass(this._rangeDistanceList, 'isochrones-control-hide');
+            L.DomUtil.removeClass(this._rangeDistanceTitle, 'isochrones-hide-content');
+            L.DomUtil.removeClass(this._rangeDistanceList, 'isochrones-hide-content');
         }
         else {
             L.DomUtil.addClass(this._timeControl, this.options.activeStyleClass);
-            L.DomUtil.removeClass(this._rangeTimeTitle, 'isochrones-control-hide');
-            L.DomUtil.removeClass(this._rangeTimeList, 'isochrones-control-hide');
+            L.DomUtil.removeClass(this._rangeTimeTitle, 'isochrones-hide-content');
+            L.DomUtil.removeClass(this._rangeTimeList, 'isochrones-hide-content');
         }
 
         // Select the correct travel mode button
         this._toggleTravelMode(null);   // Null causes the function to operate in a different way, setting up the initial state
+
+
+        // If the control is in its collapsed state we need to create buttons to toggle between collapsed and expanded states and initially hide the main UI
+        if (this._collapsed) {
+            // Hide the UI initially as the control is in the collapsed state
+            L.DomUtil.addClass(this._uiContainer, 'isochrones-hide-content');
+
+            // Create a container for the expand button - because we cannot easily hide a link tag created via the _createButton function adding the .isochrones-hide-content CSS class
+            this._expandButtonContainer = L.DomUtil.create('span', '');
+            this._container.appendChild(this._expandButtonContainer);
+
+            // Create a button to expand the control to reveal the full user interface
+            this._createButton('a', this.options.expandButtonContent, this.options.expandButtonTooltip, this.options.expandButtonStyleClass, this._expandButtonContainer, this._expand);
+
+            // Create a button to collapse the user interface - this is displayed underneath the user interface
+            this._createButton('span', this.options.collapseButtonContent, this.options.collapseButtonTooltip, this.options.collapseButtonStyleClass, this._uiContainer, this._collapse);
+        }
     },
 
     // An amended version of the Leaflet.js function of the same name, (c) 2010-2018 Vladimir Agafonkin, (c) 2010-2011 CloudMade
@@ -282,10 +283,10 @@ L.Control.Isochrones = L.Control.extend({
 
     _expand: function () {
         // Show the user interface container
-        L.DomUtil.removeClass(this._uiContainer, 'isochrones-control-hide');
+        L.DomUtil.removeClass(this._uiContainer, 'isochrones-hide-content');
 
         // Hide the toggle container
-        L.DomUtil.addClass(this._expandButtonContainer, 'isochrones-control-hide');
+        L.DomUtil.addClass(this._expandButtonContainer, 'isochrones-hide-content');
 
         // Remove the active class from the control container if either the draw or delete modes are active
         if (L.DomUtil.hasClass(this._container, this.options.activeStyleClass)) L.DomUtil.removeClass(this._container, this.options.activeStyleClass);
@@ -293,10 +294,10 @@ L.Control.Isochrones = L.Control.extend({
 
     _collapse: function () {
         // Hide the user interface container
-        L.DomUtil.addClass(this._uiContainer, 'isochrones-control-hide');
+        L.DomUtil.addClass(this._uiContainer, 'isochrones-hide-content');
 
         // Show the toggle container
-        L.DomUtil.removeClass(this._expandButtonContainer, 'isochrones-control-hide');
+        L.DomUtil.removeClass(this._expandButtonContainer, 'isochrones-hide-content');
 
         // Add the active class to the control container if either the draw or delete modes are active
         if ((this._drawMode || this._deleteMode) && !L.DomUtil.hasClass(this._container, this.options.activeStyleClass)) L.DomUtil.addClass(this._container, this.options.activeStyleClass);
@@ -467,12 +468,12 @@ L.Control.Isochrones = L.Control.extend({
                 L.DomUtil.removeClass(this._timeControl, this.options.activeStyleClass);
 
                 // The range titles
-                L.DomUtil.removeClass(this._rangeDistanceTitle, 'isochrones-control-hide');
-                L.DomUtil.addClass(this._rangeTimeTitle, 'isochrones-control-hide');
+                L.DomUtil.removeClass(this._rangeDistanceTitle, 'isochrones-hide-content');
+                L.DomUtil.addClass(this._rangeTimeTitle, 'isochrones-hide-content');
 
                 // The range lists
-                L.DomUtil.removeClass(this._rangeDistanceList, 'isochrones-control-hide');
-                L.DomUtil.addClass(this._rangeTimeList, 'isochrones-control-hide');
+                L.DomUtil.removeClass(this._rangeDistanceList, 'isochrones-hide-content');
+                L.DomUtil.addClass(this._rangeTimeList, 'isochrones-hide-content');
 
                 this._rangeIsDistance = true;
             }
@@ -482,12 +483,12 @@ L.Control.Isochrones = L.Control.extend({
                 L.DomUtil.removeClass(this._distanceControl, this.options.activeStyleClass);
 
                 // The range titles
-                L.DomUtil.removeClass(this._rangeTimeTitle, 'isochrones-control-hide');
-                L.DomUtil.addClass(this._rangeDistanceTitle, 'isochrones-control-hide');
+                L.DomUtil.removeClass(this._rangeTimeTitle, 'isochrones-hide-content');
+                L.DomUtil.addClass(this._rangeDistanceTitle, 'isochrones-hide-content');
 
                 // The range lists
-                L.DomUtil.removeClass(this._rangeTimeList, 'isochrones-control-hide');
-                L.DomUtil.addClass(this._rangeDistanceList, 'isochrones-control-hide');
+                L.DomUtil.removeClass(this._rangeTimeList, 'isochrones-hide-content');
+                L.DomUtil.addClass(this._rangeDistanceList, 'isochrones-hide-content');
 
                 this._rangeIsDistance = false;
             }

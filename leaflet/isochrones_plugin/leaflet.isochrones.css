@@ -1,4 +1,4 @@
-/* The button to expand the isochrones control from the collapsed state */
+/* Button to expand the isochrones control in a toggleable state state */
 .isochrones-control-expand-button
 {
     font-size: 18px;
@@ -9,15 +9,21 @@
     font-size: 22px;
 }
 
-/* Specific class for the collapse button when the control is in a toggleable state */
+/* Button to collapse the isochrones control when in a toggleable state */
 .isochrones-control-collapse-button
 {
     display: block;
-    width: 22px;
-    height: 22px;
-    line-height: 22px;
-    border-radius: 11px;
-    margin-bottom: 10px;
+    height: 20px;
+    line-height: 20px;
+    border-radius: 5px;
+    font-size: 18px;
+    margin-top: 5px;
+    background-color: #f4f4f4;
+    border: 1px solid transparent;
+}
+.isochrones-control-collapse-button:hover
+{
+    border: 1px dotted #757575;
 }
 
 /* The container for the isochrones control user interface */
@@ -37,22 +43,19 @@
     line-height: 38px;
     border-radius: 5px;
     margin-right: 10px;
+    border: 2px solid #757575;
 }
-
 .isochrones-control-settings-button:last-child
 {
     margin-right: 0px;
 }
-
 .isochrones-control-settings-button, .isochrones-control-collapse-button
 {
     text-align: center;
-    border: 2px solid #757575;
     cursor: pointer;
     color: #757575;
 }
-
-.isochrones-control-settings-button:hover, .isochrones-control-collapse-button:hover
+.isochrones-control-settings-button:hover
 {
     background-color: #f4f4f4;
 }
@@ -74,13 +77,6 @@
     box-shadow: 0 1px 5px rgba(0,115,212,0.65);
 }
 
-
-/* When the control is used in its collapsed state, this class is used to hide the toggle control or the settings container depending on the collapsed/expanded state of the control */
-.isochrones-control-hide
-{
-    display: none;
-}
-
 /* If something has gone wrong or the user tries to perform an action that isn't allowed e.g. trying to delete when there are no isochrones */
 .isochrones-control-error, .leaflet-touch .isochrones-control-error
 {
@@ -93,10 +89,17 @@
 .isochrones-control-range-title
 {
     font-weight: bold;
-    margin-bottom: 5px;
+    margin: 0 5px 5px 0;
+    display: inline-block;  /* change to 'block' if you want more space for the title */
 }
 
 .isochrones-show-range-interval
 {
-    padding-left: 10px;
+    padding-left: 5px;
+}
+
+/* Used to hide elements of the control as necessary, e.g. when it is in its collapsed state etc. */
+.isochrones-hide-content
+{
+    display: none;
 }
