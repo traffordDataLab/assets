@@ -453,46 +453,38 @@ L.Control.Isochrones = L.Control.extend({
 
     // Toggle the UI buttons for distance and time like radio buttons
     _setRangeByDistance: function () {
-        this._toggleRangeMode('distance');
+        if (this._rangeIsDistance == false) {
+            // The mode buttons
+            L.DomUtil.addClass(this._distanceControl, this.options.activeStyleClass);
+            L.DomUtil.removeClass(this._timeControl, this.options.activeStyleClass);
+
+            // The range titles
+            L.DomUtil.removeClass(this._rangeDistanceTitle, 'isochrones-hide-content');
+            L.DomUtil.addClass(this._rangeTimeTitle, 'isochrones-hide-content');
+
+            // The range lists
+            L.DomUtil.removeClass(this._rangeDistanceList, 'isochrones-hide-content');
+            L.DomUtil.addClass(this._rangeTimeList, 'isochrones-hide-content');
+
+            this._rangeIsDistance = true;
+        }
     },
 
     _setRangeByTime: function () {
-        this._toggleRangeMode('time');
-    },
+        if (this._rangeIsDistance) {
+            // The mode buttons
+            L.DomUtil.addClass(this._timeControl, this.options.activeStyleClass);
+            L.DomUtil.removeClass(this._distanceControl, this.options.activeStyleClass);
 
-    _toggleRangeMode: function (mode) {
-        if ((mode == 'distance' && this._rangeIsDistance == false) || (mode == 'time' && this._rangeIsDistance)) {
-            // We need to change the state
-            if (mode == 'distance') {
-                // The mode buttons
-                L.DomUtil.addClass(this._distanceControl, this.options.activeStyleClass);
-                L.DomUtil.removeClass(this._timeControl, this.options.activeStyleClass);
+            // The range titles
+            L.DomUtil.removeClass(this._rangeTimeTitle, 'isochrones-hide-content');
+            L.DomUtil.addClass(this._rangeDistanceTitle, 'isochrones-hide-content');
 
-                // The range titles
-                L.DomUtil.removeClass(this._rangeDistanceTitle, 'isochrones-hide-content');
-                L.DomUtil.addClass(this._rangeTimeTitle, 'isochrones-hide-content');
+            // The range lists
+            L.DomUtil.removeClass(this._rangeTimeList, 'isochrones-hide-content');
+            L.DomUtil.addClass(this._rangeDistanceList, 'isochrones-hide-content');
 
-                // The range lists
-                L.DomUtil.removeClass(this._rangeDistanceList, 'isochrones-hide-content');
-                L.DomUtil.addClass(this._rangeTimeList, 'isochrones-hide-content');
-
-                this._rangeIsDistance = true;
-            }
-            else {
-                // The mode buttons
-                L.DomUtil.addClass(this._timeControl, this.options.activeStyleClass);
-                L.DomUtil.removeClass(this._distanceControl, this.options.activeStyleClass);
-
-                // The range titles
-                L.DomUtil.removeClass(this._rangeTimeTitle, 'isochrones-hide-content');
-                L.DomUtil.addClass(this._rangeDistanceTitle, 'isochrones-hide-content');
-
-                // The range lists
-                L.DomUtil.removeClass(this._rangeTimeList, 'isochrones-hide-content');
-                L.DomUtil.addClass(this._rangeDistanceList, 'isochrones-hide-content');
-
-                this._rangeIsDistance = false;
-            }
+            this._rangeIsDistance = false;
         }
     },
 
