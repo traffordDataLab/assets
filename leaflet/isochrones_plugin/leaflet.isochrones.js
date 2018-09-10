@@ -4,6 +4,7 @@
     Dependencies:   Leaflet.js (external library), openrouteservice.org API (requires a key - free service available via registration)
     Licence:        https://www.trafforddatalab.io/assets/LICENSE.txt
     Notes:          Can be displayed in a collapsed or expanded state. Content for all GUI elements can be html or an icon etc.
+                    © Powered by openrouteservice https://openrouteservice.org/
 */
 L.Control.Isochrones = L.Control.extend({
     options: {
@@ -121,9 +122,6 @@ L.Control.Isochrones = L.Control.extend({
         this._mouseMarker = null;   // invisible Leaflet marker to follow the mouse pointer when control is activated
         this.isochrones = null;     // set to a Leaflet GeoJSON FeatureGroup when the API returns data
         this.layerGroup = (this.options.layerGroup == null) ? L.layerGroup(null, { pane: this.options.pane }) : this.options.layerGroup;   // holds the isochrone GeoJSON FeatureGroup(s)
-
-        // Add the LayerGroup to the map ready for the isochrones to be added
-        this.layerGroup.addTo(this._map);
 
         // Main container for the control - this is added to the map in the Leaflet control pane
         this._container = L.DomUtil.create('div', 'leaflet-bar ' + this.options.controlContainerStyleClass);
@@ -430,8 +428,11 @@ L.Control.Isochrones = L.Control.extend({
             if (parent.hasOwnProperty(key) && key != '<prototype>') parent[key].removeFrom(this.layerGroup);
         }
 
-        // Deactivate the delete control if there are no more isochrones left
-        if (this.layerGroup.getLayers().length == 0) this._deactivateDelete();
+        // Deactivate the delete control and remove the isochrones layer group from the map if there are no more isochrones left
+        if (this.layerGroup.getLayers().length == 0) {
+            this._deactivateDelete();
+            this.layerGroup.removeFrom(this._map);
+        }
 
         // Inform that an isochrone FeatureGroup has been deleted
         this._map.fire('isochrones:delete');
@@ -622,7 +623,7 @@ L.Control.Isochrones = L.Control.extend({
                     */
 
                     // Create a Leaflet GeoJSON FeatureGroup object from the GeoJSON returned from the API (NOTE: this object is intended to be accessible externally)
-                    context.isochrones = L.geoJSON(data, { style: context.options.styleFn });
+                    context.isochrones = L.geoJSON(data, { style: context.options.styleFn, attribution: '&copy; Powered by <a href="https://openrouteservice.org/" target="_blank">openrouteservice</a>' });
 
                     // Load the layers into an array so that we can sort them in decending id order if there are more than 1
                     var arrLayers = context.isochrones.getLayers();
@@ -664,6 +665,9 @@ L.Control.Isochrones = L.Control.extend({
 
                         // Add the GeoJSON FeatureGroup to the LayerGroup
                         context.isochrones.addTo(context.layerGroup);
+
+                        // Add the isochrones LayerGroup to the map if it isn't already
+                        if (!context._map.hasLayer(context.layerGroup)) context.layerGroup.addTo(context._map);
 
                         //TODO: Create a marker at the latlng indicating mode of travel etc.
 
