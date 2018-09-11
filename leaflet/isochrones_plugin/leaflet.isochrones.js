@@ -581,7 +581,7 @@ L.Control.Isochrones = L.Control.extend({
             if (this._showInterval.checked) apiUrl += '&interval=' + this.options.rangeControlTimeInterval * 60;
         }
 
-        apiUrl += '&profile=' + this._travelMode + '&location_type=start';
+        apiUrl += '&profile=' + this._travelMode + '&location_type=start&attributes=area|total_pop';
 
         // Inform that we are calling the API - could be useful for starting a spinner etc. to indicate to the user that something is happening if there is a delay
         this._map.fire('isochrones:api_call_start');
@@ -653,6 +653,64 @@ L.Control.Isochrones = L.Control.extend({
                                     }
                                 })
                             });
+
+                            // Reformat the data in the properties object to be more readable and informative
+                            /*
+                                Returned values from API:
+                                value:  either metres or seconds depending on distance or time. Ignores the input in km or mi!
+                                total_pop:  integer value of people living in the area as given by Global Human Settlement (GHS) framework
+                            */
+                            var props = arrLayers[i].feature.properties;    // get the current properties for the layer
+                            var range,
+                                rangeType,
+                                rangeUnits,
+                                area,
+                                rangeControlDistanceUnits = context.options.rangeControlDistanceUnits;
+
+                            /*
+                                Assume for now that the range type is distance to calculate everything with the correct units.
+                                If the range type is actually time we'll overwrite the range values later.
+                                This method reduces the number of if conditions.
+                            */
+                            if (rangeControlDistanceUnits == 'mi') {
+                                rangeControlDistanceUnits = 'miles';
+                                range = L.Util.formatNum(props.value/1609.34, 2);           // convert metres to miles for the range
+                                area = L.Util.formatNum(props.total_area_km/2.58998811, 2);   // convert area to square miles;
+                            }
+                            else if (context.options.rangeControlDistanceUnits == 'm') {
+                                range = L.Util.formatNum(props.value, 2);                   // no conversion necessary for the range
+                                area = L.Util.formatNum(props.total_area_km*1000000, 2);    // convert area to square metres
+                            }
+                            else {
+                                range = L.Util.formatNum(props.value/1000, 2);              // convert metres to kilometres for the range
+                                area = L.Util.formatNum(props.total_area_km, 2);            // no conversion necessary for the area
+                            }
+
+                            // Now perform the check on the range type to set the remaining values
+                            if (context._rangeIsDistance) {
+                                rangeType = 'distance';
+                                rangeUnits = rangeControlDistanceUnits;
+                            }
+                            else {
+                                rangeType = 'time';
+                                rangeUnits = 'min';
+                                range = L.Util.formatNum(props.value/60, 2);
+                            }
+
+                            var newProps = {
+                                'Travel mode': context._travelMode,
+                                'Measure': rangeType,
+                                'Range units': rangeUnits,
+                                'Range': range,
+                                'Area': area,
+                                'Area units': rangeControlDistanceUnits + '^2',
+                                'Latitude': props.center[1],
+                                'Longitude': props.center[0],
+                                'Population': props.total_pop
+                            }
+
+                            // Replace the old properties object with the new one
+                            arrLayers[i].feature.properties = newProps;
                         }
 
                         // Add the GeoJSON FeatureGroup to the LayerGroup
