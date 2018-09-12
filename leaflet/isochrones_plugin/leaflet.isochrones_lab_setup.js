@@ -29,7 +29,8 @@ function labSetupIsochronesPlugin(objExtraOptions) {
         walkingButtonContent: '',
         walkingButtonStyleClass: 'fa fa-male',
         accessibilityButtonContent: '',
-        accessibilityButtonStyleClass: 'fa fa-wheelchair-alt'
+        accessibilityButtonStyleClass: 'fa fa-wheelchair-alt',
+        markerFn: labIsochroneMarker
     }
 
     // Now add any further options if supplied
@@ -43,12 +44,32 @@ function labSetupIsochronesPlugin(objExtraOptions) {
     return L.control.isochrones(options);
 }
 
+// Lab styling of the isochrone polygons
 function labStyleIsochrones(feature) {
-    // Handle the styling of the isochrone polygons
     return {
         color: '#fc6721',
         fillColor: '#fc6721',
         opacity: 0.5,
         fillOpacity: 0.2
     };
+}
+
+// Custom markers to appear at the origin of the isochrones 
+function labIsochroneMarker(latLng, travelMode, measure) {
+    var faClass;
+
+    switch (travelMode) {
+        case 'driving-car':
+            faClass = 'fa fa-car'
+            break;
+        case 'cycling-regular':
+            faClass = 'fa fa-bicycle'
+            break;
+        default:
+            faClass = 'fa fa-male'
+    }
+
+    var customIcon = L.divIcon({ className: faClass + ' lab-isochrones-marker', iconAnchor: [12, 12] });
+
+    return L.marker(latLng, { icon: customIcon });
 }

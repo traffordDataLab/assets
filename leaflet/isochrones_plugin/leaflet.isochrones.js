@@ -100,12 +100,8 @@ L.Control.Isochrones = L.Control.extend({
         mouseOverFn: null,                              // External function to call when a mouseover event occurs on an isochrone
         mouseOutFn: null,                               // External function to call when a mouseout event occurs on an isochrone
         clickFn: null,                                  // External function to call when a click event occurs on an isochrone
-
-        markerDistance: null,                           // \
-        markerWalk: null,                               //  \
-        markerBike: null,                               //    > The marker to use at the centre of isochrones based on the modes of travel etc.
-        markerCar: null,                                //  /
-        markerWheelchair: null                          // /
+        markerFn: null,                                 // External function to call to create a custom marker at the origin of the isochrone if showMarker is true - null creates a default circleMarker
+        showMarker: true                                // If we want a marker to indicate the origin of the isochrone
     },
 
     onAdd: function (map) {
@@ -119,7 +115,7 @@ L.Control.Isochrones = L.Control.extend({
         this._travelMode = this.options.travelModeDefault;
         if (this._travelMode != this.options.travelModeDrivingProfile && this._travelMode != this.options.travelModeCyclingProfile && this._travelMode != this.options.travelModeWalkingProfile && this._travelMode != this.options.travelModeAccessibilityProfile) this._travelMode = this.options.travelModeDrivingProfile;
 
-        this._mouseMarker = null;   // invisible Leaflet marker to follow the mouse pointer when control is activated
+        this._mouseMarker = null;   // invisible Leaflet marker to follow the mouse pointer when control is activated, preventing interactions with map elements which we don't want whilst in draw or delete mode
         this.isochrones = null;     // set to a Leaflet GeoJSON FeatureGroup when the API returns data
         this.layerGroup = (this.options.layerGroup == null) ? L.layerGroup(null, { pane: this.options.pane }) : this.options.layerGroup;   // holds the isochrone GeoJSON FeatureGroup(s)
 
@@ -394,6 +390,7 @@ L.Control.Isochrones = L.Control.extend({
             if (isochronesNum == 1) {
                 // Only one, so delete it automatically - no need to change the state of this._deleteMode
                 this.layerGroup.clearLayers();
+                this.layerGroup.removeFrom(this._map);
                 this.isochones = null;
 
                 // Inform that an isochrone FeatureGroup has been deleted
@@ -607,7 +604,7 @@ L.Control.Isochrones = L.Control.extend({
                 }
                 else {
                     /*
-                        ISSUE: The GeoJSON features returned from the API are in the order smallest to largest in terms of the area of the polygons.
+                        NOTE: The GeoJSON features returned from the API are in the order smallest to largest in terms of the area of the polygons.
                         This causes us a problem as when they are displayed on the map, the largest polygon covers all the others, preventing us interacting with the other polygons.
                         The solution is to reverse the order of the features, however this is not as simple as sorting due to how Leaflet deals with layers.
                         Each layer is given an id. When you add layers to layergroup objects, it doesn't matter the order you add them, what matters is the id sequence.
@@ -654,11 +651,12 @@ L.Control.Isochrones = L.Control.extend({
                                 })
                             });
 
-                            // Reformat the data in the properties object to be more readable and informative
                             /*
+                                Reformat the data in the properties object to be more readable and informative
+
                                 Returned values from API:
-                                value:  either metres or seconds depending on distance or time. Ignores the input in km or mi!
-                                total_pop:  integer value of people living in the area as given by Global Human Settlement (GHS) framework
+                                    value:  either metres or seconds depending on distance or time. Ignores the input in km or mi!
+                                    total_pop:  integer value of people living in the area as given by Global Human Settlement (GHS) framework
                             */
                             var props = arrLayers[i].feature.properties;    // get the current properties for the layer
                             var range,
@@ -713,13 +711,24 @@ L.Control.Isochrones = L.Control.extend({
                             arrLayers[i].feature.properties = newProps;
                         }
 
+                        // Create a marker at the latlng if desired. Can be used to indicate the mode of travel etc.
+                        if (context.options.showMarker) {
+                            if (context.options.markerFn != null) {
+                                // Expecting a custom Leaflet marker to be returned for the origin of the isochrones.
+                                // Passing the relevant factors to the function so that styling can be based on mode of travel, distance or time etc.
+                                context.options.markerFn(latLng, context._travelMode, rangeType).addTo(context.isochrones);
+                            }
+                            else {
+                                // Create a default marker for the origin of the isochrones
+                                L.circleMarker(latLng, { radius: 3, weight: 0, fillColor: '#0073d4', fillOpacity: 1 }).addTo(context.isochrones);
+                            }
+                        }
+
                         // Add the GeoJSON FeatureGroup to the LayerGroup
                         context.isochrones.addTo(context.layerGroup);
 
                         // Add the isochrones LayerGroup to the map if it isn't already
                         if (!context._map.hasLayer(context.layerGroup)) context.layerGroup.addTo(context._map);
-
-                        //TODO: Create a marker at the latlng indicating mode of travel etc.
 
                         // Fire event to inform that isochrones have been drawn successfully
                         context._map.fire('isochrones:displayed');
