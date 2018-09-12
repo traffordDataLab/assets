@@ -87,7 +87,7 @@ L.Control.Isochrones = L.Control.extend({
         rangeIntervalsLabel: 'intervals',               // The 'show intervals?' checkbox label
 
         // API settings
-        apiKey: '58d904a497c67e00015b45fc6862cde0265d4fd78ec660aa83220cdb', // openrouteservice API key - the service which returns the isochrone polygons based on the various options/parameters TODO: Remove this when we ship the code as this is our personal key
+        apiKey: '',                                     // openrouteservice API key - the service which returns the isochrone polygons based on the various options/parameters
         ajaxRequestFn: simpleAjaxRequest,               // External function to make the actual call to the API via AJAX - default is to use the simple function included in leaflet.isochrones_utilities.js
         travelModeDrivingProfile: 'driving-car',        // API choices are 'driving-car' and 'driving-hgv'
         travelModeCyclingProfile: 'cycling-regular',    // API choices are 'cycling-regular', 'cycling-road', 'cycling-safe', 'cycling-mountain' and 'cycling-tour'
@@ -675,7 +675,7 @@ L.Control.Isochrones = L.Control.extend({
                             if (rangeControlDistanceUnits == 'mi') {
                                 rangeControlDistanceUnits = 'miles';
                                 range = L.Util.formatNum(props.value/1609.34, 2);           // convert metres to miles for the range
-                                area = L.Util.formatNum(props.total_area_km/2.58998811, 2);   // convert area to square miles;
+                                area = L.Util.formatNum(props.total_area_km/2.58998811, 2); // convert area to square miles;
                             }
                             else if (context.options.rangeControlDistanceUnits == 'm') {
                                 range = L.Util.formatNum(props.value, 2);                   // no conversion necessary for the range

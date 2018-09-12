@@ -5,9 +5,11 @@
     Licence:        https://www.trafforddatalab.io/assets/LICENSE.txt
     Notes:
 */
-function labSetupIsochronesPlugin() {
-    // Setup the plugin with our specific options
-    return L.control.isochrones({
+function labSetupIsochronesPlugin(objExtraOptions) {
+    // First set up the standard options
+    var options = {
+        apiKey: '58d904a497c67e00015b45fc6862cde0265d4fd78ec660aa83220cdb',
+        ajaxRequestFn: labAjax,
         expandButtonStyleClass: 'isochrones-control-expand-button fa fa-bullseye',
         expandButtonContent: '',
         collapseButtonContent: '',
@@ -27,18 +29,26 @@ function labSetupIsochronesPlugin() {
         walkingButtonContent: '',
         walkingButtonStyleClass: 'fa fa-male',
         accessibilityButtonContent: '',
-        accessibilityButtonStyleClass: 'fa fa-wheelchair-alt',
-        styleFn: styleIsochrones,
-        mouseOverFn: highlightIsochrones,
-        mouseOutFn: resetIsochrones,
-        clickFn: clickIsochrones
-    });
+        accessibilityButtonStyleClass: 'fa fa-wheelchair-alt'
+    }
+
+    // Now add any further options if supplied
+    if (objExtraOptions != null) {
+        for (var key in objExtraOptions) {
+            options[key] = objExtraOptions[key];
+        }
+    }
+
+    // Create and return the control
+    return L.control.isochrones(options);
 }
 
 function labStyleIsochrones(feature) {
     // Handle the styling of the isochrone polygons
-}
-
-function labHighlightIsochrones(feature) {
-    // Handle the highlighting behaviour when the user hovers/selects a particular polygon in the isochrones collection
+    return {
+        color: '#fc6721',
+        fillColor: '#fc6721',
+        opacity: 0.5,
+        fillOpacity: 0.2
+    };
 }

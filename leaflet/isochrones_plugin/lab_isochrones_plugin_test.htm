@@ -31,6 +31,11 @@
             {
                 max-height: 200px;  /* this is just a suggested size */
             }
+
+            .tempIcon
+            {
+                background-color #000;
+            }
         </style>
     </head>
 
@@ -62,14 +67,15 @@
             });
 
             // Add the isochrones plugin
-            labMap.isoControl = labSetupIsochronesPlugin();
+            labMap.isoControl = labSetupIsochronesPlugin({
+                // Common options are taken care of in the function, however the options below are extra
+                styleFn: labStyleIsochrones,
+                clickFn: clickIsochrones
+            });
+
             labMap.isoControl.addTo(labMap.map);
 
             // Add events
-            labMap.map.on('click', function (e) {
-                alert('This is a click on the map');
-            });
-
             labMap.map.on('isochrones:api_call_start', function (e) {
                 // example to listen for the start of the API call
                 startLabSpinner();
