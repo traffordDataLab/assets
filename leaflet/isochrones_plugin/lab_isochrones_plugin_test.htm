@@ -59,7 +59,8 @@
             labMap.isoControl = labSetupIsochronesPlugin({
                 // Common options are taken care of in the function, however the options below are extra
                 styleFn: labStyleIsochrones,
-                clickFn: clickIsochrones
+                clickFn: clickIsochrones,
+                ajaxRequestFn: labAjax
             });
 
             labMap.isoControl.addTo(labMap.map);

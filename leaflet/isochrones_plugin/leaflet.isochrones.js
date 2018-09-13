@@ -88,7 +88,7 @@ L.Control.Isochrones = L.Control.extend({
 
         // API settings
         apiKey: '',                                     // openrouteservice API key - the service which returns the isochrone polygons based on the various options/parameters
-        ajaxRequestFn: simpleAjaxRequest,               // External function to make the actual call to the API via AJAX - default is to use the simple function included in leaflet.isochrones_utilities.js
+        ajaxRequestFn: null,               // External function to make the actual call to the API via AJAX - default is to use the simple function included in leaflet.isochrones_utilities.js
         travelModeDrivingProfile: 'driving-car',        // API choices are 'driving-car' and 'driving-hgv'
         travelModeCyclingProfile: 'cycling-regular',    // API choices are 'cycling-regular', 'cycling-road', 'cycling-safe', 'cycling-mountain' and 'cycling-tour'
         travelModeWalkingProfile: 'foot-walking',       // API choices are 'foot-walking' and 'foot-hiking'
@@ -588,7 +588,7 @@ L.Control.Isochrones = L.Control.extend({
 
         // Call the API
         try {
-            var ajaxFn = this.options.ajaxRequestFn;            // This is the external function to use which makes the actual AJAX request to the API
+            var ajaxFn = (this.options.ajaxRequestFn == null) ? simpleAjaxRequest : this.options.ajaxRequestFn; // This is the external function to use which makes the actual AJAX request to the API
 
             ajaxFn(apiUrl, function (data) {
                 if (data == null) {
