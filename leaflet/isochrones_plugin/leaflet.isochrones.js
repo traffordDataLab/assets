@@ -612,7 +612,7 @@ L.Control.Isochrones = L.Control.extend({
                     */
 
                     // Create a Leaflet GeoJSON FeatureGroup object from the GeoJSON returned from the API (NOTE: this object is intended to be accessible externally)
-                    context.isochrones = L.geoJSON(data, { style: context.options.styleFn, attribution: '&copy; Powered by <a href="https://openrouteservice.org/" target="_blank">openrouteservice</a>' });
+                    context.isochrones = L.geoJSON(data, { pane: context.layerGroup.options.pane, style: context.options.styleFn, attribution: '&copy; Powered by <a href="https://openrouteservice.org/" target="_blank">openrouteservice</a>' });
 
                     // Load the layers into an array so that we can sort them in decending id order if there are more than 1
                     var arrLayers = context.isochrones.getLayers();
