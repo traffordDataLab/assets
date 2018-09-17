@@ -31,10 +31,11 @@
 {
     width: 10px;
     height: 10px;
-    color: #757575;
+    color: #fc6721;
     text-align: center;
     font-size: 10px;
     padding: 3px;
-    border: 2px solid #757575;
-    border-radius: 50%;
+    border: 2px solid #fc6721;
+    border-radius: 4px;
+    box-shadow: 0 1px 5px rgba(255,255,255,0.65);
 }

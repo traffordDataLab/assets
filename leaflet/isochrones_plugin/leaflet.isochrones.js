@@ -19,21 +19,21 @@ L.Control.Isochrones = L.Control.extend({
         controlContainerStyleClass: '',             // The container for the plugin control will usually be styled with the standard Leaflet control styling, however this option allows for customisation
         drawActiveMouseClass: 'leaflet-crosshair',  // CSS class applied to the mouse pointer when the plugin is in draw mode
 
-        // If collapsed == true a button is displayed to expand the control onclick/touch
-        expandButtonStyleClass: 'isochrones-control-expand-button',     // Allow options for styling - if you want to use an icon from services like fontawesome pass the declarations here, e.g. 'fa fa-home' etc.
-        expandButtonContent: '&#x2609;',                                // HTML to display within the control if it is collapsed. If you want an icon from services like Fontawesome pass '' for this value and set the StyleClass option
-        expandButtonTooltip: 'Show reachability options',               // Tooltip to appear on-hover
-
-        // Collapse button displayed within the settings container if collapsed == true
-        collapseButtonStyleClass: 'isochrones-control-collapse-button',
-        collapseButtonContent: '^',
-        collapseButtonTooltip: 'Hide reachability options',
-
         // The containing div to hold the actual user interface controls
         settingsContainerStyleClass: 'isochrones-control-settings-container',   // The container holding the user interface controls which is displayed if collapsed is false, or when the user expands the control by clicking on the expand button
         settingsButtonStyleClass: 'isochrones-control-settings-button',         // Generic class to style the setting buttons uniformly - further customisation per button is available with specific options below
         activeStyleClass: 'isochrones-control-active',                          // Indicate to the user which button is active in the settings and the collapsed state of the control if settings are active
         errorStyleClass: 'isochrones-control-error',                            // Gives feedback to the user via the buttons in the user interface that something went wrong
+
+        // If collapsed == true a button is displayed to expand the control onclick/touch
+        expandButtonContent: '&#x2609;',                                // HTML to display within the control if it is collapsed. If you want an icon from services like Fontawesome pass '' for this value and set the StyleClass option
+        expandButtonStyleClass: 'isochrones-control-expand-button',     // Allow options for styling - if you want to use an icon from services like fontawesome pass the declarations here, e.g. 'fa fa-home' etc.
+        expandButtonTooltip: 'Show reachability options',               // Tooltip to appear on-hover
+
+        // Collapse button displayed within the settings container if collapsed == true
+        collapseButtonContent: '^',
+        collapseButtonStyleClass: 'isochrones-control-collapse-button',
+        collapseButtonTooltip: 'Hide reachability options',
 
         // Draw isochrones button
         drawButtonContent: 'Drw',
@@ -71,7 +71,7 @@ L.Control.Isochrones = L.Control.extend({
         accessibilityButtonStyleClass: '',
         accessibilityButtonTooltip: 'Travel mode: wheelchair',
 
-        // Slider control for the range parameter
+        // Control for the range parameter
         rangeControlDistanceTitle: 'Dist.',
         rangeControlDistanceMin: 0.5,
         rangeControlDistanceMax: 3,
@@ -88,7 +88,7 @@ L.Control.Isochrones = L.Control.extend({
 
         // API settings
         apiKey: '',                                     // openrouteservice API key - the service which returns the isochrone polygons based on the various options/parameters
-        ajaxRequestFn: null,               // External function to make the actual call to the API via AJAX - default is to use the simple function included in leaflet.isochrones_utilities.js
+        ajaxRequestFn: null,                            // External function to make the actual call to the API via AJAX - default is to use the simple function included in leaflet.isochrones_utilities.js
         travelModeDrivingProfile: 'driving-car',        // API choices are 'driving-car' and 'driving-hgv'
         travelModeCyclingProfile: 'cycling-regular',    // API choices are 'cycling-regular', 'cycling-road', 'cycling-safe', 'cycling-mountain' and 'cycling-tour'
         travelModeWalkingProfile: 'foot-walking',       // API choices are 'foot-walking' and 'foot-hiking'
@@ -178,6 +178,9 @@ L.Control.Isochrones = L.Control.extend({
 
         // Accessible profile button
         this._accessibilityControl = this._createButton('span', this.options.accessibilityButtonContent, this.options.accessibilityButtonTooltip, this.options.settingsButtonStyleClass + ' ' + this.options.accessibilityButtonStyleClass, this._modesContainer, this._setTravelAccessibility);
+        // *** NOTE: TEMPORARY LINE BELOW WHILST ACCESSIBILITY ROUTING IS UNAVAILABLE FROM THE API
+        L.DomUtil.addClass(this._accessibilityControl, 'isochrones-hide-content');
+        // ***************************************************************************************
 
 
         // Distance range title

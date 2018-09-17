@@ -48,13 +48,18 @@ function labSetupIsochronesPlugin(objExtraOptions) {
 function labStyleIsochrones(feature) {
     return {
         color: '#fc6721',
-        fillColor: '#fc6721',
-        opacity: 0.5,
-        fillOpacity: 0.2
+        fillColor: '#757575',
+        opacity: 0.8,
+        fillOpacity: 0.1,
+        weight: 4,
+        dashArray: '1,6',
+        lineCap: 'square'
     };
 }
 
-// Custom markers to appear at the origin of the isochrones 
+
+
+// Custom markers to appear at the origin of the isochrones
 function labIsochroneMarker(latLng, travelMode, measure) {
     var faClass;
 
