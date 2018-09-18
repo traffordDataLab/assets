@@ -10,8 +10,7 @@ L.Control.Isochrones = L.Control.extend({
     options: {
         // Leaflet positioning options
         position: 'topleft',                        // Leaflet control pane position
-        layerGroup: null,                           // Leaflet layer to add the isochones to
-        pane: 'overlayPane',                        // Leaflet pane to add the layerGroup to
+        pane: 'overlayPane',                        // Leaflet pane to add the isochrone GeoJSON to
         zIndexMouseMarker: 9000,                    // Needs to be greater than any other layer in the map - this is an invisible marker tied to the mouse pointer when the control is activated to prevent clicks interacting with other map objects
 
         // Main control settings and styling
@@ -100,8 +99,13 @@ L.Control.Isochrones = L.Control.extend({
         mouseOverFn: null,                              // External function to call when a mouseover event occurs on an isochrone
         mouseOutFn: null,                               // External function to call when a mouseout event occurs on an isochrone
         clickFn: null,                                  // External function to call when a click event occurs on an isochrone
-        markerFn: null,                                 // External function to call to create a custom marker at the origin of the isochrone if showMarker is true - null creates a default circleMarker
-        showMarker: true                                // If we want a marker to indicate the origin of the isochrone
+
+        // Isochrone origin marker styling and interaction
+        showOriginMarker: true,                         // If we want a marker to indicate the origin of the isochrone
+        markerFn: null,                                 // External function to call to create a custom marker at the origin of the isochrone if showOriginMarker is true - null creates a default circleMarker
+        markerOverFn: null,                             // External function to call when a mouseover event occurs on an origin marker
+        markerOutFn: null,                              // External function to call when a mouseout event occurs on an origin marker
+        markerClickFn: null                             // External function to call when a click event occurs on an origin marker
     },
 
     onAdd: function (map) {
@@ -115,9 +119,14 @@ L.Control.Isochrones = L.Control.extend({
         this._travelMode = this.options.travelModeDefault;
         if (this._travelMode != this.options.travelModeDrivingProfile && this._travelMode != this.options.travelModeCyclingProfile && this._travelMode != this.options.travelModeWalkingProfile && this._travelMode != this.options.travelModeAccessibilityProfile) this._travelMode = this.options.travelModeDrivingProfile;
 
-        this._mouseMarker = null;   // invisible Leaflet marker to follow the mouse pointer when control is activated, preventing interactions with map elements which we don't want whilst in draw or delete mode
-        this.isochrones = null;     // set to a Leaflet GeoJSON FeatureGroup when the API returns data
-        this.layerGroup = (this.options.layerGroup == null) ? L.layerGroup(null, { pane: this.options.pane }) : this.options.layerGroup;   // holds the isochrone GeoJSON FeatureGroup(s)
+        // invisible Leaflet marker to follow the mouse pointer when control is activated, preventing interactions with map elements which we don't want whilst in draw or delete mode
+        this._mouseMarker = null;
+
+        // Holds the latest GeoJSON data returned from the API
+        this.latestIsochrones = null;
+
+        // Group object to hold each GeoJSON 'set' of isochrones return from the API via this.latestIsochrones
+        this.isochronesGroup = L.geoJSON(null, { style: this.options.styleFn, pane: this.options.pane, attribution: '&copy; Powered by <a href="https://openrouteservice.org/" target="_blank">openrouteservice</a>' })
 
         // Main container for the control - this is added to the map in the Leaflet control pane
         this._container = L.DomUtil.create('div', 'leaflet-bar ' + this.options.controlContainerStyleClass);
@@ -136,8 +145,8 @@ L.Control.Isochrones = L.Control.extend({
     onRemove: function (map) {
         // clean up - remove any styles, event listeners, layers etc.
         this._deactivateDraw();
-        this.layerGroup.removeFrom(this._map);
-        this.layerGroup.clearLayers();
+        this.isochronesGroup.removeFrom(this._map);
+        this.isochronesGroup.clearLayers();
 
         // Fire event to inform that the control has been removed from the map
         this._map.fire('isochrones:control_removed');
@@ -386,15 +395,14 @@ L.Control.Isochrones = L.Control.extend({
 
     _activateDelete: function () {
         // We want to delete some isochrones
-        var isochronesNum = this.layerGroup.getLayers().length;
+        var isochronesNum = this.isochronesGroup.getLayers().length;
 
         if (isochronesNum > 0) {
             // We have some isochrones to delete - how many?
             if (isochronesNum == 1) {
                 // Only one, so delete it automatically - no need to change the state of this._deleteMode
-                this.layerGroup.clearLayers();
-                this.layerGroup.removeFrom(this._map);
-                this.isochones = null;
+                this.isochronesGroup.clearLayers();
+                this.isochronesGroup.removeFrom(this._map);
 
                 // Inform that an isochrone FeatureGroup has been deleted
                 this._map.fire('isochrones:delete');
@@ -419,19 +427,19 @@ L.Control.Isochrones = L.Control.extend({
         if (L.DomUtil.hasClass(this._container, this.options.activeStyleClass)) L.DomUtil.removeClass(this._container, this.options.activeStyleClass);
     },
 
-    // Removes a particular FeatureGroup of isochrones from the LayerGroup.
-    // Called when an isochrone FeatureGroup is clicked on whilst the plugin is in delete mode.
+    // Removes a particular 'set' of isochrones (i.e. either a single isochrone or an interval group of isochrones) from the isochronesGroup object.
+    // Called when an isochrone 'set' is clicked on whilst the plugin is in delete mode.
     _delete: function (e) {
         var parent = e.sourceTarget._eventParents;
 
         for (var key in parent) {
-            if (parent.hasOwnProperty(key) && key != '<prototype>') parent[key].removeFrom(this.layerGroup);
+            if (parent.hasOwnProperty(key) && key != '<prototype>') parent[key].removeFrom(this.isochronesGroup);
         }
 
-        // Deactivate the delete control and remove the isochrones layer group from the map if there are no more isochrones left
-        if (this.layerGroup.getLayers().length == 0) {
+        // Deactivate the delete control and remove the isochrones group from the map if there are no more isochrones left
+        if (this.isochronesGroup.getLayers().length == 0) {
             this._deactivateDelete();
-            this.layerGroup.removeFrom(this._map);
+            this.isochronesGroup.removeFrom(this._map);
         }
 
         // Inform that an isochrone FeatureGroup has been deleted
@@ -614,15 +622,15 @@ L.Control.Isochrones = L.Control.extend({
                         Therefore we need to generate new a new id for each layer, with the larger polygon layers given lower ids than the smaller.
                     */
 
-                    // Create a Leaflet GeoJSON FeatureGroup object from the GeoJSON returned from the API (NOTE: this object is intended to be accessible externally)
-                    context.isochrones = L.geoJSON(data, { pane: context.layerGroup.options.pane, style: context.options.styleFn, attribution: '&copy; Powered by <a href="https://openrouteservice.org/" target="_blank">openrouteservice</a>' });
+                    // Create a Leaflet GeoJSON FeatureGroup object from the GeoJSON returned from the API - This is intended to be accessible externally if required
+                    context.latestIsochrones = L.geoJSON(data, { style: context.options.styleFn, pane: context.options.pane });
 
-                    // Load the layers into an array so that we can sort them in decending id order if there are more than 1
-                    var arrLayers = context.isochrones.getLayers();
+                    // Load the layers from the GeoJSON object into an array so that we can sort them in decending id order if there are more than 1
+                    var arrLayers = context.latestIsochrones.getLayers();
 
                     if (arrLayers.length > 0) {
-                        // Now remove all the layers from the object - we will be adding them back once we've reorded them
-                        context.isochrones.clearLayers();
+                        // Now remove all the layers from the GeoJSON object - we will be adding them back once we've reorded them
+                        context.latestIsochrones.clearLayers();
 
                         // Sort the array in decending order of the internal Leaflet id
                         arrLayers.sort(function (a, b) { return b['_leaflet_id'] - a['_leaflet_id'] });
@@ -634,13 +642,10 @@ L.Control.Isochrones = L.Control.extend({
                             // ...force Leaflet to assign a new one
                             L.Util.stamp(arrLayers[i]);
 
-                            // Now add the layer with its new id to the Leaflet GeoJSON FeatureGroup object
-                            context.isochrones.addLayer(arrLayers[i]);
-
                             // Add events to the layer - do here whilst we're looping through the array rather than after using the Leaflet eachLayer() method
                             arrLayers[i].on({
-                                mouseover: (function (e) { if (context.options.mouseOverFn != null) context.options.mouseOverFn(e, context.isochrones) }),
-                                mouseout: (function (e) { if (context.options.mouseOutFn != null) context.options.mouseOutFn(e, context.isochrones) }),
+                                mouseover: (function (e) { if (context.options.mouseOverFn != null) context.options.mouseOverFn(e) }),
+                                mouseout: (function (e) { if (context.options.mouseOutFn != null) context.options.mouseOutFn(e) }),
                                 click: (function(e) {
                                     if (context._deleteMode) {
                                         // If we're in delete mode, call the delete function
@@ -649,7 +654,7 @@ L.Control.Isochrones = L.Control.extend({
                                     }
                                     else {
                                         // Otherwise, if there is a user-defined click function, call that instead
-                                        if (context.options.clickFn != null) context.options.clickFn(e, context.isochrones);
+                                        if (context.options.clickFn != null) context.options.clickFn(e);
                                     }
                                 })
                             });
@@ -712,26 +717,52 @@ L.Control.Isochrones = L.Control.extend({
 
                             // Replace the old properties object with the new one
                             arrLayers[i].feature.properties = newProps;
+
+                            // Now add the layer with its new id to the Leaflet GeoJSON object
+                            context.latestIsochrones.addLayer(arrLayers[i]);
                         }
 
                         // Create a marker at the latlng if desired. Can be used to indicate the mode of travel etc.
-                        if (context.options.showMarker) {
+                        if (context.options.showOriginMarker) {
+                            var originMarker;
+
                             if (context.options.markerFn != null) {
                                 // Expecting a custom Leaflet marker to be returned for the origin of the isochrones.
                                 // Passing the relevant factors to the function so that styling can be based on mode of travel, distance or time etc.
-                                context.options.markerFn(latLng, context._travelMode, rangeType).addTo(context.isochrones);
+                                originMarker = context.options.markerFn(latLng, context._travelMode, rangeType);
                             }
                             else {
                                 // Create a default marker for the origin of the isochrones
-                                L.circleMarker(latLng, { radius: 3, weight: 0, fillColor: '#0073d4', fillOpacity: 1 }).addTo(context.isochrones);
+                                originMarker = L.circleMarker(latLng, { radius: 3, weight: 0, fillColor: '#0073d4', fillOpacity: 1 });
                             }
+
+                            // Attach events if required
+                            originMarker.on({
+                                mouseover: (function (e) { if (context.options.markerOverFn != null) context.options.markerOverFn(e) }),
+                                mouseout: (function (e) { if (context.options.markerOutFn != null) context.options.markerOutFn(e) }),
+                                click: (function(e) {
+                                    if (context._deleteMode) {
+                                        // If we're in delete mode, call the delete function
+                                        L.DomEvent.stopPropagation(e);
+                                        context._delete(e);
+                                    }
+                                    else {
+                                        // Otherwise, if there is a user-defined click function, call that instead
+                                        if (context.options.markerClickFn != null) context.options.markerClickFn(e);
+                                    }
+                                })
+                            });
+
+                            // Add the marker to the isochrones GeoJSON
+                            originMarker.addTo(context.latestIsochrones);
                         }
 
-                        // Add the GeoJSON FeatureGroup to the LayerGroup
-                        context.isochrones.addTo(context.layerGroup);
+                        // Add the newly created isochrones GeoJSON to the overall GeoJSON FeatureGroup
+                        context.latestIsochrones.addTo(context.isochronesGroup);
 
-                        // Add the isochrones LayerGroup to the map if it isn't already
-                        if (!context._map.hasLayer(context.layerGroup)) context.layerGroup.addTo(context._map);
+                        // Add the isochrones GeoJSON FeatureGroup to the map if it isn't already
+                        //if (!context._map.hasLayer(context.layerGroup)) context.layerGroup.addTo(context._map);
+                        if (!context._map.hasLayer(context.isochronesGroup)) context.isochronesGroup.addTo(context._map);
 
                         // Fire event to inform that isochrones have been drawn successfully
                         context._map.fire('isochrones:displayed');
