@@ -1,0 +1,105 @@
+/* Button to expand the isochrones control in a toggleable state state */
+.isochrones-control-expand-button
+{
+    font-size: 18px;
+    font-weight: bold;
+}
+.leaflet-touch .isochrones-control-expand-button
+{
+    font-size: 22px;
+}
+
+/* Button to collapse the isochrones control when in a toggleable state */
+.isochrones-control-collapse-button
+{
+    display: block;
+    height: 20px;
+    line-height: 20px;
+    border-radius: 5px;
+    font-size: 18px;
+    margin-top: 5px;
+    background-color: #f4f4f4;
+    border: 1px solid transparent;
+}
+.isochrones-control-collapse-button:hover
+{
+    border: 1px dotted #757575;
+}
+
+/* The container for the isochrones control user interface */
+.isochrones-control-settings-container
+{
+    background: #fff;
+    padding: 6px;
+    border-radius: 5px;
+}
+
+/* General class for styling the 'button' controls in the user interface container */
+.isochrones-control-settings-button
+{
+    display: inline-block;
+    width: 38px;
+    height: 38px;
+    line-height: 38px;
+    border-radius: 5px;
+    margin-right: 10px;
+    border: 2px solid #757575;
+}
+.isochrones-control-settings-button:last-child
+{
+    margin-right: 0px;
+}
+.isochrones-control-settings-button, .isochrones-control-collapse-button
+{
+    text-align: center;
+    cursor: pointer;
+    color: #757575;
+}
+.isochrones-control-settings-button:hover
+{
+    background-color: #f4f4f4;
+}
+
+/* Dividers between the different UI sections */
+.isochrones-control-settings-block-container
+{
+    display: block;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px dotted #757575;
+}
+
+/* General class for highlighting the selected 'button' controls in the user interface container and the collapsed control if either the draw or delete mode is active */
+.isochrones-control-active, .leaflet-touch .isochrones-control-active, .isochrones-control-active a, .leaflet-touch .isochrones-control-active a
+{
+    border-color: #0073d4;
+    color: #0073d4;
+    box-shadow: 0 1px 5px rgba(0,115,212,0.65);
+}
+
+/* If something has gone wrong or the user tries to perform an action that isn't allowed e.g. trying to delete when there are no isochrones */
+.isochrones-control-error, .leaflet-touch .isochrones-control-error
+{
+    border-color: red;
+    color: red;
+    box-shadow: 0 1px 5px rgba(255,0,0,0.65);
+}
+
+/* Container for the range titles - applies to both time and distance */
+.isochrones-control-range-title
+{
+    font-weight: bold;
+    margin: 0 5px 5px 0;
+    display: inline-block;  /* change to 'block' if you want more space for the title */
+}
+
+.isochrones-show-range-interval
+{
+    padding-left: 5px;
+}
+
+/* Used to hide elements of the control as necessary, e.g. when it is in its collapsed state etc. */
+.isochrones-hide-content
+{
+    display: none;
+}
