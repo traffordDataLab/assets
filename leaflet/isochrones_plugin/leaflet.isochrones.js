@@ -1,7 +1,7 @@
 /*
     Created:        2018/06/12 by James Austin - Trafford Data Lab
     Purpose:        Uses openrouteservice API to create isochrones showing areas within reach of certain travel times based on different modes of travel or distance. See https://wiki.openstreetmap.org/wiki/Isochrone for more information
-    Dependencies:   Leaflet.js (external library), openrouteservice.org API (requires a key - free service available via registration)
+    Dependencies:   Leaflet.js (external library), openrouteservice.org API (requires a key - free service available via registration), some AJAX function (either custom or simple_ajax_request.js)
     Licence:        https://www.trafforddatalab.io/assets/LICENSE.txt
     Notes:          Can be displayed in a collapsed or expanded state. Content for all GUI elements can be html or an icon etc.
                     © Powered by openrouteservice https://openrouteservice.org/
@@ -9,14 +9,14 @@
 L.Control.Isochrones = L.Control.extend({
     options: {
         // Leaflet positioning options
-        position: 'topleft',                        // Leaflet control pane position
-        pane: 'overlayPane',                        // Leaflet pane to add the isochrone GeoJSON to
-        zIndexMouseMarker: 9000,                    // Needs to be greater than any other layer in the map - this is an invisible marker tied to the mouse pointer when the control is activated to prevent clicks interacting with other map objects
+        position: 'topleft',                                                    // Leaflet control pane position
+        pane: 'overlayPane',                                                    // Leaflet pane to add the isochrone GeoJSON to
+        zIndexMouseMarker: 9000,                                                // Needs to be greater than any other layer in the map - this is an invisible marker tied to the mouse pointer when the control is activated to prevent clicks interacting with other map objects
 
         // Main control settings and styling
-        collapsed: true,                            // Operates in a similar way to the Leaflet layer control - can be collapsed into a standard single control which expands on-click (true) or is displayed fully expanded (false)
-        controlContainerStyleClass: '',             // The container for the plugin control will usually be styled with the standard Leaflet control styling, however this option allows for customisation
-        drawActiveMouseClass: 'leaflet-crosshair',  // CSS class applied to the mouse pointer when the plugin is in draw mode
+        collapsed: true,                                                        // Operates in a similar way to the Leaflet layer control - can be collapsed into a standard single control which expands on-click (true) or is displayed fully expanded (false)
+        controlContainerStyleClass: '',                                         // The container for the plugin control will usually be styled with the standard Leaflet control styling, however this option allows for customisation
+        drawActiveMouseClass: 'leaflet-crosshair',                              // CSS class applied to the mouse pointer when the plugin is in draw mode
 
         // The containing div to hold the actual user interface controls
         settingsContainerStyleClass: 'isochrones-control-settings-container',   // The container holding the user interface controls which is displayed if collapsed is false, or when the user expands the control by clicking on the expand button
@@ -25,9 +25,9 @@ L.Control.Isochrones = L.Control.extend({
         errorStyleClass: 'isochrones-control-error',                            // Gives feedback to the user via the buttons in the user interface that something went wrong
 
         // If collapsed == true a button is displayed to expand the control onclick/touch
-        expandButtonContent: '&#x2609;',                                // HTML to display within the control if it is collapsed. If you want an icon from services like Fontawesome pass '' for this value and set the StyleClass option
-        expandButtonStyleClass: 'isochrones-control-expand-button',     // Allow options for styling - if you want to use an icon from services like fontawesome pass the declarations here, e.g. 'fa fa-home' etc.
-        expandButtonTooltip: 'Show reachability options',               // Tooltip to appear on-hover
+        expandButtonContent: '&#x2609;',                                        // HTML to display within the control if it is collapsed. If you want an icon from services like Fontawesome pass '' for this value and set the StyleClass option
+        expandButtonStyleClass: 'isochrones-control-expand-button',             // Allow options for styling - if you want to use an icon from services like fontawesome pass the declarations here, e.g. 'fa fa-home' etc.
+        expandButtonTooltip: 'Show reachability options',                       // Tooltip to appear on-hover
 
         // Collapse button displayed within the settings container if collapsed == true
         collapseButtonContent: '^',
@@ -79,7 +79,7 @@ L.Control.Isochrones = L.Control.extend({
 
         rangeControlTimeTitle: 'Time',
         rangeControlTimeMin: 5,                         // \
-        rangeControlTimeMax: 30,                        //  > All these values need to be multiplied by 60 to convert to seconds - no other unit of time is allowed
+        rangeControlTimeMax: 30,                        //  > All these values will be multiplied by 60 to convert to seconds - no other unit of time is allowed
         rangeControlTimeInterval: 5,                    // /
 
         rangeTypeDefault: 'time',                       // Range can be either distance or time - any value other than 'distance' passed to the API is assumed to be 'time'
@@ -87,7 +87,7 @@ L.Control.Isochrones = L.Control.extend({
 
         // API settings
         apiKey: '',                                     // openrouteservice API key - the service which returns the isochrone polygons based on the various options/parameters
-        ajaxRequestFn: null,                            // External function to make the actual call to the API via AJAX - default is to use the simple function included in leaflet.isochrones_utilities.js
+        ajaxRequestFn: null,                            // External function to make the actual call to the API via AJAX - default is to use the simple function simple_ajax_request.js bundled with the plugin
         travelModeDrivingProfile: 'driving-car',        // API choices are 'driving-car' and 'driving-hgv'
         travelModeCyclingProfile: 'cycling-regular',    // API choices are 'cycling-regular', 'cycling-road', 'cycling-safe', 'cycling-mountain' and 'cycling-tour'
         travelModeWalkingProfile: 'foot-walking',       // API choices are 'foot-walking' and 'foot-hiking'
@@ -607,7 +607,7 @@ L.Control.Isochrones = L.Control.extend({
                     context._map.fire('isochrones:no_data');
 
                     // Log more specific details in the javascript console
-                    if (console.log) console.log('Leaflet.isochrones.js error calling API, no data returned. Likely cause is API unavailable or bad parameters.');
+                    if (window.console && window.console.log) window.console.log('Leaflet.isochrones.js error calling API, no data returned. Likely cause is API unavailable or bad parameters.');
 
                     // Inform the user that something went wrong and deactivate the draw control
                     context._showError(context._drawControl);
@@ -772,7 +772,7 @@ L.Control.Isochrones = L.Control.extend({
                         context._map.fire('isochrones:no_data');
 
                         // Log more specific details in the javascript console
-                        if (console.log) console.log('Leaflet.isochrones.js: API returned data but no GeoJSON layers.');
+                        if (window.console && window.console.log) window.console.log('Leaflet.isochrones.js: API returned data but no GeoJSON layers.');
 
                         // Inform the user that something went wrong and deactivate the draw control
                         context._showError(context._drawControl);
@@ -798,7 +798,7 @@ L.Control.Isochrones = L.Control.extend({
             context._map.fire('isochrones:api_call_end');
 
             // Log the error in the console
-            if (console.log) console.log('Leaflet.isochrones.js error attempting to call API.\nLikely cause is function simpleAjaxRequest has not been included and no alternative has been specified.\nSee docs for more details, actual error below.\n' + e);
+            if (window.console && window.console.log) window.console.log('Leaflet.isochrones.js error attempting to call API.\nLikely cause is function simpleAjaxRequest has not been included and no alternative has been specified.\nSee docs for more details, actual error below.\n' + e);
 
             // Inform the user that something went wrong and deactivate the draw control
             context._showError(context._drawControl);
