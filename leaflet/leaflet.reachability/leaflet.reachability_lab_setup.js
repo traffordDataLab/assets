@@ -1,19 +1,19 @@
 /*
     Created:        2018/06/19 by James Austin - Trafford Data Lab
-    Purpose:        Setup script to handle the styling and behaviour for our leaflet.isochrones.js plugin
-    Dependencies:   Leaflet.js (external library), leaflet.isochrones.js (internal library)
+    Purpose:        Setup script to handle the styling and behaviour for our leaflet.reachability.js plugin
+    Dependencies:   Leaflet.js (external library), leaflet.reachability.js (internal library)
     Licence:        https://www.trafforddatalab.io/assets/LICENSE.txt
     Notes:
 */
-function labSetupIsochronesPlugin(objExtraOptions) {
+function labSetupReachabilityPlugin(objExtraOptions) {
     // First set up the standard options
     var options = {
         apiKey: '58d904a497c67e00015b45fc6862cde0265d4fd78ec660aa83220cdb',
         ajaxRequestFn: labAjax,
-        expandButtonStyleClass: 'isochrones-control-expand-button fa fa-bullseye',
+        expandButtonStyleClass: 'reachability-control-expand-button fa fa-bullseye',
         expandButtonContent: '',
         collapseButtonContent: '',
-        collapseButtonStyleClass: 'isochrones-control-collapse-button fa fa-caret-up',
+        collapseButtonStyleClass: 'reachability-control-collapse-button fa fa-caret-up',
         drawButtonContent: '',
         drawButtonStyleClass: 'fa fa-pencil',
         deleteButtonContent: '',
@@ -30,7 +30,7 @@ function labSetupIsochronesPlugin(objExtraOptions) {
         walkingButtonStyleClass: 'fa fa-male',
         accessibilityButtonContent: '',
         accessibilityButtonStyleClass: 'fa fa-wheelchair-alt',
-        markerFn: labIsochroneMarker
+        markerFn: labReachabilityMarker
     }
 
     // Now add any further options if supplied
@@ -41,11 +41,11 @@ function labSetupIsochronesPlugin(objExtraOptions) {
     }
 
     // Create and return the control
-    return L.control.isochrones(options);
+    return L.control.reachability(options);
 }
 
-// Lab styling of the isochrone polygons
-function labStyleIsochrones(feature) {
+// Lab styling of the isolines polygons
+function labStyleIsolines(feature) {
     return {
         color: '#fc6721',
         fillColor: '#757575',
@@ -59,8 +59,8 @@ function labStyleIsochrones(feature) {
 
 
 
-// Custom markers to appear at the origin of the isochrones
-function labIsochroneMarker(latLng, travelMode, measure) {
+// Custom markers to appear at the origin of the isolines
+function labReachabilityMarker(latLng, travelMode, measure) {
     var faClass;
 
     switch (travelMode) {
@@ -74,7 +74,7 @@ function labIsochroneMarker(latLng, travelMode, measure) {
             faClass = 'fa fa-male'
     }
 
-    var customIcon = L.divIcon({ className: faClass + ' lab-isochrones-marker', iconAnchor: [12, 12] });
+    var customIcon = L.divIcon({ className: faClass + ' lab-reachability-marker', iconAnchor: [12, 12] });
 
     return L.marker(latLng, { icon: customIcon });
 }

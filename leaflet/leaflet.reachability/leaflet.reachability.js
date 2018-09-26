@@ -1,37 +1,37 @@
 /*
     Created:        2018/06/12 by James Austin - Trafford Data Lab
-    Purpose:        Uses openrouteservice API to create isochrones showing areas within reach of certain travel times based on different modes of travel or distance. See https://wiki.openstreetmap.org/wiki/Isochrone for more information
+    Purpose:        Uses openrouteservice API to create isolines showing areas within reach of certain travel times based on different modes of travel or distance. See https://wiki.openstreetmap.org/wiki/Isochrone for more information
     Dependencies:   Leaflet.js (external library), openrouteservice.org API (requires a key - free service available via registration), some AJAX function (either custom or simple_ajax_request.js)
-    Licence:        https://www.trafforddatalab.io/assets/LICENSE.txt
+    Licence:        https://github.com/traffordDataLab/leaflet.reachability/blob/master/LICENSE
     Notes:          Can be displayed in a collapsed or expanded state. Content for all GUI elements can be html or an icon etc.
                     © Powered by openrouteservice https://openrouteservice.org/
 */
-L.Control.Isochrones = L.Control.extend({
+L.Control.Reachability = L.Control.extend({
     options: {
         // Leaflet positioning options
-        position: 'topleft',                                                    // Leaflet control pane position
-        pane: 'overlayPane',                                                    // Leaflet pane to add the isochrone GeoJSON to
-        zIndexMouseMarker: 9000,                                                // Needs to be greater than any other layer in the map - this is an invisible marker tied to the mouse pointer when the control is activated to prevent clicks interacting with other map objects
+        position: 'topleft',                                                        // Leaflet control pane position
+        pane: 'overlayPane',                                                        // Leaflet pane to add the isolines GeoJSON to
+        zIndexMouseMarker: 9000,                                                    // Needs to be greater than any other layer in the map - this is an invisible marker tied to the mouse pointer when the control is activated to prevent clicks interacting with other map objects
 
         // Main control settings and styling
-        collapsed: true,                                                        // Operates in a similar way to the Leaflet layer control - can be collapsed into a standard single control which expands on-click (true) or is displayed fully expanded (false)
-        controlContainerStyleClass: '',                                         // The container for the plugin control will usually be styled with the standard Leaflet control styling, however this option allows for customisation
-        drawActiveMouseClass: 'leaflet-crosshair',                              // CSS class applied to the mouse pointer when the plugin is in draw mode
+        collapsed: true,                                                            // Operates in a similar way to the Leaflet layer control - can be collapsed into a standard single control which expands on-click (true) or is displayed fully expanded (false)
+        controlContainerStyleClass: '',                                             // The container for the plugin control will usually be styled with the standard Leaflet control styling, however this option allows for customisation
+        drawActiveMouseClass: 'leaflet-crosshair',                                  // CSS class applied to the mouse pointer when the plugin is in draw mode
 
         // The containing div to hold the actual user interface controls
-        settingsContainerStyleClass: 'isochrones-control-settings-container',   // The container holding the user interface controls which is displayed if collapsed is false, or when the user expands the control by clicking on the expand button
-        settingsButtonStyleClass: 'isochrones-control-settings-button',         // Generic class to style the setting buttons uniformly - further customisation per button is available with specific options below
-        activeStyleClass: 'isochrones-control-active',                          // Indicate to the user which button is active in the settings and the collapsed state of the control if settings are active
-        errorStyleClass: 'isochrones-control-error',                            // Gives feedback to the user via the buttons in the user interface that something went wrong
+        settingsContainerStyleClass: 'reachability-control-settings-container',     // The container holding the user interface controls which is displayed if collapsed is false, or when the user expands the control by clicking on the expand button
+        settingsButtonStyleClass: 'reachability-control-settings-button',           // Generic class to style the setting buttons uniformly - further customisation per button is available with specific options below
+        activeStyleClass: 'reachability-control-active',                            // Indicate to the user which button is active in the settings and the collapsed state of the control if settings are active
+        errorStyleClass: 'reachability-control-error',                              // Gives feedback to the user via the buttons in the user interface that something went wrong
 
         // If collapsed == true a button is displayed to expand the control onclick/touch
-        expandButtonContent: '&#x2609;',                                        // HTML to display within the control if it is collapsed. If you want an icon from services like Fontawesome pass '' for this value and set the StyleClass option
-        expandButtonStyleClass: 'isochrones-control-expand-button',             // Allow options for styling - if you want to use an icon from services like fontawesome pass the declarations here, e.g. 'fa fa-home' etc.
-        expandButtonTooltip: 'Show reachability options',                       // Tooltip to appear on-hover
+        expandButtonContent: '&#x2609;',                                            // HTML to display within the control if it is collapsed. If you want an icon from services like Fontawesome pass '' for this value and set the StyleClass option
+        expandButtonStyleClass: 'reachability-control-expand-button',               // Allow options for styling - if you want to use an icon from services like fontawesome pass the declarations here, e.g. 'fa fa-home' etc.
+        expandButtonTooltip: 'Show reachability options',                           // Tooltip to appear on-hover
 
         // Collapse button displayed within the settings container if collapsed == true
         collapseButtonContent: '^',
-        collapseButtonStyleClass: 'isochrones-control-collapse-button',
+        collapseButtonStyleClass: 'reachability-control-collapse-button',
         collapseButtonTooltip: 'Hide reachability options',
 
         // Draw isochrones button
@@ -39,12 +39,12 @@ L.Control.Isochrones = L.Control.extend({
         drawButtonStyleClass: '',
         drawButtonTooltip: 'Draw reachability',
 
-        // Delete button to remove any current isochrones drawn on the map
+        // Delete button to remove any current isoline groups drawn on the map
         deleteButtonContent: 'Del',
         deleteButtonStyleClass: '',
         deleteButtonTooltip: 'Delete reachability',
 
-        // Isochrone calculation mode - either distance or time
+        // Isoline calculation mode - either distance or time
         distanceButtonContent: 'Dst',
         distanceButtonStyleClass: '',
         distanceButtonTooltip: 'Reachability based on distance',
@@ -86,7 +86,7 @@ L.Control.Isochrones = L.Control.extend({
         rangeIntervalsLabel: 'intervals',               // The 'show intervals?' checkbox label
 
         // API settings
-        apiKey: '',                                     // openrouteservice API key - the service which returns the isochrone polygons based on the various options/parameters
+        apiKey: '',                                     // openrouteservice API key - the service which returns the isoline polygons based on the various options/parameters
         ajaxRequestFn: null,                            // External function to make the actual call to the API via AJAX - default is to use the simple function simple_ajax_request.js bundled with the plugin
         travelModeDrivingProfile: 'driving-car',        // API choices are 'driving-car' and 'driving-hgv'
         travelModeCyclingProfile: 'cycling-regular',    // API choices are 'cycling-regular', 'cycling-road', 'cycling-safe', 'cycling-mountain' and 'cycling-tour'
@@ -94,15 +94,15 @@ L.Control.Isochrones = L.Control.extend({
         travelModeAccessibilityProfile: 'wheelchair',   // API choices are 'wheelchair'
         travelModeDefault: null,                        // Set travel mode default - if this is not equal to one of the 4 profiles above it is set to the value of travelModeDrivingProfile in the onAdd function
 
-        // Isocrone styling and interaction
-        styleFn: null,                                  // External function to call which styles the isochrones returned from API call
-        mouseOverFn: null,                              // External function to call when a mouseover event occurs on an isochrone
-        mouseOutFn: null,                               // External function to call when a mouseout event occurs on an isochrone
-        clickFn: null,                                  // External function to call when a click event occurs on an isochrone
+        // Isoline styling and interaction
+        styleFn: null,                                  // External function to call which styles the isolines returned from API call
+        mouseOverFn: null,                              // External function to call when a mouseover event occurs on an isoline
+        mouseOutFn: null,                               // External function to call when a mouseout event occurs on an isoline
+        clickFn: null,                                  // External function to call when a click event occurs on an isoline
 
-        // Isochrone origin marker styling and interaction
-        showOriginMarker: true,                         // If we want a marker to indicate the origin of the isochrone
-        markerFn: null,                                 // External function to call to create a custom marker at the origin of the isochrone if showOriginMarker is true - null creates a default circleMarker
+        // Isoline origin marker styling and interaction
+        showOriginMarker: true,                         // If we want a marker to indicate the origin of the isoline
+        markerFn: null,                                 // External function to call to create a custom marker at the origin of the isoline if showOriginMarker is true - null creates a default circleMarker
         markerOverFn: null,                             // External function to call when a mouseover event occurs on an origin marker
         markerOutFn: null,                              // External function to call when a mouseout event occurs on an origin marker
         markerClickFn: null                             // External function to call when a click event occurs on an origin marker
@@ -123,10 +123,10 @@ L.Control.Isochrones = L.Control.extend({
         this._mouseMarker = null;
 
         // Holds the latest GeoJSON data returned from the API
-        this.latestIsochrones = null;
+        this.latestIsolines = null;
 
-        // Group object to hold each GeoJSON 'set' of isochrones return from the API via this.latestIsochrones
-        this.isochronesGroup = L.geoJSON(null, { style: this.options.styleFn, pane: this.options.pane, attribution: '&copy; Powered by <a href="https://openrouteservice.org/" target="_blank">openrouteservice</a>' })
+        // Group object to hold each GeoJSON 'set' of isolines return from the API via this.latestIsolines
+        this.isolinesGroup = L.geoJSON(null, { style: this.options.styleFn, pane: this.options.pane, attribution: '&copy; Powered by <a href="https://openrouteservice.org/" target="_blank">openrouteservice</a>' })
 
         // Main container for the control - this is added to the map in the Leaflet control pane
         this._container = L.DomUtil.create('div', 'leaflet-bar ' + this.options.controlContainerStyleClass);
@@ -136,7 +136,7 @@ L.Control.Isochrones = L.Control.extend({
         this._createUI();
 
         // Fire event to inform that the control has been added to the map
-        this._map.fire('isochrones:control_added');
+        this._map.fire('reachability:control_added');
 
         // Leaflet draws the control on the map
         return this._container;
@@ -145,11 +145,11 @@ L.Control.Isochrones = L.Control.extend({
     onRemove: function (map) {
         // clean up - remove any styles, event listeners, layers etc.
         this._deactivateDraw();
-        this.isochronesGroup.removeFrom(this._map);
-        this.isochronesGroup.clearLayers();
+        this.isolinesGroup.removeFrom(this._map);
+        this.isolinesGroup.clearLayers();
 
         // Fire event to inform that the control has been removed from the map
-        this._map.fire('isochrones:control_removed');
+        this._map.fire('reachability:control_removed');
     },
 
     _createUI: function () {
@@ -158,23 +158,23 @@ L.Control.Isochrones = L.Control.extend({
         this._container.appendChild(this._uiContainer);
 
         // Container for the action and mode buttons
-        this._actionsAndModesContainer = L.DomUtil.create('div', 'isochrones-control-settings-block-container', this._uiContainer);
+        this._actionsAndModesContainer = L.DomUtil.create('div', 'reachability-control-settings-block-container', this._uiContainer);
 
-        // Draw button - to create isochrones
+        // Draw button - to create isolines
         this._drawControl = this._createButton('span', this.options.drawButtonContent, this.options.drawButtonTooltip, this.options.settingsButtonStyleClass + ' ' + this.options.drawButtonStyleClass, this._actionsAndModesContainer, this._toggleDraw);
 
-        // Delete button - to remove isochrones
+        // Delete button - to remove isolines
         this._deleteControl = this._createButton('span', this.options.deleteButtonContent, this.options.deleteButtonTooltip, this.options.settingsButtonStyleClass + ' ' + this.options.deleteButtonStyleClass, this._actionsAndModesContainer, this._toggleDelete);
 
-        // Distance setting button - to calculate isochrones based on distance
+        // Distance setting button - to calculate isolines based on distance (isodistance)
         this._distanceControl = this._createButton('span', this.options.distanceButtonContent, this.options.distanceButtonTooltip, this.options.settingsButtonStyleClass + ' ' + this.options.distanceButtonStyleClass, this._actionsAndModesContainer, this._setRangeByDistance);
 
-        // Distance setting button - to calculate isochrones based on distance
+        // Time setting button - to calculate isolines based on time (isochrones)
         this._timeControl = this._createButton('span', this.options.timeButtonContent, this.options.timeButtonTooltip, this.options.settingsButtonStyleClass + ' ' + this.options.timeButtonStyleClass, this._actionsAndModesContainer, this._setRangeByTime);
 
 
         // Container for the travel mode buttons
-        this._modesContainer = L.DomUtil.create('div', 'isochrones-control-settings-block-container', this._uiContainer);
+        this._modesContainer = L.DomUtil.create('div', 'reachability-control-settings-block-container', this._uiContainer);
 
         // Driving profile button
         this._drivingControl = this._createButton('span', this.options.drivingButtonContent, this.options.drivingButtonTooltip, this.options.settingsButtonStyleClass + ' ' + this.options.drivingButtonStyleClass, this._modesContainer, this._setTravelDriving);
@@ -188,16 +188,16 @@ L.Control.Isochrones = L.Control.extend({
         // Accessible profile button
         this._accessibilityControl = this._createButton('span', this.options.accessibilityButtonContent, this.options.accessibilityButtonTooltip, this.options.settingsButtonStyleClass + ' ' + this.options.accessibilityButtonStyleClass, this._modesContainer, this._setTravelAccessibility);
         // *** NOTE: TEMPORARY LINE BELOW WHILST ACCESSIBILITY ROUTING IS UNAVAILABLE FROM THE API
-        L.DomUtil.addClass(this._accessibilityControl, 'isochrones-hide-content');
+        L.DomUtil.addClass(this._accessibilityControl, 'reachability-control-hide-content');
         // ***************************************************************************************
 
 
         // Distance range title
-        this._rangeDistanceTitle = L.DomUtil.create('span', 'isochrones-control-range-title isochrones-hide-content', this._uiContainer);
+        this._rangeDistanceTitle = L.DomUtil.create('span', 'reachability-control-range-title reachability-control-hide-content', this._uiContainer);
         this._rangeDistanceTitle.innerHTML = this.options.rangeControlDistanceTitle;
 
         // Distance range control
-        this._rangeDistanceList = L.DomUtil.create('select', 'isochrones-control-range-list isochrones-hide-content', this._uiContainer);
+        this._rangeDistanceList = L.DomUtil.create('select', 'reachability-control-range-list reachability-control-hide-content', this._uiContainer);
         for (var i = this.options.rangeControlDistanceMin; i <= this.options.rangeControlDistanceMax; i += this.options.rangeControlDistanceInterval) {
             var opt = L.DomUtil.create('option', '', this._rangeDistanceList);
             opt.setAttribute('value', i);
@@ -206,11 +206,11 @@ L.Control.Isochrones = L.Control.extend({
 
 
         // Time range title
-        this._rangeTimeTitle = L.DomUtil.create('span', 'isochrones-control-range-title isochrones-hide-content', this._uiContainer);
+        this._rangeTimeTitle = L.DomUtil.create('span', 'reachability-control-range-title reachability-control-hide-content', this._uiContainer);
         this._rangeTimeTitle.innerHTML = this.options.rangeControlTimeTitle;
 
         // Time range control
-        this._rangeTimeList = L.DomUtil.create('select', 'isochrones-control-range-list isochrones-hide-content', this._uiContainer);
+        this._rangeTimeList = L.DomUtil.create('select', 'reachability-control-range-list reachability-control-hide-content', this._uiContainer);
         for (var i = this.options.rangeControlTimeMin; i <= this.options.rangeControlTimeMax; i += this.options.rangeControlTimeInterval) {
             var opt = L.DomUtil.create('option', '', this._rangeTimeList);
             opt.setAttribute('value', i);
@@ -220,10 +220,10 @@ L.Control.Isochrones = L.Control.extend({
 
         /*
             Show intervals checkbox
-                - selected means that we want to show a range of isochrones, from the minimum value up to the chosen values
-                - not selected means that we want to only show one isochrone for the selected value
+                - selected means that we want to show a range of isolines, from the minimum value up to the chosen values
+                - not selected means that we want to only show one isoline for the selected value
         */
-        this._showIntervalContainer = L.DomUtil.create('span', 'isochrones-show-range-interval', this._uiContainer);
+        this._showIntervalContainer = L.DomUtil.create('span', 'reachability-control-show-range-interval', this._uiContainer);
         this._showInterval = L.DomUtil.create('input', '', this._showIntervalContainer);
         this._showInterval.setAttribute('id', 'rangeInterval');
         this._showInterval.setAttribute('type', 'checkbox');
@@ -235,13 +235,13 @@ L.Control.Isochrones = L.Control.extend({
         // Select the correct range type button and show the correct range list
         if (this._rangeIsDistance) {
             L.DomUtil.addClass(this._distanceControl, this.options.activeStyleClass);
-            L.DomUtil.removeClass(this._rangeDistanceTitle, 'isochrones-hide-content');
-            L.DomUtil.removeClass(this._rangeDistanceList, 'isochrones-hide-content');
+            L.DomUtil.removeClass(this._rangeDistanceTitle, 'reachability-control-hide-content');
+            L.DomUtil.removeClass(this._rangeDistanceList, 'reachability-control-hide-content');
         }
         else {
             L.DomUtil.addClass(this._timeControl, this.options.activeStyleClass);
-            L.DomUtil.removeClass(this._rangeTimeTitle, 'isochrones-hide-content');
-            L.DomUtil.removeClass(this._rangeTimeList, 'isochrones-hide-content');
+            L.DomUtil.removeClass(this._rangeTimeTitle, 'reachability-control-hide-content');
+            L.DomUtil.removeClass(this._rangeTimeList, 'reachability-control-hide-content');
         }
 
         // Select the correct travel mode button
@@ -251,9 +251,9 @@ L.Control.Isochrones = L.Control.extend({
         // If the control is in its collapsed state we need to create buttons to toggle between collapsed and expanded states and initially hide the main UI
         if (this._collapsed) {
             // Hide the UI initially as the control is in the collapsed state
-            L.DomUtil.addClass(this._uiContainer, 'isochrones-hide-content');
+            L.DomUtil.addClass(this._uiContainer, 'reachability-control-hide-content');
 
-            // Create a container for the expand button - because we cannot easily hide a link tag created via the _createButton function adding the .isochrones-hide-content CSS class
+            // Create a container for the expand button - because we cannot easily hide a link tag created via the _createButton function adding the .reachability-control-hide-content CSS class
             this._expandButtonContainer = L.DomUtil.create('span', '');
             this._container.appendChild(this._expandButtonContainer);
 
@@ -289,10 +289,10 @@ L.Control.Isochrones = L.Control.extend({
 
     _expand: function () {
         // Show the user interface container
-        L.DomUtil.removeClass(this._uiContainer, 'isochrones-hide-content');
+        L.DomUtil.removeClass(this._uiContainer, 'reachability-control-hide-content');
 
         // Hide the toggle container
-        L.DomUtil.addClass(this._expandButtonContainer, 'isochrones-hide-content');
+        L.DomUtil.addClass(this._expandButtonContainer, 'reachability-control-hide-content');
 
         // Remove the active class from the control container if either the draw or delete modes are active
         if (L.DomUtil.hasClass(this._container, this.options.activeStyleClass)) L.DomUtil.removeClass(this._container, this.options.activeStyleClass);
@@ -300,10 +300,10 @@ L.Control.Isochrones = L.Control.extend({
 
     _collapse: function () {
         // Hide the user interface container
-        L.DomUtil.addClass(this._uiContainer, 'isochrones-hide-content');
+        L.DomUtil.addClass(this._uiContainer, 'reachability-control-hide-content');
 
         // Show the toggle container
-        L.DomUtil.removeClass(this._expandButtonContainer, 'isochrones-hide-content');
+        L.DomUtil.removeClass(this._expandButtonContainer, 'reachability-control-hide-content');
 
         // Add the active class to the control container if either the draw or delete modes are active
         if ((this._drawMode || this._deleteMode) && !L.DomUtil.hasClass(this._container, this.options.activeStyleClass)) L.DomUtil.addClass(this._container, this.options.activeStyleClass);
@@ -335,7 +335,7 @@ L.Control.Isochrones = L.Control.extend({
 
         /*
             Using a technique deployed in Jacob Toye's Leaflet.Draw plugin:
-            We create an invisible mouse marker to capture the click event to give us a lat/lng to calculate the isochrones.
+            We create an invisible mouse marker to capture the click event to give us a lat/lng to calculate the isolines.
             This allows us to style the mouse pointer easily and also not interact with other map elements whilst in draw mode.
         */
         if (!this._mouseMarker) {
@@ -367,7 +367,7 @@ L.Control.Isochrones = L.Control.extend({
             .on('click', this._registerDrawRequest, this);
 
         // Fire an event to indicate that the control is active - in case we want to run some external code etc.
-        this._map.fire('isochrones:activated');
+        this._map.fire('reachability:activated');
     },
 
     _deactivateDraw: function () {
@@ -390,22 +390,22 @@ L.Control.Isochrones = L.Control.extend({
             .off('click', this._registerDrawRequest, this);
 
         // Fire an event to indicate that the control is no longer active - in case we want to run some external code etc.
-        this._map.fire('isochrones:deactivated');
+        this._map.fire('reachability:deactivated');
     },
 
     _activateDelete: function () {
-        // We want to delete some isochrones
-        var isochronesNum = this.isochronesGroup.getLayers().length;
+        // We want to delete some isoline groups
+        var isolinesGroupNum = this.isolinesGroup.getLayers().length;
 
-        if (isochronesNum > 0) {
-            // We have some isochrones to delete - how many?
-            if (isochronesNum == 1) {
+        if (isolinesGroupNum > 0) {
+            // We have some isoline groups to delete - how many?
+            if (isolinesGroupNum == 1) {
                 // Only one, so delete it automatically - no need to change the state of this._deleteMode
-                this.isochronesGroup.clearLayers();
-                this.isochronesGroup.removeFrom(this._map);
+                this.isolinesGroup.clearLayers();
+                this.isolinesGroup.removeFrom(this._map);
 
-                // Inform that an isochrone FeatureGroup has been deleted
-                this._map.fire('isochrones:delete');
+                // Inform that an isoline FeatureGroup has been deleted
+                this._map.fire('reachability:delete');
             }
             else {
                 // We have more than one so the user will need to choose which to delete. Therefore set the control in delete mode and wait for the user event
@@ -414,7 +414,7 @@ L.Control.Isochrones = L.Control.extend({
             }
         }
         else {
-            // There are no isochrones to delete so warn the user by flashing the button
+            // There are no isoline groups to delete so warn the user by flashing the button
             this._showError(this._deleteControl);
         }
     },
@@ -427,23 +427,23 @@ L.Control.Isochrones = L.Control.extend({
         if (L.DomUtil.hasClass(this._container, this.options.activeStyleClass)) L.DomUtil.removeClass(this._container, this.options.activeStyleClass);
     },
 
-    // Removes a particular 'set' of isochrones (i.e. either a single isochrone or an interval group of isochrones) from the isochronesGroup object.
-    // Called when an isochrone 'set' is clicked on whilst the plugin is in delete mode.
+    // Removes a particular 'set' or group of isolines (i.e. either a single isoline or an interval group of isolines) from the isolinesGroup object.
+    // Called when an isoline group is clicked on whilst the plugin is in delete mode.
     _delete: function (e) {
         var parent = e.sourceTarget._eventParents;
 
         for (var key in parent) {
-            if (parent.hasOwnProperty(key) && key != '<prototype>') parent[key].removeFrom(this.isochronesGroup);
+            if (parent.hasOwnProperty(key) && key != '<prototype>') parent[key].removeFrom(this.isolinesGroup);
         }
 
-        // Deactivate the delete control and remove the isochrones group from the map if there are no more isochrones left
-        if (this.isochronesGroup.getLayers().length == 0) {
+        // Deactivate the delete control and remove the isolines group from the map if there are no more isoline groups left
+        if (this.isolinesGroup.getLayers().length == 0) {
             this._deactivateDelete();
-            this.isochronesGroup.removeFrom(this._map);
+            this.isolinesGroup.removeFrom(this._map);
         }
 
-        // Inform that an isochrone FeatureGroup has been deleted
-        this._map.fire('isochrones:delete');
+        // Inform that an isoline FeatureGroup has been deleted
+        this._map.fire('reachability:delete');
     },
 
     // Show a visible error to the user if something has gone wrong
@@ -467,12 +467,12 @@ L.Control.Isochrones = L.Control.extend({
             L.DomUtil.removeClass(this._timeControl, this.options.activeStyleClass);
 
             // The range titles
-            L.DomUtil.removeClass(this._rangeDistanceTitle, 'isochrones-hide-content');
-            L.DomUtil.addClass(this._rangeTimeTitle, 'isochrones-hide-content');
+            L.DomUtil.removeClass(this._rangeDistanceTitle, 'reachability-control-hide-content');
+            L.DomUtil.addClass(this._rangeTimeTitle, 'reachability-control-hide-content');
 
             // The range lists
-            L.DomUtil.removeClass(this._rangeDistanceList, 'isochrones-hide-content');
-            L.DomUtil.addClass(this._rangeTimeList, 'isochrones-hide-content');
+            L.DomUtil.removeClass(this._rangeDistanceList, 'reachability-control-hide-content');
+            L.DomUtil.addClass(this._rangeTimeList, 'reachability-control-hide-content');
 
             this._rangeIsDistance = true;
         }
@@ -485,12 +485,12 @@ L.Control.Isochrones = L.Control.extend({
             L.DomUtil.removeClass(this._distanceControl, this.options.activeStyleClass);
 
             // The range titles
-            L.DomUtil.removeClass(this._rangeTimeTitle, 'isochrones-hide-content');
-            L.DomUtil.addClass(this._rangeDistanceTitle, 'isochrones-hide-content');
+            L.DomUtil.removeClass(this._rangeTimeTitle, 'reachability-control-hide-content');
+            L.DomUtil.addClass(this._rangeDistanceTitle, 'reachability-control-hide-content');
 
             // The range lists
-            L.DomUtil.removeClass(this._rangeTimeList, 'isochrones-hide-content');
-            L.DomUtil.addClass(this._rangeDistanceList, 'isochrones-hide-content');
+            L.DomUtil.removeClass(this._rangeTimeList, 'reachability-control-hide-content');
+            L.DomUtil.addClass(this._rangeDistanceList, 'reachability-control-hide-content');
 
             this._rangeIsDistance = false;
         }
@@ -549,7 +549,7 @@ L.Control.Isochrones = L.Control.extend({
     },
 
     // Deals with updating the position of the invisible Leaflet marker that chases the mouse pointer or is set to the location of a touch.
-    // This is used to determine the coordinates on the map when the user clicks/touches to create an isochrone
+    // This is used to determine the coordinates on the map when the user clicks/touches to create an isoline group
     _updatePointerMarkerPosition: function (e) {
 		var newPos = this._map.mouseEventToLayerPoint(e.originalEvent);
 		var latlng = this._map.layerPointToLatLng(newPos);
@@ -561,7 +561,7 @@ L.Control.Isochrones = L.Control.extend({
         L.DomEvent.stop(e.originalEvent);
 	},
 
-    // Prevents multiple events, e.g. click on the mouse marker and map all calling the API and creating multiple isochrones.
+    // Prevents multiple events, e.g. click on the mouse marker and map all calling the API and creating duplicate isoline groups.
     _registerDrawRequest: function (e) {
         L.DomEvent.stop(e.originalEvent);     // stop any default actions and propagation from the event
 
@@ -573,7 +573,7 @@ L.Control.Isochrones = L.Control.extend({
         }
     },
 
-    // Main function to make the actual call to the API and display the resultant isochrones on the map
+    // Main function to make the actual call to the API and display the resultant isoline group on the map
     _callApi: function (latLng) {
         // Create the URL to pass to the API
         var apiUrl = 'https://api.openrouteservice.org/isochrones?api_key=' + this.options.apiKey;
@@ -592,7 +592,7 @@ L.Control.Isochrones = L.Control.extend({
         apiUrl += '&profile=' + this._travelMode + '&location_type=start&attributes=area|total_pop';
 
         // Inform that we are calling the API - could be useful for starting a spinner etc. to indicate to the user that something is happening if there is a delay
-        this._map.fire('isochrones:api_call_start');
+        this._map.fire('reachability:api_call_start');
 
         // Store the context for use within the API callback below
         var context = this;
@@ -604,10 +604,10 @@ L.Control.Isochrones = L.Control.extend({
             ajaxFn(apiUrl, function (data) {
                 if (data == null) {
                     // Fire event to inform that no data was returned
-                    context._map.fire('isochrones:no_data');
+                    context._map.fire('reachability:no_data');
 
                     // Log more specific details in the javascript console
-                    if (window.console && window.console.log) window.console.log('Leaflet.isochrones.js error calling API, no data returned. Likely cause is API unavailable or bad parameters.');
+                    if (window.console && window.console.log) window.console.log('Leaflet.reachability.js error calling API, no data returned. Likely cause is API unavailable or bad parameters.');
 
                     // Inform the user that something went wrong and deactivate the draw control
                     context._showError(context._drawControl);
@@ -623,14 +623,14 @@ L.Control.Isochrones = L.Control.extend({
                     */
 
                     // Create a Leaflet GeoJSON FeatureGroup object from the GeoJSON returned from the API - This is intended to be accessible externally if required
-                    context.latestIsochrones = L.geoJSON(data, { style: context.options.styleFn, pane: context.options.pane });
+                    context.latestIsolines = L.geoJSON(data, { style: context.options.styleFn, pane: context.options.pane });
 
                     // Load the layers from the GeoJSON object into an array so that we can sort them in decending id order if there are more than 1
-                    var arrLayers = context.latestIsochrones.getLayers();
+                    var arrLayers = context.latestIsolines.getLayers();
 
                     if (arrLayers.length > 0) {
                         // Now remove all the layers from the GeoJSON object - we will be adding them back once we've reorded them
-                        context.latestIsochrones.clearLayers();
+                        context.latestIsolines.clearLayers();
 
                         // Sort the array in decending order of the internal Leaflet id
                         arrLayers.sort(function (a, b) { return b['_leaflet_id'] - a['_leaflet_id'] });
@@ -719,7 +719,7 @@ L.Control.Isochrones = L.Control.extend({
                             arrLayers[i].feature.properties = newProps;
 
                             // Now add the layer with its new id to the Leaflet GeoJSON object
-                            context.latestIsochrones.addLayer(arrLayers[i]);
+                            context.latestIsolines.addLayer(arrLayers[i]);
                         }
 
                         // Create a marker at the latlng if desired. Can be used to indicate the mode of travel etc.
@@ -727,12 +727,12 @@ L.Control.Isochrones = L.Control.extend({
                             var originMarker;
 
                             if (context.options.markerFn != null) {
-                                // Expecting a custom Leaflet marker to be returned for the origin of the isochrones.
+                                // Expecting a custom Leaflet marker to be returned for the origin of the isolines group.
                                 // Passing the relevant factors to the function so that styling can be based on mode of travel, distance or time etc.
                                 originMarker = context.options.markerFn(latLng, context._travelMode, rangeType);
                             }
                             else {
-                                // Create a default marker for the origin of the isochrones
+                                // Create a default marker for the origin of the isolines group
                                 originMarker = L.circleMarker(latLng, { radius: 3, weight: 0, fillColor: '#0073d4', fillOpacity: 1 });
                             }
 
@@ -753,26 +753,25 @@ L.Control.Isochrones = L.Control.extend({
                                 })
                             });
 
-                            // Add the marker to the isochrones GeoJSON
-                            originMarker.addTo(context.latestIsochrones);
+                            // Add the marker to the isolines GeoJSON
+                            originMarker.addTo(context.latestIsolines);
                         }
 
-                        // Add the newly created isochrones GeoJSON to the overall GeoJSON FeatureGroup
-                        context.latestIsochrones.addTo(context.isochronesGroup);
+                        // Add the newly created isolines GeoJSON to the overall GeoJSON FeatureGroup
+                        context.latestIsolines.addTo(context.isolinesGroup);
 
-                        // Add the isochrones GeoJSON FeatureGroup to the map if it isn't already
-                        //if (!context._map.hasLayer(context.layerGroup)) context.layerGroup.addTo(context._map);
-                        if (!context._map.hasLayer(context.isochronesGroup)) context.isochronesGroup.addTo(context._map);
+                        // Add the isolines GeoJSON FeatureGroup to the map if it isn't already
+                        if (!context._map.hasLayer(context.isolinesGroup)) context.isolinesGroup.addTo(context._map);
 
-                        // Fire event to inform that isochrones have been drawn successfully
-                        context._map.fire('isochrones:displayed');
+                        // Fire event to inform that isolines have been drawn successfully
+                        context._map.fire('reachability:displayed');
                     }
                     else {
                         // Fire event to inform that no data was returned
-                        context._map.fire('isochrones:no_data');
+                        context._map.fire('reachability:no_data');
 
                         // Log more specific details in the javascript console
-                        if (window.console && window.console.log) window.console.log('Leaflet.isochrones.js: API returned data but no GeoJSON layers.');
+                        if (window.console && window.console.log) window.console.log('Leaflet.reachability.js: API returned data but no GeoJSON layers.');
 
                         // Inform the user that something went wrong and deactivate the draw control
                         context._showError(context._drawControl);
@@ -781,7 +780,7 @@ L.Control.Isochrones = L.Control.extend({
                 }
 
                 // Inform that we have completed calling the API - could be useful for stopping a spinner etc. to indicate to the user that something was happening. Doesn't indicate success
-                context._map.fire('isochrones:api_call_end');
+                context._map.fire('reachability:api_call_end');
 
                 // Get ready to register another draw request
                 context._drawRequestRegistered = false;
@@ -789,16 +788,16 @@ L.Control.Isochrones = L.Control.extend({
         }
         catch (e) {
             // Fire event to inform that an error occurred calling the API
-            context._map.fire('isochrones:error');
+            context._map.fire('reachability:error');
 
             // Fire event to inform that no data was returned
-            context._map.fire('isochrones:no_data');
+            context._map.fire('reachability:no_data');
 
             // Inform that we have completed calling the API - could be useful for stopping a spinner etc. to indicate to the user that something was happening.
-            context._map.fire('isochrones:api_call_end');
+            context._map.fire('reachability:api_call_end');
 
             // Log the error in the console
-            if (window.console && window.console.log) window.console.log('Leaflet.isochrones.js error attempting to call API.\nLikely cause is function simpleAjaxRequest has not been included and no alternative has been specified.\nSee docs for more details, actual error below.\n' + e);
+            if (window.console && window.console.log) window.console.log('Leaflet.reachability.js error attempting to call API.\nLikely cause is function simpleAjaxRequest has not been included and no alternative has been specified.\nSee docs for more details, actual error below.\n' + e);
 
             // Inform the user that something went wrong and deactivate the draw control
             context._showError(context._drawControl);
@@ -807,6 +806,6 @@ L.Control.Isochrones = L.Control.extend({
     }
 });
 
-L.control.isochrones = function (options) {
-    return new L.Control.Isochrones(options);
+L.control.reachability = function (options) {
+    return new L.Control.Reachability(options);
 };
