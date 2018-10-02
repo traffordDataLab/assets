@@ -29,6 +29,14 @@
     background: rgba(255, 255, 255, 0.8);
 }
 
+.leaflet-control-attribution
+{
+    /* fixes text scaling issue when changing from portrait to landscape on mobile browsers */
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+}
+
 /* The following styles are for the text/icons within leaflet bar controls e.g. zoom, reset etc. */
 .leaflet-bar a
 {
