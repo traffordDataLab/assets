@@ -22,13 +22,17 @@ function timeSeries(obj){
   var title = (obj.title) ? obj.title:"";
   var xtitle = (obj.xtitle) ? obj.xtitle:"";
   var ytitle = (obj.ytitle) ? obj.ytitle:"";
-  var source = (obj.source) ? obj.source:"";
+  var source = (obj.source) ? "Source: "+obj.source:"";
   var width = (obj.width) ? obj.width:800; //optional width and height
   var height = (obj.height) ? obj.height:350;
+  var clickFunction = (obj.clickFunction) ? obj.clickFunction:""
+  var markClick  = (obj.markClick) ? obj.markClick:false //for one series timeline, mark a circle when clicked
+  var indexToMark = (obj.indexToMark) ? obj.indexToMark:"" //for one series timeline mark a circle with the given index
+
 
   //define width height and margins
 
-  var margin = {top: 70, right: 20, bottom: 70, left: 40};
+  var margin = {top: 70, right: 20, bottom: 70, left: 60};
 
   var widthG = width - margin.left - margin.right;
   var heightG = height - margin.top - margin.bottom;
@@ -46,190 +50,240 @@ function timeSeries(obj){
 
   //data formating
   var parseTime = d3.timeParse(dateFormat);
-  var tooltipTime = d3.timeFormat("%Y-%m");
+  var formatTime = d3.timeFormat("%Y-%m");
+  var formatTimeTooltip = d3.timeFormat("%b %Y");
 
   var series=data.map(function (d){return d.map(function(r){
     return {serie:r["serie"],
     date:parseTime(r["date"]),
     value:+r["value"]}
+    });
+  })
+
+  series.map(function (d){d.sort(function (a, b) {
+    return a.date - b.date;
+    });
+  })
+
+  var extents = series.map(function(r){
+    return d3.extent(r, function(d) { return d["date"]; });
   });
-})
 
-var extents = series.map(function(r){
-  return d3.extent(r, function(d) { return d["date"]; });
-});
+  var yDomain=d3.max(series, function(s) { return d3.max(s, function(d) {return d.value; })+0.5; })
 
-//create Scales
-var x = d3.scaleTime()
-.domain(extents[0])
-.range([0,widthG]);
+  //create Scales
+  var x = d3.scaleTime()
+  .domain(extents[0])
+  .range([0,widthG]);
 
-var y = d3.scaleLinear()
-.domain([0, d3.max(series, function(s) { return d3.max(s, function(d) {return d.value; })+0.5; })])
-.range([heightG,0]);
+  var y = d3.scaleLinear()
+  .domain([0, yDomain])
+  .range([heightG,0]);
 
-var z = d3.scaleOrdinal()
-.range(palette)
-.domain(series.map(function(d) {return d[0].serie; }))
+  var z = d3.scaleOrdinal()
+  .range(palette)
+  .domain(series.map(function(d) {return d[0].serie; }))
 
-//add axes
-g.append("g")
-.attr("class", "x axis")
-.attr("transform", "translate(0," + heightG + ")")
-.call(d3.axisBottom(x))
-.selectAll("text")
-.style("text-anchor", "end")
-.attr("dx", "-.9em")
-.attr("dy", "-.55em")
-.attr("transform", "rotate(-90)" );
+  //add axes
+  g.append("g")
+  .attr("class", "x axis")
+  .attr("transform", "translate(0," + heightG + ")")
+  .call(d3.axisBottom(x))
+  .selectAll("text")
+  .style("text-anchor", "end")
+  .attr("dx", "-.9em")
+  .attr("dy", "-.55em")
+  .attr("transform", "rotate(-90)" );
 
-g.append("g")
-.attr("class", "y axis")
-.call(d3.axisLeft(y))
+  g.append("g")
+  .attr("class", "y axis")
+  .call(d3.axisLeft(y)
+  .ticks(4))
 
-//add axes titles
+  //add axes titles
 
-g.append("text")
-.attr("class", "titleX")
-.attr("x", widthG / 2 )
-.attr("y",  heightG + margin.top - 10)
-.style("text-anchor", "middle")
-.style("font-size", "12px")
-.text(xtitle);
+  g.append("text")
+  .attr("class", "titleX")
+  .attr("x", widthG / 2 )
+  .attr("y",  heightG + margin.top - 10)
+  .style("text-anchor", "middle")
+  .style("font-size", "12px")
+  .text(xtitle);
 
-g.append("text")
-.attr("class", "titleY")
-.attr("transform", "rotate(-90)")
-.attr("y", 0 - margin.left - 3)
-.attr("x",0 - (heightG / 2))
-.attr("dy", "1em")
-.style("text-anchor", "middle")
-.style("font-size", "12px")
-.text(ytitle);
+  g.append("text")
+  .attr("class", "titleY")
+  .attr("transform", "rotate(-90)")
+  .attr("y", 0 - margin.left + 10)
+  .attr("x",0 - (heightG / 2))
+  .attr("dy", "1em")
+  .style("text-anchor", "middle")
+  .style("font-size", "12px")
+  .text(ytitle);
 
-//add gridlines and additional styling
-g.append("g")
-.attr("class", "grid")
-.attr("transform", "translate(0," + heightG + ")")
-.call(d3.axisBottom(x)
-.ticks(3)
-.tickSize(-heightG)
-.tickFormat(""))
+  //add gridlines and additional styling
+  g.append("g")
+  .attr("class", "grid")
+  .attr("transform", "translate(0," + heightG + ")")
+  .call(d3.axisBottom(x)
+  .ticks(3)
+  .tickSize(-heightG)
+  .tickFormat(""))
 
-g.append("g")
-.attr("class", "grid")
-.call(d3.axisLeft(y)
-.ticks(3)
-.tickSize(-widthG)
-.tickFormat(""))
+  g.append("g")
+  .attr("class", "grid")
+  .call(d3.axisLeft(y)
+  .ticks(3)
+  .tickSize(-widthG)
+  .tickFormat(""))
 
-d3.selectAll(".grid")
-.style("stroke-dasharray", "2,2")
-.style("stroke-opacity", 0.7)
-.selectAll("path")
-.style("stroke-width", 0)
+  d3.selectAll(".grid")
+  .style("stroke-dasharray", "2,2")
+  .style("stroke-opacity", 0.7)
+  .selectAll("path")
+  .style("stroke-width", 0)
 
-//Add chart title and Source
+  //Add chart title and Source
 
-g.append("text")
-.attr("class", "plot_title")
-.attr("x", 0)
-.attr("y", 0 - (margin.top / 2))
-.attr("text-anchor", "start")
-.text(title)
-.style("font-size", "18px")
+  g.append("text")
+  .attr("class", "plot_title")
+  .attr("x", 0)
+  .attr("y", 0 - (margin.top / 2))
+  .attr("text-anchor", "start")
+  .text(title)
+  .style("font-size", "18px")
 
 
-g.append("text")
-.attr("class", "source")
-.attr("x", -(margin.left/2))
-.attr("y", heightG + (margin.bottom) - 2)
-.attr("text-anchor", "start")
-.text("Source: " + source)
-.style("font-size", "10px")
+  g.append("text")
+  .attr("class", "source")
+  .attr("x", -(margin.left/2))
+  .attr("y", heightG + (margin.bottom) - 2)
+  .attr("text-anchor", "start")
+  .text(source)
+  .style("font-size", "10px")
 
-//Add paths and circles
+  //Add paths and circles
 
-var serie = g.selectAll(".serie")
-.data(series)
-.enter().append("g")
-.attr("class", "serie");
+  var serie = g.selectAll(".serie")
+  .data(series)
+  .enter().append("g")
+  .attr("class", "serie");
 
-serie.append("path")
-.attr("fill","none")
-.attr("stroke-width","2px")
-.style("stroke",  function(d) {return z(d[0].serie); })
-.attr("d", d3.line()
-.x(function(d) { return x(d.date); })
-.y(function(d) { return y(d.value) }));
+  serie.append("path")
+  .attr("fill","none")
+  .attr("stroke-width","2px")
+  .style("stroke",  function(d) {return z(d[0].serie); })
+  .attr("d", d3.line()
+  .x(function(d) { return x(d.date); })
+  .y(function(d) { return y(d.value) }));
 
-serie.append("g")
-.attr("class","circles")
-.selectAll("circle")
-.data(function(d){return d})
-.enter().append("circle")
-.attr("r", 3)
-.attr("cx",function(d){return x(d.date);})
-.attr("cy",function(d){return y(d.value);})
-.style("stroke", function(d) { return z(d.serie); })
-.style("stroke-width", "2px")
-.style("fill", "white")
-.on("mouseover", function(d) {
-  tooltipDiv.style("opacity", .9)
-  .html("Date: "+ tooltipTime(d.date) + "<br/>Value: "  + d.value)
-  .style("left", (d3.event.pageX + 10) + "px")
-  .style("top", (d3.event.pageY - 10) + "px");
-
-  d3.select(this).style("fill",function(d) { return z(d.serie); })
-  .attr("r", 4)
-})
-.on("mouseout", function(d) {
-  tooltipDiv.style("opacity", 0);
-  d3.select(this).style("fill","white")
+  serie.append("g")
+  .attr("class","circles")
+  .selectAll("circle")
+  .data(function(d){return d})
+  .enter().append("circle")
   .attr("r", 3)
-})
+  .attr("cx",function(d){return x(d.date);})
+  .attr("cy",function(d){return y(d.value);})
+  .style("stroke", function(d) { return z(d.serie); })
+  .style("stroke-width", "2px")
+  .style("fill", "white")
+  .on("mouseover", function(d,i) {
+    var matrix = this.getScreenCTM()
+    .translate(+ this.getAttribute("cx"), + this.getAttribute("cy"));
 
-//Add legend
+    showTooltip(d,i,matrix)
 
-var legendg= g.append("g")
-.attr("width", widthG)
-.attr("transform", "translate(0,-10)");
+    d3.select(this)
+    .style("fill",function(d) { return z(d.serie); })
+    .attr("r", 4)})
+  .on("mouseout", mouseout)
+  .on("click", function(d) {
+      d.date=formatTime(d.date)
+      d3.select(this).call(clickFunction,d)
+      d.date=parseTime(d.date)
+      if(markClick){
+        d3.selectAll(".circles").selectAll("circle")
+        .style("fill", "white")
+        .attr("r", 3)
+        .on("mouseout", mouseout)
 
-var legend = legendg.selectAll('.legends')
-.data(series)
-.enter().append('g')
-.attr("class", "legends")
+        d3.select(this)
+        .style("fill",function(d) { return z(d.serie); })
+        .on("mouseout", mouseout2)
+      }
+    })
+  .on("touchstart", function(d,i){
+    d3.event.preventDefault();
 
-legend.append("circle")
-.attr("cx", 0)
-.attr("cy", 0)
-.attr("r", 5)
-.style("fill", function(d) { return z(d[0].serie); })
+    d3.selectAll(".circles").selectAll("circle")
+    .style("fill", "white")
+    .attr("r", 3)
 
-legend.append('text')
-.attr("x", 8)
-.attr("y", 4)
-.attr("dy", ".03em")
-.style("font-size", "12px")
-.text(function (d) {
-  return d[0]["serie"]
-})
+    var matrix = this.getScreenCTM()
+    .translate(+ this.getAttribute("cx"), + this.getAttribute("cy"));
+    showTooltip(d,i,matrix)
 
-.style("text-anchor", "start")
-.style("font-size", 12)
+    d3.select(this).style("fill",function(d) { return z(d.serie); })
+    .attr("r", 4)
 
-var offsets = [0];
-legendg.selectAll(".legends").nodes().map(function(d){
-  offsets.push(d.getElementsByTagName("text")[0].clientWidth)})
+    d.date=formatTime(d.date)
+    d3.select(this).call(clickFunction,d)
+    d.date=parseTime(d.date)
+  })
+
+  if(markClick){
+    if (indexToMark==""){
+      d3.select(".circles").selectAll("circle:last-of-type")
+      .style("fill",function(d) { return z(d.serie); })
+      .on("mouseout", mouseout2)
+    } else {
+      d3.select(".circles").selectAll("circle:nth-child("+(indexToMark+1)+")")
+      .style("fill",function(d) { return z(d.serie); })
+      .on("mouseout", mouseout2)
+    }
+  }
+
+
+  //Add legend
+
+  var legendg= g.append("g")
+  .attr("width", widthG)
+  .attr("transform", "translate(0,-10)");
+
+  var legend = legendg.selectAll('.legends')
+  .data(series)
+  .enter().append('g')
+  .attr("class", "legends")
+
+  legend.append("circle")
+  .attr("cx", 0)
+  .attr("cy", 0)
+  .attr("r", 5)
+  .style("fill", function(d) { return z(d[0].serie); })
+
+  legend.append('text')
+  .attr("x", 8)
+  .attr("y", 4)
+  .attr("dy", ".03em")
+  .style("font-size", "12px")
+  .text(function (d) {return d[0]["serie"]})
+  .style("text-anchor", "start")
+  .style("font-size", 12)
+
+  var offsets = [0];
+  legendg.selectAll(".legends").nodes().map(function(d){
+    var textBBox=d.getElementsByTagName("text")[0].getBBox()
+    offsets.push(textBBox.width)
+  })
 
   var totalOffset = 0;
-  legendg.selectAll(".legends").attr("transform", function (d, i) {
-    //if(i>0) totalOffset = totalOffset+offsets[i]+25
-    if(i>0) totalOffset = totalOffset + 170
+  legendg.selectAll(".legends")
+  .attr("transform", function (d, i) {
+    if(i>0) totalOffset = totalOffset+offsets[i]+25
     return  "translate(" + totalOffset + ",0)"
   })
 
-  //Add tooltip
+    //Add tooltip
 
   var tooltipDiv = d3.select("body").append("div")
   .attr("class", "tooltip")
@@ -246,5 +300,27 @@ legendg.selectAll(".legends").nodes().map(function(d){
   .style("font-size", "10px")
   .style("text-align", "left")
 
+  function mouseout(d) {
+    tooltipDiv.style("opacity", 0);
+    d3.select(this).style("fill","white")
+    .attr("r", 3)
+  }
+  function mouseout2(d) {
+    tooltipDiv.style("opacity", 0);
+    d3.select(this)
+    .attr("r", 3)
+  }
+  function showTooltip(d,i,matrix){
+    tooltipDiv.html("Date: "+ formatTimeTooltip(d.date) + "<br/>Value: " + d.value)
+    var offsetLeft=-5
+    var offsetUp=d3.selectAll(".tooltip").node().getBoundingClientRect().height+5
+    if (i>series[0].length/2){
+      offsetLeft=d3.selectAll(".tooltip").node().getBoundingClientRect().width+5
+    }
+    tooltipDiv.style("opacity", .9)
+    .style("left", (window.pageXOffset + matrix.e - offsetLeft)+ "px")
+    .style("top", (window.pageYOffset + matrix.f) - offsetUp+ "px");
+
+  }
 
 }
