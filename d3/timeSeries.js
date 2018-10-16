@@ -25,7 +25,7 @@ function timeSeries(obj){
   var source = (obj.source) ? "Source: "+obj.source:"";
   var width = (obj.width) ? obj.width:800; //optional width and height
   var height = (obj.height) ? obj.height:350;
-  var clickFunction = (obj.clickFunction) ? obj.clickFunction:""
+  var clickFunction = (obj.clickFunction) ? obj.clickFunction:dummyFunction
   var markClick  = (obj.markClick) ? obj.markClick:false //for one series timeline, mark a circle when clicked
   var indexToMark = (obj.indexToMark) ? obj.indexToMark:"" //for one series timeline mark a circle with the given index
 
@@ -53,10 +53,13 @@ function timeSeries(obj){
   var formatTime = d3.timeFormat("%Y-%m");
   var formatTimeTooltip = d3.timeFormat("%b %Y");
 
-  var series=data.map(function (d){return d.map(function(r){
+  var series=data.map(function (d){return d.map(function(r,i){
+    var mark=false
+    if (i== +indexToMark)mark=true
     return {serie:r["serie"],
     date:parseTime(r["date"]),
-    value:+r["value"]}
+    value:+r["value"],
+    mark:mark}
     });
   })
 
@@ -198,9 +201,9 @@ function timeSeries(obj){
     .attr("r", 4)})
   .on("mouseout", mouseout)
   .on("click", function(d) {
-      d.date=formatTime(d.date)
-      d3.select(this).call(clickFunction,d)
-      d.date=parseTime(d.date)
+    d.date=formatTime(d.date)
+    d3.select(this).call(clickFunction,d)
+    d.date=parseTime(d.date)
       if(markClick){
         d3.selectAll(".circles").selectAll("circle")
         .style("fill", "white")
@@ -212,37 +215,24 @@ function timeSeries(obj){
         .on("mouseout", mouseout2)
       }
     })
-  .on("touchstart", function(d,i){
-    d3.event.preventDefault();
 
-    d3.selectAll(".circles").selectAll("circle")
-    .style("fill", "white")
-    .attr("r", 3)
-
-    var matrix = this.getScreenCTM()
-    .translate(+ this.getAttribute("cx"), + this.getAttribute("cy"));
-    showTooltip(d,i,matrix)
-
-    d3.select(this).style("fill",function(d) { return z(d.serie); })
-    .attr("r", 4)
-
-    d.date=formatTime(d.date)
-    d3.select(this).call(clickFunction,d)
-    d.date=parseTime(d.date)
-  })
 
   if(markClick){
     if (indexToMark==""){
       d3.select(".circles").selectAll("circle:last-of-type")
       .style("fill",function(d) { return z(d.serie); })
       .on("mouseout", mouseout2)
-    } else {
-      d3.select(".circles").selectAll("circle:nth-child("+(indexToMark+1)+")")
-      .style("fill",function(d) { return z(d.serie); })
-      .on("mouseout", mouseout2)
+    }else {
+      for(i=0;i<series[0].length;i++){
+        if(series[0][i].mark==true){
+          d3.select(".circles").selectAll("circle:nth-child("+(i+1)+")")
+          .style("fill",function(d) { return z(d.serie); })
+          .on("mouseout", mouseout2)
+          break
+        }
+      }
     }
   }
-
 
   //Add legend
 
@@ -321,6 +311,9 @@ function timeSeries(obj){
     .style("left", (window.pageXOffset + matrix.e - offsetLeft)+ "px")
     .style("top", (window.pageYOffset + matrix.f) - offsetUp+ "px");
 
+  }
+
+  function dummyFunction(){
   }
 
 }
