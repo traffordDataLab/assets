@@ -201,7 +201,7 @@ function timeSeries(obj){
     .attr("r", 4)})
   .on("mouseout", mouseout)
   .on("click", click)
-  .on("touchend", click)
+  .on("touchstart", click)
 
   if(clickFunction!=dummyFunction){
     d3.selectAll(".circles").selectAll("circle")
