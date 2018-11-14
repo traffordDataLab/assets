@@ -190,6 +190,7 @@ function timeSeries(obj){
   .style("stroke", function(d) { return z(d.serie); })
   .style("stroke-width", "2px")
   .style("fill", "white")
+  .style("cursor","pointer")
   .on("mouseover", function(d,i) {
     var matrix = this.getScreenCTM()
     .translate(+ this.getAttribute("cx"), + this.getAttribute("cy"));
