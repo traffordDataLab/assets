@@ -190,7 +190,6 @@ function timeSeries(obj){
   .style("stroke", function(d) { return z(d.serie); })
   .style("stroke-width", "2px")
   .style("fill", "white")
-  .style("cursor","pointer")
   .on("mouseover", function(d,i) {
     var matrix = this.getScreenCTM()
     .translate(+ this.getAttribute("cx"), + this.getAttribute("cy"));
@@ -201,22 +200,13 @@ function timeSeries(obj){
     .style("fill",function(d) { return z(d.serie); })
     .attr("r", 4)})
   .on("mouseout", mouseout)
-  .on("click", function(d) {
-    d.date=formatTime(d.date)
-    d3.select(this).call(clickFunction,d)
-    d.date=parseTime(d.date)
-      if(markClick){
-        d3.selectAll(".circles").selectAll("circle")
-        .style("fill", "white")
-        .attr("r", 3)
-        .on("mouseout", mouseout)
+  .on("click", click)
+  .on("touchend", click)
 
-        d3.select(this)
-        .style("fill",function(d) { return z(d.serie); })
-        .on("mouseout", mouseout2)
-      }
-    })
-
+  if(clickFunction!=dummyFunction){
+    d3.selectAll(".circles").selectAll("circle")
+    .style("cursor","pointer")
+  }
 
   if(markClick){
     if (indexToMark==""){
@@ -276,7 +266,7 @@ function timeSeries(obj){
 
     //Add tooltip
 
-  var tooltipDiv = d3.select("body").append("div")
+  var tooltipDiv = d3.select(container).append("div")
   .attr("class", "tooltip")
   .style("opacity", 0)
   .style("position", "absolute")
@@ -301,12 +291,27 @@ function timeSeries(obj){
     d3.select(this)
     .attr("r", 3)
   }
+  function click(d) {
+    d.date=formatTime(d.date)
+    d3.select(this).call(clickFunction,d)
+    d.date=parseTime(d.date)
+      if(markClick){
+        d3.selectAll(".circles").selectAll("circle")
+        .style("fill", "white")
+        .attr("r", 3)
+        .on("mouseout", mouseout)
+
+        d3.select(this)
+        .style("fill",function(d) { return z(d.serie); })
+        .on("mouseout", mouseout2)
+      }
+    }
   function showTooltip(d,i,matrix){
     tooltipDiv.html("Date: "+ formatTimeTooltip(d.date) + "<br/>Value: " + d.value)
     var offsetLeft=-5
-    var offsetUp=d3.selectAll(".tooltip").node().getBoundingClientRect().height+5
+    var offsetUp=tooltipDiv.node().getBoundingClientRect().height+5
     if (i>series[0].length/2){
-      offsetLeft=d3.selectAll(".tooltip").node().getBoundingClientRect().width+5
+      offsetLeft=tooltipDiv.node().getBoundingClientRect().width+5
     }
     tooltipDiv.style("opacity", .9)
     .style("left", (window.pageXOffset + matrix.e - offsetLeft)+ "px")
