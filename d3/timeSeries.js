@@ -155,7 +155,6 @@ function timeSeries(obj){
   .text(title)
   .style("font-size", "18px")
 
-
   g.append("text")
   .attr("class", "source")
   .attr("x", -(margin.left/2))
@@ -190,18 +189,11 @@ function timeSeries(obj){
   .style("stroke", function(d) { return z(d.serie); })
   .style("stroke-width", "2px")
   .style("fill", "white")
-  .on("mouseover", function(d,i) {
-    var matrix = this.getScreenCTM()
-    .translate(+ this.getAttribute("cx"), + this.getAttribute("cy"));
-
-    showTooltip(d,i,matrix)
-
-    d3.select(this)
-    .style("fill",function(d) { return z(d.serie); })
-    .attr("r", 4)})
-  .on("mouseout", mouseout)
+  .on("mouseenter", hover)
+  .on("touchstart", hover)
+  .on("mouseleave", mouseout)
+  .on("touchmove", mouseout)
   .on("click", click)
-  .on("touchstart", click)
 
   if(clickFunction!=dummyFunction){
     d3.selectAll(".circles").selectAll("circle")
@@ -212,13 +204,17 @@ function timeSeries(obj){
     if (indexToMark==""){
       d3.select(".circles").selectAll("circle:last-of-type")
       .style("fill",function(d) { return z(d.serie); })
-      .on("mouseout", mouseout2)
+      .attr("r",4)
+      .on("mouseleave", mouseout2)
+      .on("touchmove", mouseout2)
     }else {
       for(i=0;i<series[0].length;i++){
         if(series[0][i].mark==true){
           d3.select(".circles").selectAll("circle:nth-child("+(i+1)+")")
           .style("fill",function(d) { return z(d.serie); })
-          .on("mouseout", mouseout2)
+          .attr("r",4)
+          .on("mouseleave", mouseout2)
+          .on("touchmove", mouseout2)
           break
         }
       }
@@ -288,8 +284,6 @@ function timeSeries(obj){
   }
   function mouseout2(d) {
     tooltipDiv.style("opacity", 0);
-    d3.select(this)
-    .attr("r", 3)
   }
   function click(d) {
     d.date=formatTime(d.date)
@@ -299,27 +293,38 @@ function timeSeries(obj){
         d3.selectAll(".circles").selectAll("circle")
         .style("fill", "white")
         .attr("r", 3)
-        .on("mouseout", mouseout)
+        .on("mouseleave", mouseout)
+        .on("touchmove", mouseout)
 
         d3.select(this)
         .style("fill",function(d) { return z(d.serie); })
-        .on("mouseout", mouseout2)
+        .attr("r", 4)
+        .on("mouseleave", mouseout2)
+        .on("touchmove", mouseout2)
       }
     }
-  function showTooltip(d,i,matrix){
-    tooltipDiv.html("Date: "+ formatTimeTooltip(d.date) + "<br/>Value: " + d.value)
-    var offsetLeft=-5
-    var offsetUp=tooltipDiv.node().getBoundingClientRect().height+5
-    if (i>series[0].length/2){
-      offsetLeft=tooltipDiv.node().getBoundingClientRect().width+5
+    function hover(d,i) {
+      var matrix = this.getScreenCTM()
+      .translate(+ this.getAttribute("cx"), + this.getAttribute("cy"));
+
+      showTooltip(d,i,matrix)
+
+      d3.select(this)
+      .style("fill",function(d) { return z(d.serie); })
+      .attr("r", 4)
     }
-    tooltipDiv.style("opacity", .9)
-    .style("left", (window.pageXOffset + matrix.e - offsetLeft)+ "px")
-    .style("top", (window.pageYOffset + matrix.f) - offsetUp+ "px");
-
-  }
-
-  function dummyFunction(){
-  }
+    function showTooltip(d,i,matrix){
+      tooltipDiv.html("Date: "+ formatTimeTooltip(d.date) + "<br/>Value: " + d.value)
+      var offsetLeft=-5
+      var offsetUp=tooltipDiv.node().getBoundingClientRect().height+5
+      if (i>series[0].length/2){
+        offsetLeft=tooltipDiv.node().getBoundingClientRect().width+5
+      }
+      tooltipDiv.style("opacity", .9)
+      .style("left", (window.pageXOffset + matrix.e - offsetLeft)+ "px")
+      .style("top", (window.pageYOffset + matrix.f) - offsetUp+ "px");
+    }
+    function dummyFunction(){
+    }
 
 }
