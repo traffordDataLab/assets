@@ -62,7 +62,7 @@ function horizontalBarChart(obj){
   gy.selectAll(".tick")
   .selectAll("text")
   .style("font-size", "15px")
-  .attr("transform", "translate(0," + 0 + ")")
+  .attr("transform", "translate(-4," + 0 + ")")
 
 
   var barsg = histo.append("g")
@@ -82,7 +82,7 @@ function horizontalBarChart(obj){
     return hy(d.name)+3;
   })
   .attr("height", hy.bandwidth()-6)
-  .attr("x", 0)
+  .attr("x", 2.5)
   .attr("width", function (d) {
     return hx(d.value);
   })
@@ -123,7 +123,7 @@ function horizontalBarChart(obj){
   })
   //x position is 3 pixels to the right of the bar
   .attr("x", function (d) {
-    return hx(d.value) + 3;
+    return hx(d.value) + 5;
   })
   .text(function (d) {
     return numFormat(d.value);
