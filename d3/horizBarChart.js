@@ -20,6 +20,12 @@ function horizontalBarChart(obj){
   var markClick  = (obj.markClick) ? obj.markClick:false
   var indexToMark = (obj.indexToMark) ? obj.indexToMark:""
 
+  data.sort(function(a, b){
+    if(a.name > b.name) { return -1; }
+    if(a.name < b.name) { return 1; }
+    return 0;
+  })
+
   //define width height and margins
 
   var margin = {top: 50, right: 20, bottom: 20, left: 20};
@@ -108,6 +114,11 @@ function horizontalBarChart(obj){
     }
   })
 
+  if(clickFunction!=dummyFunction){
+    d3.selectAll(".bar")
+    .style("cursor","pointer")
+  }
+
   if(markClick){
     if (indexToMark!=""){
       d3.select(".bars").selectAll("g:nth-child("+(indexToMark-1)+")").selectAll("rect")
@@ -146,4 +157,6 @@ function horizontalBarChart(obj){
   .text(source)
   .style("font-size", "12px")
 
+  function dummyFunction(){
+  }
 }
