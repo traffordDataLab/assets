@@ -20,6 +20,14 @@ function horizontalBarChart(obj){
   var markClick  = (obj.markClick) ? obj.markClick:false
   var indexToMark = (obj.indexToMark) ? obj.indexToMark:""
 
+  data=data.map(function(r,i){
+    var mark=false
+    if (i== +indexToMark-2)mark=true
+    return {name:r["name"],
+    value:r["value"],
+    mark:mark}
+  });
+
   data.sort(function(a, b){
     if(a.name > b.name) { return -1; }
     if(a.name < b.name) { return 1; }
@@ -121,8 +129,12 @@ function horizontalBarChart(obj){
 
   if(markClick){
     if (indexToMark!=""){
-      d3.select(".bars").selectAll("g:nth-child("+(indexToMark-1)+")").selectAll("rect")
-      .style("fill", strokeColour)
+      for(i=0;i<data.length;i++){
+        if(data[i].mark==true){
+          d3.select(".bars").selectAll("g:nth-child("+(i+1)+")").selectAll("rect")
+          .style("fill", strokeColour)
+        }
+      }
     }
   }
 
