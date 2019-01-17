@@ -1,0 +1,49 @@
+{
+    "background": "#ffffff",
+    "title": {
+        "orient": "top",
+        "anchor": "middle",
+        "offset": 5,
+        "font": "sans-serif",
+        "fontSize": 18,
+        "fontWeight": 600,
+        "color": "#757575"
+    },
+    "axis": {
+        "domain": false,
+        "gridColor": "#757575",
+        "gridOpacity": 1,
+        "gridDash": [1],
+        "gridWidth": 0.3,
+        "ticks": false,
+        "titleFont": "sans-serif",
+        "titleFontSize": 11,
+        "titleColor": "#757575",
+        "titleFontWeight": "normal",
+        "labelFont": "sans-serif",
+        "labelFontSize": 10,
+        "labelColor": "#757575",
+        "labelFontWeight": "normal",
+        "labelPadding": 5
+    },
+    "axisX": {
+        "titleX": 580,
+        "titleY": 25
+    },
+    "axisY": {
+        "titleX": -80,
+        "titleY": 25
+    },
+    "legend": {
+        "padding": 1,
+        "titleFont": "sans-serif",
+        "titleFontSize": 12,
+        "titleColor": "#757575",
+        "labelFont": "sans-serif",
+        "labelFontSize": 10,
+        "labelColor": "#757575"
+    },
+    "view": {
+        "stroke": "transparent"
+    }
+}
