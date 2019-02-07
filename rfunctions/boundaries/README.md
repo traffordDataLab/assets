@@ -1,5 +1,3 @@
-#### Background
-
 Retrieve vector boundaries from [ONS](https://www.ons.gov.uk/)' [Open Geography Portal](http://geoportal.statistics.gov.uk/) using the `get_vector()` R function.
 
 *Requirements*: [sf](https://cran.r-project.org/web/packages/sf/index.html) and [httr](https://cran.r-project.org/web/packages/httr/index.html) R packages.
