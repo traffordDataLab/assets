@@ -2,7 +2,7 @@
 
 Retrieve vector boundaries from [ONS](https://www.ons.gov.uk/)' [Open Geography Portal](http://geoportal.statistics.gov.uk/) using the `get_vector()` R function.
 
-*Requirements* : [sf](https://cran.r-project.org/web/packages/sf/index.html) and [httr](https://cran.r-project.org/web/packages/httr/index.html) R packages.
+*Requirements*: [sf](https://cran.r-project.org/web/packages/sf/index.html) and [httr](https://cran.r-project.org/web/packages/httr/index.html) R packages.
 
 
 ```r
@@ -12,8 +12,8 @@ source("https://www.trafforddatalab.io/assets/rfunctions/boundaries/get_vector.R
 
 There are three arguments in the `get_vector()` function:
 
-- **boundary** - provide the [URL for the vector boundary file](https://ons-inspire.esriuk.com/arcgis/rest/services). For example, the 2018 vector boundaries for electoral wards is `Administrative_Boundaries/Wards_May_2018_Boundaries `.
-- **condition** - provide a [where clause](https://developers.arcgis.com/rest/services-reference/query-feature-service-layer-.htm) to filter the attributes of the dataset.
+- **boundary** - provide the [URL for the vector boundary file](https://ons-inspire.esriuk.com/arcgis/rest/services). For example, the 2018 vector boundaries for electoral wards is `Administrative_Boundaries/Wards_May_2018_Boundaries `
+- **condition** - provide a [where clause](https://developers.arcgis.com/rest/services-reference/query-feature-service-layer-.htm) to filter the attributes of the dataset
 - **resolution** - indicate 1 of up to 4 possible resolutions: 0 = Full resolution (clipped); 1 = Full resolution (extent); 2 = Generalised (clipped) and; 3 = Ultra generalised (clipped). The default is 0.
 
 ---
