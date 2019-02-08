@@ -20,7 +20,7 @@ get_vector <- function(boundary, condition, resolution = 0){
       where = condition, # WHERE clause
       outSR = "4326", # coordinate reference system
       outFields = "*", # return all attributes
-      geometryPrecision = 4, # specify the number of decimal places
+      geometryPrecision = 6, # specify the number of decimal places
       f = "geojson" # return GeoJSON format
     )
   )
