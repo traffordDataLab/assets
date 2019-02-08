@@ -28,15 +28,15 @@ text(bdy$lon, y = bdy$lat, bdy$lad18nm, cex = 0.8, col = "#212121")
 
 ![](img/local_authority.png)
 
-##### Vector boundaries of Clifford and Longford wards
+##### Vector boundaries of Greater Manchester local authorities
 
 ```r
-bdy <- get_vector("Administrative_Boundaries/Wards_May_2018_Boundaries", "wd18cd LIKE 'E05000825' OR wd18cd LIKE 'E05000832'", resolution = 2)
+bdy <- get_vector("Administrative_Boundaries/Local_Authority_Districts_DEC_2018_Boundaries", "lad18nm IN ('Bolton','Bury','Manchester','Oldham','Rochdale','Salford','Stockport','Tameside','Trafford','Wigan')", resolution = 2)
 plot(st_geometry(bdy), col = "#DDDDCC", border = "#212121")
-text(bdy$lon, y = bdy$lat, bdy$wd18nm, cex = 0.8, col = "#212121")
+text(bdy$lon, y = bdy$lat, bdy$lad18nm, cex = 0.8, col = "#212121")
 ```
 
-![](img/wards.png)
+![](img/gm.png)
 
 ##### Latest postcode centroids for Clifford ward
 
@@ -44,7 +44,7 @@ text(bdy$lon, y = bdy$lat, bdy$wd18nm, cex = 0.8, col = "#212121")
 bdy <- get_vector("Administrative_Boundaries/Wards_May_2018_Boundaries", "wd18cd LIKE 'E05000825'", resolution = 2)
 postcodes <- get_vector("Postcodes/ONS_Postcode_Directory_Latest_Centroids", "osward LIKE 'E05000825'")
 plot(st_geometry(bdy), col = "#DDDDCC", border = "#212121")
-plot(st_geometry(postcodes), add = T, pch = 21, cex = 0.7, bg = "#fc6721", col = "#FFFFFF")
+plot(st_geometry(postcodes), add = T, pch = 21, cex = 0.7, bg = "#3182bd", col = "#FFFFFF")
 ```
 
 ![](img/postcodes.png)
