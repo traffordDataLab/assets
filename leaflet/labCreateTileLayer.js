@@ -3,7 +3,7 @@
     Purpose:        Create Leaflet map tile layers
     Dependencies:   Leaflet.js (http://www.leafletjs.com)
     Licence:        https://www.trafforddatalab.io/assets/LICENSE.txt
-    Notes:          MaxZoom fixed to 19 for consistency
+    Notes:          MaxZoom fixed to 18 for consistency with the different providers and with vector tiles declared in labCreateVectorTileLayer.js
 */
 function labCreateTileLayer(type) {
 
@@ -13,21 +13,33 @@ function labCreateTileLayer(type) {
             	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
             	subdomains: 'abcd',
                 minZoom: 3,
-            	maxZoom: 19
+                maxZoom: 18,
+                errorTileUrl: ''
+            });
+
+        case 'CartoDB.DarkMatter':
+            return L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                subdomains: 'abcd',
+                minZoom: 3,
+                maxZoom: 18,
+                errorTileUrl: ''
             });
 
         case 'OpenStreetMap.Mapnik':
             return L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
                 minZoom: 3,
-            	maxZoom: 19
+                maxZoom: 18,
+                errorTileUrl: ''
             });
 
         case 'Esri.WorldImagery':
             return L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
             	attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
                 minZoom: 3,
-                maxZoom: 19
+                maxZoom: 18,
+                errorTileUrl: ''
             });
 
         case 'Stamen.TonerLite':
@@ -35,7 +47,8 @@ function labCreateTileLayer(type) {
             	attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
             	subdomains: 'abcd',
             	minZoom: 3,
-            	maxZoom: 19,
+                maxZoom: 18,
+                errorTileUrl: '',
             	ext: 'png'
             });
 
@@ -43,7 +56,8 @@ function labCreateTileLayer(type) {
             return L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
             	attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012',
                 minZoom: 3,
-                maxZoom: 19
+                maxZoom: 18,
+                errorTileUrl: ''
             });
 
         default:
@@ -51,7 +65,7 @@ function labCreateTileLayer(type) {
             return L.tileLayer('', {
                 attribution: '',
                 minZoom: 3,
-                maxZoom: 19
+                maxZoom: 18
             });
     }
 
