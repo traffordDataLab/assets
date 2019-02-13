@@ -11,7 +11,7 @@ function labCreateVectorTileLayer(type) {
     switch (type) {
         case 'OSZoomstack.Light':
             return L.mapboxGL({
-                style: 'https://s3-eu-west-1.amazonaws.com/tiles.os.uk/styles/open-zoomstack-light/styleZ.json',
+                style: 'https://s3-eu-west-1.amazonaws.com/tiles.os.uk/styles/open-zoomstack-light/style.json',
                 accessToken: 'no-token',
                 attribution: 'Tiles: <a href="https://www.ordnancesurvey.co.uk/business-and-government/products/os-open-zoomstack.html" target="_blank">OS Open Zoomstack</a> Light',
                 minZoom: 3,
