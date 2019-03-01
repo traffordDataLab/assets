@@ -86,7 +86,7 @@ function labMarkerSVG(objOptions) {
 
     // Add icon and shadow URL parameters to the icon object to pass to L.icon
     objLeafletIconOptions.iconUrl = 'data:image/svg+xml;base64,' + btoa(svg);
-    objLeafletIconOptions.shadowUrl = 'lab_marker_shadow.png';
+    objLeafletIconOptions.shadowUrl = 'https://www.trafforddatalab.io/assets/leaflet/svg_markers/lab_marker_shadow.png';
 
     // Create and return the Leaflet icon object
     return L.icon(objLeafletIconOptions);
