@@ -28,7 +28,7 @@ theme_lab <- function () {
       legend.key = element_blank(),
       legend.title = element_text(size = 12, colour = "#757575"),
       legend.text.align = 0,
-      legend.text = element_text(size = 10, colour = "#757575"),
+      legend.text = element_text(size = 12, colour = "#757575"),
       # facetting
       strip.background = element_rect(fill = "transparent", colour = NA),
       strip.text = element_text(size = 12, face = "bold", colour = "#757575", hjust = 0)
