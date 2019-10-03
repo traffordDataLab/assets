@@ -9,12 +9,12 @@ theme_lab <- function () {
       panel.border = element_blank(),
       # grid lines
       panel.grid.major.x = element_blank(),
-      panel.grid.major.y = element_line(color = "#cbcbcb", size = 0.5), 
+      panel.grid.major.y = element_line(size = 0.5, color = "#cbcbcb"), 
       panel.grid.minor = element_blank(),
       # axis ticks and lines
       axis.ticks = element_blank(),
       axis.line = element_blank(),
-      # title,  subtitle and caption
+      # title, subtitle and caption
       plot.title = element_text(size = 20, face = "bold", colour = "#757575", hjust = 0),
       plot.subtitle = element_text(size = 16, colour = "#757575", hjust = 0, margin = margin(9, 0, 9, 0)),
       plot.caption = element_text(size = 10, color = "grey50", hjust = 1, margin = margin(t = 15)),
@@ -31,6 +31,6 @@ theme_lab <- function () {
       legend.text = element_text(size = 10, colour = "#757575"),
       # facetting
       strip.background = element_rect(fill = "transparent", colour = NA),
-      strip.text = element_text(size = 12, colour = "#757575", face = "bold", hjust = 0)
+      strip.text = element_text(size = 12, face = "bold", colour = "#757575", hjust = 0)
     )
 }
