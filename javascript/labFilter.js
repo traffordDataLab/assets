@@ -37,7 +37,7 @@ function LabFilter(objOptions) {
     // User Interface properties
     this.filterContainer = (objOptions['filterContainer'] == null) ? null : objOptions['filterContainer'];                      // The HTML object to create the user interface for the filter within
     this.filterClass = (objOptions['filterClass'] == null) ? null : String(objOptions['filterClass']);                          // CSS class[es] to apply to the user interface
-    this.filterPlaceholder = (objOptions['filterPlaceholder'] == null) ? 'filter...' : String(objOptions['filterPlaceholder']); // text to display within the filter input box
+    this.filterPlaceholder = (objOptions['filterPlaceholder'] == null) ? 'search...' : String(objOptions['filterPlaceholder']); // text to display within the filter input box
 
     // Create the form element to contain the filter
     this.form = document.createElement('form');
