@@ -9,23 +9,30 @@ function LabFilter(objOptions) {
 
     // Function taking input from the filter UI and performing the filtering process
     this.doFilter = function () {
-        var def_filterTerm = context.input.value.toLowerCase();    // convert the input to lowercase so we can match like-for-like with the content
-        var el;
+        try {
+            var def_filterTerm = context.input.value.toLowerCase();    // convert the input to lowercase so we can match like-for-like with the content
+            var el;
 
-        // Loop through the content elements we have been given, looking for matches of def_filterTerms
-        for (var i = 0; i < context.contentElements.length; i++) {
-            el = context.contentElements[i];
+            // Loop through the content elements we have been given, looking for matches of def_filterTerms
+            for (var i = 0; i < context.contentElements.length; i++) {
+                el = context.contentElements[i];
 
-            if (def_filterTerm == '' || el.innerHTML.toLowerCase().indexOf(def_filterTerm) > -1) {
-                // Either the filter has been cleared or a match has been found
-                el.parentNode.classList.add(context.matchedClass);
-                el.parentNode.classList.remove(context.unMatchedClass);
+                if (def_filterTerm == '' || el.innerHTML.toLowerCase().indexOf(def_filterTerm) > -1) {
+                    // Either the filter has been cleared or a match has been found
+                    el.parentNode.classList.add(context.matchedClass);
+                    el.parentNode.classList.remove(context.unMatchedClass);
+                }
+                else {
+                    // This is non-matching item and so needs to be removed
+                    el.parentNode.classList.remove(context.matchedClass);
+                    el.parentNode.classList.add(context.unMatchedClass);
+                }
             }
-            else {
-                // This is non-matching item and so needs to be removed
-                el.parentNode.classList.remove(context.matchedClass);
-                el.parentNode.classList.add(context.unMatchedClass);
-            }
+        }
+        catch (e) {
+            // Some error has occurred preventing the filter from working. Alert the user and remove the UI
+            alert('Sorry, there is an issue using the search facility in this browser.\nApologies for the inconvenience.');
+            context.filterContainer.removeChild(context.form);
         }
     };
 
