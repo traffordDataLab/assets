@@ -46,6 +46,7 @@ function LabFilter(objOptions) {
         this.filterContainer = (objOptions['filterContainer'] == null) ? null : objOptions['filterContainer'];                      // The HTML object to create the user interface for the filter within
         this.filterClass = (objOptions['filterClass'] == null) ? null : String(objOptions['filterClass']);                          // CSS class[es] to apply to the user interface
         this.filterPlaceholder = (objOptions['filterPlaceholder'] == null) ? 'search...' : String(objOptions['filterPlaceholder']); // text to display within the filter input box
+        this.filterTitle = (objOptions['filterTitle'] == null) ? 'Filter the items on the page by entering keywords into the box' : String(objOptions['filterTitle']); // descriptive title to make the form more accessible
 
         // Create the form element to contain the filter
         this.form = document.createElement('form');
@@ -62,6 +63,7 @@ function LabFilter(objOptions) {
         this.input.id = 'filterTerm';
         this.input.name = 'filterTerm';
         this.input.placeholder = this.filterPlaceholder;
+        this.input.title = this.filterTitle;
         this.input.addEventListener('input', this.doFilter);
         if (this.filterClass !== null) this.input.setAttribute('class', this.filterClass);
 
