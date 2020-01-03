@@ -46,7 +46,8 @@ function LabFilter(objOptions) {
         this.filterContainer = (objOptions['filterContainer'] == null) ? null : objOptions['filterContainer'];                      // The HTML object to create the user interface for the filter within
         this.filterClass = (objOptions['filterClass'] == null) ? null : String(objOptions['filterClass']);                          // CSS class[es] to apply to the user interface
         this.filterPlaceholder = (objOptions['filterPlaceholder'] == null) ? 'search...' : String(objOptions['filterPlaceholder']); // text to display within the filter input box
-        this.filterTitle = (objOptions['filterTitle'] == null) ? 'Filter the items on the page by entering keywords into the box' : String(objOptions['filterTitle']); // descriptive title to make the form more accessible
+        this.filterTitle = (objOptions['filterTitle'] == null) ? 'Search the items on the page by entering keywords into the box' : String(objOptions['filterTitle']); // descriptive title to make the form more accessible
+        this.filterLabel = (objOptions['filterLabel'] == null) ? null : String(objOptions['filterLabel']);                          // An optional label to associate with the input box to further make the form more accessible
 
         // Create the form element to contain the filter
         this.form = document.createElement('form');
@@ -66,6 +67,14 @@ function LabFilter(objOptions) {
         this.input.title = this.filterTitle;
         this.input.addEventListener('input', this.doFilter);
         if (this.filterClass !== null) this.input.setAttribute('class', this.filterClass);
+
+        // Create the label associated with the input box if text has been provided and add it to the form
+        if (this.filterLabel !== null) {
+            this.label = document.createElement('label');
+            this.label.setAttribute('for', this.input.id);
+            this.label.appendChild(document.createTextNode(this.filterLabel));
+            this.form.appendChild(this.label);
+        }
 
         // Display the User Interface
         this.form.appendChild(this.input);              // add the filter input box to the form
