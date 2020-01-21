@@ -38,7 +38,7 @@ function LabFilter(objOptions) {
 
     try {
         // Main properties
-        this.contentElements = (objOptions['contentElements'] == null) ? document.getElementsByTagName('filterTags') : objOptions['contentElements'];  // the DOM elements containing the filter terms to search, looks for <filterTags> as default
+        this.contentElements = (objOptions['contentElements'] == null) ? document.getElementsByClassName('filterTags') : objOptions['contentElements'];  // the DOM elements containing the filter terms to search, looks for elements containing the .filterTags class by default
         this.matchedClass = (objOptions['matchedClass'] == null) ? null : String(objOptions['matchedClass']);                 // CSV of CSS classes that we want adding to an element when a filter match is found and removing when it's not
         this.unMatchedClass = (objOptions['unMatchedClass'] == null) ? 'hideContent' : String(objOptions['unMatchedClass']);  // CSV of CSS classes that we want removing from an element when a filter match is found and adding when it's not, defaults to our standard 'hideContent' class (e.g. display: none;)
 
