@@ -1,6 +1,7 @@
 /*
     Created:        2019-12-09 by James Austin - Trafford Data Lab
-    Updated:        2020-05-01 - improved accessibility
+    Updated:        2023-01-18 - allow filtering of items in multiple separate containers
+                    2020-05-01 - improved accessibility
     Purpose:        To provide an easy method of filtering content on a web page
     Dependencies:   None
     Licence:        https://www.trafforddatalab.io/assets/LICENSE.txt
@@ -40,20 +41,30 @@ function LabFilter(objOptions) {
             var filterTerms = context.input.value.toLowerCase();    // convert the input to lowercase so we can match like-for-like with the content
             var numMatch = 0;   // a count of the total number of matches found
 
-            // remove no results message if present
-            if (context.elItemsContainer.contains(context.elNoMatchesMsg)) context.elItemsContainer.removeChild(context.elNoMatchesMsg);
-
-            // remove all currently displayed items from their container - we add the matching ones back in below
-            for (var i = 0; i < context.elItems.length; i++) {
-                if (context.elItemsContainer.contains(context.elItems[i])) context.elItemsContainer.removeChild(context.elItems[i]);
+            // remove all currently displayed items from their container(s) - we add the matching ones back in below
+            for (var i = 0; i < context.elItemsContainers.length; i++) {
+                context.elItemsContainers[i].innerHTML = '';
             }
 
             // Loop through all elements containing the filter keywords for each item, looking for matches
             for (var i = 0; i < context.arrFilters.length; i++) {
                 if (filterTerms == '' || context.arrFilters[i].indexOf(filterTerms) > -1) {
                     // Either the filter has been cleared or a match has been found
-                    context.elItemsContainer.appendChild(context.elItems[i]);   // add the item to the container
+                    context.elItemsContainers[i].appendChild(context.elItems[i]);   // add the item to the container
                     numMatch++; // increment the match count
+                }
+            }
+
+            // Place "no items" messages in all empty item containers to show that no matches were found within that section
+            for (var i = 0; i < context.elItemsContainers.length; i++) {
+                if (context.elItemsContainers[i].innerHTML == '') {
+                    // create elements required for the "no items" message
+                    var elNoMatchesMsg = document.createElement('p');
+                    elNoMatchesMsg.appendChild(document.createTextNode(context.noMatchesMsg));
+                    if (context.noMatchesClass != null) elNoMatchesMsg.setAttribute('class', context.noMatchesClass);
+
+                    // append "no items" message to the container
+                    context.elItemsContainers[i].appendChild(elNoMatchesMsg);
                 }
             }
 
@@ -62,9 +73,6 @@ function LabFilter(objOptions) {
 
             if (numMatch == 0) {
                 resultMsg = ' (no matches)';
-
-                // No matches have been found so display message in the item container so that it is not just empty
-                context.elItemsContainer.appendChild(context.elNoMatchesMsg);
             }
             else if (numMatch == context.elItems.length) {
                 resultMsg = ' (showing all ' + context.elItems.length + ')';
@@ -91,21 +99,18 @@ function LabFilter(objOptions) {
 
         // Get an array of the parent elements of the filter keywords - these are effectively the elements we are going to show/hide when we do a search
         // We also need to create an array of the search keywords associated with each item as elFilters will be destroyed once we begin searching as the parent elements will be removed from the DOM
-        this.elItems = new Array();        // this will be an array of DOM elements
-        this.arrFilters = new Array();     // this will be an array of search terms, the index in the array corresponding to the item they belong to
+        this.elItems = new Array();             // this will be an array of DOM elements
+        this.elItemsContainers = new Array();   // this will be an array of the parent DOM elements of elItems (the items to search on should be in some form of container, e.g. div, section etc. - we need to insert/remove the items in the DOM with reference to this)
+        this.arrFilters = new Array();          // this will be an array of search terms, the index in the array corresponding to the item they belong to
         for (var i = 0; i < elFilters.length; i++) {
             this.elItems.push(elFilters[i].parentNode);
+            this.elItemsContainers.push(elFilters[i].parentNode.parentNode);
             this.arrFilters.push(elFilters[i].innerHTML.toLowerCase());
         }
 
-        // The items to search on should be in some form of container, (e.g. div, section etc.) - we need to insert/remove the items in the DOM with reference to this
-        this.elItemsContainer = this.elItems[0].parentNode;
-
-        // Create a message to display if no results are found - this can be added and removed from elItemsContainer as required
-        var noMatchesMsg = (objOptions['noMatchesMsg'] == null) ? 'Sorry, no matches were found.' : String(objOptions['noMatchesMsg']);
-        this.elNoMatchesMsg = document.createElement('p');
-        this.elNoMatchesMsg.appendChild(document.createTextNode(noMatchesMsg));
-        if (objOptions['noMatchesClass'] != null) this.elNoMatchesMsg.setAttribute('class', String(objOptions['noMatchesClass']));
+        // These are used to create a message to display if no results are found - this can be added and removed from elItemsContainers as required
+        this.noMatchesMsg = (objOptions['noMatchesMsg'] == null) ? 'Sorry, no matches were found.' : String(objOptions['noMatchesMsg']);
+        this.noMatchesClass = (objOptions['noMatchesClass'] == null) ? null : String(objOptions['noMatchesClass']);
 
         // User Interface properties
         this.elFilterUIContainer = (objOptions['filterContainer'] == null) ? null : objOptions['filterContainer'];  // The HTML object to create the user interface for the filter within
