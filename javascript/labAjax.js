@@ -52,20 +52,27 @@ function labAjax(url, callback, objOptions) {
                     // we are ready to process the result
                     var ajaxResult;
 
-                    switch (def_type) {
-                        case 'json':
-                            ajaxResult = JSON.parse(xmlhttp.responseText);
-                            break;
-                        case 'xml':
-                            ajaxResult = xmlhttp.responseXML;
-                            break;
-                        default:
-                            // Just treat it as text
-                            ajaxResult = xmlhttp.responseText;
+                    try {
+                        switch (def_type) {
+                            case 'json':
+                                ajaxResult = JSON.parse(xmlhttp.responseText);
+                                break;
+                            case 'xml':
+                                ajaxResult = xmlhttp.responseXML;
+                                break;
+                            default:
+                                // Just treat it as text
+                                ajaxResult = xmlhttp.responseText;
+                        }
+    
+                        if (def_cache === true) def_cacheObj[url] = ajaxResult;   // Cache the data if required
+                        callback(ajaxResult);
                     }
-
-                    if (def_cache === true) def_cacheObj[url] = ajaxResult;   // Cache the data if required
-                    callback(ajaxResult);
+                    catch(e) {
+                        // An error occurred, most likely we attempted to parse the result as 'json' and it isn't
+                        callback(null);
+                    }
+                    
                 }
                 else if (xmlhttp.status >= 300) {
                     // Not a successful response, perhaps a 404 etc. so abort
